@@ -1,8 +1,15 @@
 const http = require('http');
-const axios = require('axios')
+const axios = require('axios');
 const cheerio = require('cheerio');
+const mongoose = require('mongoose');
+const dotenv = require("dotenv");
+
+dotenv.config();
+console.log("dotenv", dotenv);
+
 const PORT = 3000;
 
+const { bnnmarketcall } = require('./bnnmarketcallModel');
 
 async function getForum() {
 	try {
@@ -41,8 +48,43 @@ async function main(){
 	console.log("Making request");
 	let response = await getForum();
 
-	console.log(response);
+	//console.log(response);
 
+	//add a year property or convert it to a mongodb datetime
+
+	//now the file is structured properly we can use our db.
+
+	//step 1 is to filter out the picks that are blank, means their episode isnt up yet with a link of picks
+	//[ '', '', '' ] this is what it looks like
+
+	//step 2 is to post to mongodb
+	
+
+	// Connect to Mongo
+	mongoose
+	.connect(process.env.MONGO_URI_DEV, {
+		useNewUrlParser: true,
+		useCreateIndex: true,
+		useUnifiedTopology: true,
+		useFindAndModify: false,
+	})
+	.then(() => {
+		console.log('MongoDB Connected...');
+	})
+	.catch((err) => console.log(err));
+	
+	for(let i = 0; i < response.length; i++){
+		
+		try {
+			bnnmarketcall.create(response[i], function (err, entry) {
+				//console.log("Entry: ", entry, " error is: ", err);
+			});
+		} catch (err) {
+			//console.log(err);
+		}
+	}
+
+	console.log("end of script");
 }
 
 
