@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const dotenv = require("dotenv");
 
 dotenv.config();
-console.log("dotenv", dotenv);
 
 const PORT = 3000;
 
@@ -53,15 +52,6 @@ async function getForum() {
 async function main(){
 	console.log("Making request");
 	let response = await getForum();
-
-	//console.log(response);
-
-	//now the file is structured properly we can use our db.
-
-	//step 1 is to filter out the picks that are blank, means their episode isnt up yet with a link of picks
-	//[ '', '', '' ] this is what it looks like
-
-	//step 2 is to post to mongodb
 	
 
 	// Connect to Mongo
@@ -79,41 +69,19 @@ async function main(){
 	
 	for(let i = 0; i < response.length; i++){
 
-		//maybe run a validation test on response[i], to see
-		//before we post the data to our database. It would be bad
-		//not too, could just compare it to an interface and make sure it
-		//has all the right properties and that they are not blank or null or undefined
-		//important for future automation.
-		//console.log(response[i]);
-		try {
-			bnnmarketcall.create(response[i], function (err, entry) {
-				//console.log("Entry: ", entry, " error is: ", err);
-			});
-		} catch (err) {
-			//console.log(err);
+		let foundCurrentEntry = await bnnmarketcall.findOne({day: response[i].day, month: response[i].month});
+		if(foundCurrentEntry === null){
+			try {
+				bnnmarketcall.create(response[i], function (err, entry) {
+					//console.log("Entry: ", entry, " error is: ", err);
+				});
+			} catch (err) {
+				//console.log(err);
+			}
 		}
 	}
-
-	//lots of things to do.
-	//first I need to make sure there is no duplicate insertions.
-	//can probably do this by just checking the 5 days of the week, or even better
-	//would be starting day of the week - current day. Check those for duplicates
-
-	//ignore the days that aren't posted yet.
-
-	//add to the stock picks the ticker
-	//so convert it to an array of objects that are {name: 'String' ticker: 'String'}
-	//you can get ticker from stripping it off the href link.
-
-	//I also want to get the link of the top picks for the author description.
-	//on the authors top picks article theres a div with class article-text, that looks like it has everything
-	//can just store that in the db as a large string, the html I mean. Aslong as we arent storing the site banner
-	//or ads it'll be ok.
-
-	//catch error for no internet, maybe write to log file.
-	//like log every step so if it crashes i can find the problem quick
-	//then make a quick reference txt file of the format of the object going into the db so we can parse db quick.
-	//console.log("end of script");
+	
+	process.exit(1);
 }
 
 
