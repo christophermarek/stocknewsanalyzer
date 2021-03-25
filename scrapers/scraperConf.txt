@@ -1,0 +1,3 @@
+
+scraperFolderName, active(0,1)
+bnnmarketcall, 1
