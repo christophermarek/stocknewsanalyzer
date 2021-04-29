@@ -53,7 +53,6 @@ async function main(){
 	console.log("Making request");
 	let response = await getForum();
 	
-
 	// Connect to Mongo
 	mongoose
 	.connect(process.env.MONGO_URI_DEV, {
