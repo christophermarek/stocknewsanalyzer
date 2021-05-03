@@ -17,6 +17,15 @@ var root = {
 };
 //USED THIS TUTORIAL HERE FOR TEMPLATE
 //https://graphql.org/graphql-js/running-an-express-graphql-server/
+
+//THIS LOOKS LIKE A GOOD WAY TO LEARN TO SETUP THE SERVER
+//https://www.howtographql.com/graphql-js/0-introduction/
+//https://www.youtube.com/watch?v=ed8SzALpx1Q ok this looks better
+
+//https://httptoolkit.tech/blog/simple-graphql-server-without-apollo/ this looks the best cause no extra tech on the stack
+//https://github.com/aichbauer/express-graphql-boilerplate
+//https://github.com/graphql/graphql-js
+
 //***************** */ */
 var app = express();
 app.use('/graphql', graphqlHTTP({

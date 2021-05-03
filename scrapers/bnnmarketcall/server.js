@@ -49,13 +49,13 @@ async function getForum() {
 	}
 }
 
-async function main(){
+async function bnnmarketcallscript(dbURI){
 	console.log("Making request");
 	let response = await getForum();
 	
 	// Connect to Mongo
 	mongoose
-	.connect(process.env.MONGO_URI_DEV, {
+	.connect(dbURI, {
 		useNewUrlParser: true,
 		useCreateIndex: true,
 		useUnifiedTopology: true,
@@ -66,6 +66,8 @@ async function main(){
 	})
 	.catch((err) => console.log(err));
 	
+	console.log(response);
+
 	for(let i = 0; i < response.length; i++){
 
 		let foundCurrentEntry = await bnnmarketcall.findOne({day: response[i].day, month: response[i].month});
@@ -84,5 +86,6 @@ async function main(){
 }
 
 
-console.log("Script beginning");
-main();
+module.exports = {
+    bnnmarketcallscript
+};
