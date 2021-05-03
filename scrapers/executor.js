@@ -32,11 +32,9 @@ function main(){
     try {
         var data = fs.readFileSync(scraperConfig.filepath, scraperConfig.encoding);
         splitLines = data.split("\n");
-        //i = 1, skip first line
 
-        //run each scraper parsed where active is 1
-        //we pull foldername from the conf, 
-        //so to run it would be /foldername/server.js
+        //run each scraper parsed where active is 1 in config
+        //i = 1, skip first line
         for (i = 1; i < splitLines.length; i++){
             line = splitLines[i];
             splitLine = line.split(",")
@@ -52,7 +50,6 @@ function main(){
         console.log('Error:', e.stack);
     }
     
-
     //update script to also fetch the full html of the article. It will only be text so itll be light on sizes
     
 }
