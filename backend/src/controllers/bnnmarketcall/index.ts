@@ -1,10 +1,12 @@
 import { Response, Request } from "express"
-import { bnnmarketcall } from "../../types/bnnmarketcall"
-import Bnnmarketcall from "../../models/bnnmarketcall"
+import { bnnmarketcallType } from "../../types/bnnmarketcall"
+import bnnmarketcall from "../../models/bnnmarketcall"
 
 const getbnnmarketcallData = async (req: Request, res: Response): Promise<void> => {
   try {
-    const bnnmarketcallData: bnnmarketcall[] = await Bnnmarketcall.find()
+    //console.log(await bnnmarketcall.find({}));
+    const bnnmarketcallData: bnnmarketcallType[] = await bnnmarketcall.find().exec()
+    //console.log(bnnmarketcallData)
     res.status(200).json({ bnnmarketcallData })
   } catch (error) {
     throw error

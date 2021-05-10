@@ -1,4 +1,4 @@
-import { bnnmarketcall, Pick } from "../types/bnnmarketcall"
+import { bnnmarketcallType, Pick } from "../types/bnnmarketcall"
 import { model, Schema } from "mongoose"
 
 const bnnmarketcallSchema: Schema = new Schema(
@@ -37,4 +37,4 @@ const bnnmarketcallSchema: Schema = new Schema(
   { timestamps: true }
 )
 
-export default model<bnnmarketcall>("Bnnmarketcall", bnnmarketcallSchema)
+export default model<bnnmarketcallType>("bnnmarketcall", bnnmarketcallSchema)

@@ -2,7 +2,7 @@
 import { Document } from "mongoose"
 
 
-export interface bnnmarketcall extends Document {
+export interface bnnmarketcallType extends Document {
     _id: string
     month: string
     day: string

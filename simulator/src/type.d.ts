@@ -6,6 +6,8 @@ interface bnnmarketcall {
   guest: string
   picks: pick[]
   date: date
+  createdAt?: string
+  updatedAt?: string
 }
 
 interface bnnmarketcallProps {

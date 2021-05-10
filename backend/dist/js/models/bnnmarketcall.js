@@ -29,4 +29,4 @@ const bnnmarketcallSchema = new mongoose_1.Schema({
 }, 
 //dont know if i need these timestamps
 { timestamps: true });
-exports.default = mongoose_1.model("Bnnmarketcall", bnnmarketcallSchema);
+exports.default = mongoose_1.model("bnnmarketcall", bnnmarketcallSchema);
