@@ -2,9 +2,10 @@
     "compilerOptions": {
       "target": "es6",
       "module": "commonjs",
-      "outDir": "build",
-      "rootDir": "./src",
+      "outDir": "dist/js",
+      "rootDir": "src",
       "strict": true,
+      "skipLibCheck": true,
       "esModuleInterop": true,
       "forceConsistentCasingInFileNames": true
     },
