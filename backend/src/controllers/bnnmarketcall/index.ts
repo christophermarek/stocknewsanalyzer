@@ -5,6 +5,7 @@ import bnnmarketcall from "../../models/bnnmarketcall"
 const getbnnmarketcallData = async (req: Request, res: Response): Promise<void> => {
   try {
     //console.log(await bnnmarketcall.find({}));
+    console.log("request inc");
     const bnnmarketcallData: bnnmarketcallType[] = await bnnmarketcall.find().exec()
     //console.log(bnnmarketcallData)
     res.status(200).json({ bnnmarketcallData })

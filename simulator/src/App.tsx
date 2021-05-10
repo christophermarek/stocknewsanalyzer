@@ -16,15 +16,20 @@ function App() {
   const [todos, setTodos] = useState<bnnmarketcall[]>([])
 
   useEffect(() => {
-    console.log(fetchTodos())
+    fetchTodos()
     //console.log(todos);
   }, [])
 
   const fetchTodos = (): void => {
     getTodos()
-    .then(({ data: { todos } }: bnnmarketcall[] | any) => setTodos(todos))
+    .then(({ data: { bnnmarketcallData } }: bnnmarketcall[] | any) => setTodos(bnnmarketcallData))
     .catch((err: Error) => console.log(err))
   }
+
+  if(todos && todos.length > 0){
+    console.log(todos)
+  }
+
 
   return (
     <div className="App">
