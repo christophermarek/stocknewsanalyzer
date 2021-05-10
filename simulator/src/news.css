@@ -1,0 +1,11 @@
+
+.bnnmarketcallitem{
+    outline: solid;
+    margin: 1%;
+    margin-right: 50%;
+}
+
+.News{
+    display: flex;
+    flex-direction: column;
+}

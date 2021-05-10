@@ -6,12 +6,17 @@ interface bnnmarketcall {
   guest: string
   picks: pick[]
   date: date
+  focus: string
   createdAt?: string
   updatedAt?: string
 }
 
+interface bnnmarketcallObject {
+  bnnmarketcallObject: bnnmarketcall[]
+}
+
 interface bnnmarketcallProps {
-  newsbnn: bnnmarketcall 
+  bnnmarketcallItem: bnnmarketcall 
 }
 
 type ApiDataType = {

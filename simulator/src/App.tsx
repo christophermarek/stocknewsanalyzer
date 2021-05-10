@@ -4,6 +4,8 @@ import News from "./news/News";
 import Default from "./Default";
 import { getTodos } from './API'
 
+import './news.css'
+
 import {
   BrowserRouter as Router,
   Route,
@@ -27,7 +29,7 @@ function App() {
   }
 
   if(todos && todos.length > 0){
-    console.log(todos)
+    console.log(todos);
   }
 
 
@@ -43,7 +45,7 @@ function App() {
 
           <Switch>
             <Route path="/news">
-              <News />
+              <News bnnmarketcallObject={ todos }/>
             </Route>
             <Route path="/">
               <Default />
