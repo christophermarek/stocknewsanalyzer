@@ -16,10 +16,7 @@ exports.getbnnmarketcallData = void 0;
 const bnnmarketcall_1 = __importDefault(require("../../models/bnnmarketcall"));
 const getbnnmarketcallData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        //console.log(await bnnmarketcall.find({}));
-        console.log("request inc");
         const bnnmarketcallData = yield bnnmarketcall_1.default.find().exec();
-        //console.log(bnnmarketcallData)
         res.status(200).json({ bnnmarketcallData });
     }
     catch (error) {
