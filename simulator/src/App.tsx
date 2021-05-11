@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import './App.css';
 import News from "./news/News";
 import Default from "./Default";
-import { getTodos } from './API'
+import { getBnnMarketCalls } from './API'
 
 import './news.css'
 
@@ -15,17 +15,16 @@ import {
 
 function App() {
   
-  const [todos, setTodos] = useState<bnnmarketcall[]>([]);
+  const [bnnmarketcalls, setBnnMarketCalls] = useState<bnnmarketcall[]>([]);
   const [selectedNavItem, setSelectedNavItem] = useState<string>("none");
 
   useEffect(() => {
     fetchTodos()
-    //console.log(todos);
   }, [])
 
   const fetchTodos = (): void => {
-    getTodos()
-    .then(({ data: { bnnmarketcallData } }: bnnmarketcall[] | any) => setTodos(bnnmarketcallData))
+    getBnnMarketCalls()
+    .then(({ data: { bnnmarketcallData } }: bnnmarketcall[] | any) => setBnnMarketCalls(bnnmarketcallData))
     .catch((err: Error) => console.log(err))
   }
   
@@ -45,7 +44,7 @@ function App() {
 
           <Switch>
             <Route path="/news">
-              <News bnnmarketcallObject={ todos }/>
+              <News bnnmarketcallObject={ bnnmarketcalls }/>
             </Route>
             <Route path="/">
               <Default />

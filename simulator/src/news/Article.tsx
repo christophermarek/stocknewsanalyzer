@@ -4,7 +4,6 @@ type Props = articleProps
 
 const Article: React.FC<Props> = ( {articleText, setCurrentArticleViewing} ) => {
 
-
     useEffect(() => {
         window.scrollTo(0, 0)
       }, [])
@@ -18,7 +17,6 @@ const Article: React.FC<Props> = ( {articleText, setCurrentArticleViewing} ) => 
             <button className="bnnmarketcallitemArticleButton" onClick={onClick}>Back</button>
 
             <div className="ArticleText" dangerouslySetInnerHTML={ { __html: articleText } }></div>
-
         </div>
     )
 }

@@ -30,6 +30,6 @@ interface bnnmarketcallProps {
 type ApiDataType = {
   message: string
   status: string
-  todos: ITodo[]
-  todo?: ITodo
+  bnnmarketcalls: bnnmarketcall[]
+  bnnmarketcall?: bnnmarketcall
 }
