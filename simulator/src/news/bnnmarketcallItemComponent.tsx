@@ -2,17 +2,29 @@ import * as React from "react";
 
 type Props = bnnmarketcallProps
 
-const BnnMarketCallItemComponent: React.FC<Props> = ({ bnnmarketcallItem }) => {
+const BnnMarketCallItemComponent: React.FC<Props> = ({ bnnmarketcallItem, setCurrentArticleViewing }) => {
 
-  console.log(bnnmarketcallItem);
+  function onClick(){
+    setCurrentArticleViewing(bnnmarketcallItem.text);
+    console.log(bnnmarketcallItem)
+  }
 
   return (
     <div className="bnnmarketcallitem">
-      <p>{bnnmarketcallItem.date}</p>
-      <p>{bnnmarketcallItem.guest}</p>
-      <p>{bnnmarketcallItem.focus}</p>
-      <p>{bnnmarketcallItem.month + " " + bnnmarketcallItem.day}</p>
-
+      <div className="bnnmarketcallitemInfo">
+        <p>Date Saved: {bnnmarketcallItem.date}</p>
+        <p>Guest: {bnnmarketcallItem.guest}</p>
+        <p>Focus: {bnnmarketcallItem.focus}</p>
+        <p>Date: {bnnmarketcallItem.month + " " + bnnmarketcallItem.day}</p>
+      </div>
+      {bnnmarketcallItem.text != undefined ? (
+        <div className="bnnmarketcallitemArticleButton">
+          <button onClick={onClick}>View Article</button>
+        </div>
+      ) : (
+        true
+      )}
+      
     </div>
   )
 }

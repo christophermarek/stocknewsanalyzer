@@ -26,6 +26,10 @@ const bnnmarketcallSchema = new mongoose_1.Schema({
         type: Date,
         required: true,
     },
+    text: {
+        type: String,
+        required: false,
+    },
 }, 
 //dont know if i need these timestamps
 { timestamps: true });

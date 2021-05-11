@@ -7,6 +7,7 @@ interface bnnmarketcall {
   picks: pick[]
   date: date
   focus: string
+  text: string
   createdAt?: string
   updatedAt?: string
 }
@@ -15,8 +16,15 @@ interface bnnmarketcallObject {
   bnnmarketcallObject: bnnmarketcall[]
 }
 
+interface articleProps{
+  articleText: string
+  setCurrentArticleViewing: Function
+}
+ 
+
 interface bnnmarketcallProps {
   bnnmarketcallItem: bnnmarketcall 
+  setCurrentArticleViewing: Function
 }
 
 type ApiDataType = {

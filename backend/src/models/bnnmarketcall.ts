@@ -32,6 +32,11 @@ const bnnmarketcallSchema: Schema = new Schema(
       type: Date,
       required: true,
     },
+
+    text: {
+      type: String,
+      required: false,
+    },
   },
   //dont know if i need these timestamps
   { timestamps: true }
