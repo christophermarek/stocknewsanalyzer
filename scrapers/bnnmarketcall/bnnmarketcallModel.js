@@ -12,6 +12,7 @@ const bnnmarketcallSchema = new Schema({
         type: Date, 
         default: Date.now,
     },
+    text: { type : String},
 });
 
 const bnnmarketcall = mongoose.model('bnnmarketcall', bnnmarketcallSchema);

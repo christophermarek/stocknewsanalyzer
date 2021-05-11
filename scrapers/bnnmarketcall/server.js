@@ -10,22 +10,32 @@ const PORT = 3000;
 
 const { bnnmarketcall } = require('./bnnmarketcallModel');
 
-async function getPickText(url){
-	try{
-		const { data } = await axios.get(
-			url	
-		);
+async function getListPicksText(response){
 
-		const $ = cheerio.load(data);
+	//console.log(response);
 
-		$("#content-container > div.content-wrapper > section > div.content-main > article.standard-article.standard-video-article > div > div.article-text").each((index, element) => {
-			let html = $.html(element);
-			console.log(html);
-			return html;
-		});
-	}catch (error){
-		return false;
+	for(let i = 0; i < response.length; i++){
+		try{
+			const { data } = await axios.get(
+				response[i].url	
+			);
+	
+			const $ = cheerio.load(data);
+	
+			$("#content-container > div.content-wrapper > section > div.content-main > article.standard-article.standard-video-article > div > div.article-text").each((index, element) => {
+				let html = $.html(element);
+				//console.log(html);
+				response[i].text = html;
+			});
+		}catch (error){
+			console.log(error);
+			console.log("error getting pick text");
+		}
+
 	}
+
+	return response;
+	
 }
 
 //change name, not get forum
@@ -95,19 +105,17 @@ async function getListItem() {
 		
 		
 		for(let i = 0; i < pickTextsUrls.length; i++){
-			let text = await getPickText(pickTextsUrls[i].url);
-			console.log(text);
 			//now find the matching entry in our parsedData array by first and last name
 			for(let n = 0; n < parsedData.length; n++){
 				//console.log(parsedData[n].guest);
 				if(parsedData[n].guest.toLowerCase().includes(pickTextsUrls[i].fName) && parsedData[n].guest.toLowerCase().includes(pickTextsUrls[i].lName)){
-					parsedData[n].text = text;
+					parsedData[n].url = pickTextsUrls[i].url;
 				}
 			}
 			//console.log(text);
 		}
 		
-		console.log(parsedData);
+		//console.log(parsedData);
 		return parsedData;
 	} catch (error) {
 		console.log(error);
@@ -119,6 +127,12 @@ async function bnnmarketcallscript(dbURI){
 	console.log("Making request");
 	let response = await getListItem();
 	
+	let textResponse = await getListPicksText(response);
+
+
+	//console.log(response);
+	
+
 	// Connect to Mongo
 	mongoose
 	.connect(dbURI, {
@@ -132,7 +146,7 @@ async function bnnmarketcallscript(dbURI){
 	})
 	.catch((err) => console.log(err));
 	
-	for(let i = 0; i < response.length; i++){
+	for(let i = 0; i < textResponse.length; i++){
 
 		let foundCurrentEntry = await bnnmarketcall.findOne({day: response[i].day, month: response[i].month});
 		if(foundCurrentEntry === null){
