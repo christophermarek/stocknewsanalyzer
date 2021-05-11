@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab');
+
 .navBar{
     display: flex;
     justify-content: space-evenly;
@@ -31,5 +33,6 @@
 body{
     background-color: #191919;
     color: #8e8e8e;
+    font-family: 'Roboto Slab', sans-serif;
 
 }
