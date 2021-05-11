@@ -6,7 +6,6 @@ const BnnMarketCallItemComponent: React.FC<Props> = ({ bnnmarketcallItem, setCur
 
   function onClick(){
     setCurrentArticleViewing(bnnmarketcallItem.text);
-    console.log(bnnmarketcallItem)
   }
 
   return (

@@ -4,7 +4,6 @@ type Props = articleProps
 
 const Article: React.FC<Props> = ( {articleText, setCurrentArticleViewing} ) => {
 
-    console.log(articleText);
 
     function onClick(){
         setCurrentArticleViewing("none");
@@ -13,6 +12,9 @@ const Article: React.FC<Props> = ( {articleText, setCurrentArticleViewing} ) => 
     return (
         <div className="Article">
             <button onClick={onClick}>Back</button>
+
+            <div dangerouslySetInnerHTML={ { __html: articleText } }></div>
+
         </div>
     )
 }
