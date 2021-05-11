@@ -15,7 +15,8 @@ import {
 
 function App() {
   
-  const [todos, setTodos] = useState<bnnmarketcall[]>([])
+  const [todos, setTodos] = useState<bnnmarketcall[]>([]);
+  const [selectedNavItem, setSelectedNavItem] = useState<string>("none");
 
   useEffect(() => {
     fetchTodos()
@@ -27,11 +28,10 @@ function App() {
     .then(({ data: { bnnmarketcallData } }: bnnmarketcall[] | any) => setTodos(bnnmarketcallData))
     .catch((err: Error) => console.log(err))
   }
-
-  if(todos && todos.length > 0){
-    console.log(todos);
+  
+  const navBtnClicked = (navItem: string): void => {
+    setSelectedNavItem(navItem)
   }
-
 
   return (
     <div className="App">
@@ -39,8 +39,8 @@ function App() {
         <div>
 
           <nav className="navBar">
-            <Link to="/">Home</Link>
-            <Link to="/news">News</Link>
+            <Link className={"navBtn" + (selectedNavItem == "home" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("home")} to="/">Home</Link>
+            <Link className={"navBtn" + (selectedNavItem == "news" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("news")} to="/news">News</Link>
           </nav>
 
           <Switch>

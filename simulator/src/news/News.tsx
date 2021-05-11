@@ -11,10 +11,13 @@ function News( bnnmarketcallObject: bnnmarketcallObject ) {
     <div className="News">
       {currentArticleViewing == "none" ? (
         bnnmarketcallObject.bnnmarketcallObject.map((bnnmarketcallItem: bnnmarketcall) => (
-          <BnnMarketCallItemComponent 
-            bnnmarketcallItem={bnnmarketcallItem}
-            setCurrentArticleViewing={setCurrentArticleViewing}
-          />
+          <>
+            <BnnMarketCallItemComponent 
+              bnnmarketcallItem={bnnmarketcallItem}
+              setCurrentArticleViewing={setCurrentArticleViewing}
+            />
+            <hr className="articleDivider"></hr>
+          </>
         ))
       ) : (
         <Article

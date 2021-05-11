@@ -1,6 +1,5 @@
 
 .bnnmarketcallitem{
-    outline: solid;
     margin: 1%;
     margin-right: 50%;
 }
@@ -8,4 +7,17 @@
 .News{
     display: flex;
     flex-direction: column;
+}
+
+.bnnmarketcallitemArticleButton{
+    background-color: #bbb;
+    color: #000;
+    border: 0;
+    border-radius: 1em;
+    padding: 0.7em 8em;
+    cursor: pointer;
+}
+
+.bnnmarketcallitemArticleButton:hover{
+    color: #8e8e8e;
 }

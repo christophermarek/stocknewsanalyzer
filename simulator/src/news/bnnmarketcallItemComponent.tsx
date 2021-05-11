@@ -17,9 +17,7 @@ const BnnMarketCallItemComponent: React.FC<Props> = ({ bnnmarketcallItem, setCur
         <p>Date: {bnnmarketcallItem.month + " " + bnnmarketcallItem.day}</p>
       </div>
       {bnnmarketcallItem.text != undefined ? (
-        <div className="bnnmarketcallitemArticleButton">
-          <button onClick={onClick}>View Article</button>
-        </div>
+        <button className="bnnmarketcallitemArticleButton"onClick={onClick}>View Article</button>
       ) : (
         true
       )}

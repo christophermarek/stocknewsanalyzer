@@ -1,9 +1,13 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 
 type Props = articleProps
 
 const Article: React.FC<Props> = ( {articleText, setCurrentArticleViewing} ) => {
 
+
+    useEffect(() => {
+        window.scrollTo(0, 0)
+      }, [])
 
     function onClick(){
         setCurrentArticleViewing("none");
@@ -11,9 +15,9 @@ const Article: React.FC<Props> = ( {articleText, setCurrentArticleViewing} ) => 
 
     return (
         <div className="Article">
-            <button onClick={onClick}>Back</button>
+            <button className="bnnmarketcallitemArticleButton" onClick={onClick}>Back</button>
 
-            <div dangerouslySetInnerHTML={ { __html: articleText } }></div>
+            <div className="ArticleText" dangerouslySetInnerHTML={ { __html: articleText } }></div>
 
         </div>
     )

@@ -1,0 +1,35 @@
+
+.navBar{
+    display: flex;
+    justify-content: space-evenly;
+    background-color: #111;
+    border-color: #111;
+    border: 1px solid transparent;
+}
+
+.navBtn{
+    text-decoration: none;
+    color: #8e8e8e;
+    font-size: 1.5em;
+    margin: 1%;
+}
+
+.navBtn:hover{
+    color: white;
+}
+
+.navItemSelected{
+    color: white;
+    border-bottom: 1px solid white;
+}
+
+.articleDivider{
+    width: 100%;
+    border-color: #444;
+}
+
+body{
+    background-color: #191919;
+    color: #8e8e8e;
+
+}
