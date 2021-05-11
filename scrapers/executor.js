@@ -21,9 +21,8 @@ function executeScript(scriptName){
 }
 
 function main(){
-    //step 1
+    
     //parse scraperConf to get the active scrapers we will run
-
     dbURI = process.env.MONGO_URI_DEV;
     scraperConfig = {filepath: './scraperConf.txt', encoding: 'utf8'};
 

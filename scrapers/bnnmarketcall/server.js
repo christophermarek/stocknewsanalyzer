@@ -12,8 +12,6 @@ const { bnnmarketcall } = require('./bnnmarketcallModel');
 
 async function getListPicksText(response){
 
-	//console.log(response);
-
 	for(let i = 0; i < response.length; i++){
 		try{
 			const { data } = await axios.get(
@@ -24,7 +22,6 @@ async function getListPicksText(response){
 	
 			$("#content-container > div.content-wrapper > section > div.content-main > article.standard-article.standard-video-article > div > div.article-text").each((index, element) => {
 				let html = $.html(element);
-				//console.log(html);
 				response[i].text = html;
 			});
 		}catch (error){
@@ -38,7 +35,6 @@ async function getListPicksText(response){
 	
 }
 
-//change name, not get forum
 async function getListItem() {
 	try {
 
@@ -49,7 +45,6 @@ async function getListItem() {
 		const $ = cheerio.load(data);
 		parsedData = [];
 
-		//#content-container > div.content-wrapper > section > div.content-main > section > table > tbody > tr > td.guestCol > div > span
 		$("#content-container > div.content-wrapper > section > div.content-main > section > table > tbody > .pickRow").each((index, element) => {
 			
 			let month = $(element).find("td.Date > div.month").text();
@@ -60,7 +55,6 @@ async function getListItem() {
 
 			try{
 				$(element).find('td.pickCol > div.Picks > div.Pick').each((i, elm) => {
-					//console.log(elm);
 					let pick = {};
 					let pickName = $(elm).find("a").text();
 					let parsedTicker = $(elm).find("a").attr('href');
@@ -68,7 +62,6 @@ async function getListItem() {
 					pick.name = pickName;
 					pick.ticker = ticker; 
 					picks.push(pick);
-
 				});
 
 				parsedData.push({month: month, day: day, guest: guest, focus: focus, picks: picks});
@@ -76,7 +69,6 @@ async function getListItem() {
 			}catch (noPicksError){
 				console.log("no picks yet, so not pushing this entry");
 			}
-			
 
 		});
 
@@ -87,16 +79,13 @@ async function getListItem() {
 				let link = "https://www.bnnbloomberg.ca" + element.attribs.href;
 
 				//now we are going to have to parse this link to get the text
-				//but its just stored in a class called article text so selecting it cant be hard.
 				//get first and last name from link to join with rest of data
 				let splitLink = link.split("/");
 				let guestSplit = splitLink[3].split("-");
 				let firstName = guestSplit[0];
 				let lastName = guestSplit[1];
 
-				//console.log(firstName + " " + lastName);
 				pickTextsUrls.push({fName: firstName, lName: lastName, url: link})
-				//save link and text
 				
 			});
 		} catch (noLinkError){
@@ -107,19 +96,15 @@ async function getListItem() {
 		for(let i = 0; i < pickTextsUrls.length; i++){
 			//now find the matching entry in our parsedData array by first and last name
 			for(let n = 0; n < parsedData.length; n++){
-				//console.log(parsedData[n].guest);
 				if(parsedData[n].guest.toLowerCase().includes(pickTextsUrls[i].fName) && parsedData[n].guest.toLowerCase().includes(pickTextsUrls[i].lName)){
 					parsedData[n].url = pickTextsUrls[i].url;
 				}
 			}
-			//console.log(text);
 		}
 		
-		//console.log(parsedData);
 		return parsedData;
 	} catch (error) {
 		console.log(error);
-		//should log this
 	}
 }
 
@@ -128,9 +113,6 @@ async function bnnmarketcallscript(dbURI){
 	let response = await getListItem();
 	
 	let textResponse = await getListPicksText(response);
-
-
-	//console.log(response);
 	
 
 	// Connect to Mongo
@@ -148,11 +130,11 @@ async function bnnmarketcallscript(dbURI){
 	
 	for(let i = 0; i < textResponse.length; i++){
 
-		let foundCurrentEntry = await bnnmarketcall.findOne({day: response[i].day, month: response[i].month});
+		let foundCurrentEntry = await bnnmarketcall.findOne({day: textResponse[i].day, month: textResponse[i].month});
 		if(foundCurrentEntry === null){
 			try {
-				bnnmarketcall.create(response[i], function (err, entry) {
-					//console.log("Entry: ", entry, " error is: ", err);
+				bnnmarketcall.create(textResponse[i], function (err, entry) {
+
 				});
 			} catch (err) {
 				//console.log(err);
