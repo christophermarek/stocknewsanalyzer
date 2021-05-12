@@ -16,6 +16,15 @@
     margin: 1%;
 }
 
+.formField{
+    display: flex;
+    align-items: center;
+}
+
+.formFieldLabel{
+    padding-right: 1%;
+}
+
 .navBtn:hover{
     color: white;
 }
