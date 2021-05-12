@@ -8,6 +8,7 @@ const BnnMarketCallItemComponent: React.FC<Props> = ({ bnnmarketcallItem, setCur
     setCurrentArticleViewing(bnnmarketcallItem.text);
   }
 
+
   return (
     <div className="bnnmarketcallitem">
       <div className="bnnmarketcallitemInfo">
@@ -15,6 +16,11 @@ const BnnMarketCallItemComponent: React.FC<Props> = ({ bnnmarketcallItem, setCur
         <p>Guest: {bnnmarketcallItem.guest}</p>
         <p>Focus: {bnnmarketcallItem.focus}</p>
         <p>Date: {bnnmarketcallItem.month + " " + bnnmarketcallItem.day}</p>
+        <ul>
+          {bnnmarketcallItem.picks.map((pick: any) => (
+            <li>{pick.name + " (Ticker:" + pick.ticker + ")"}</li>
+          ))}
+        </ul>
       </div>
       {bnnmarketcallItem.text != undefined ? (
         <button className="bnnmarketcallitemArticleButton"onClick={onClick}>View Article</button>

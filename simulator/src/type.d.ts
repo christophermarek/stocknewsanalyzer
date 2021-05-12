@@ -12,6 +12,10 @@ interface bnnmarketcall {
   updatedAt?: string
 }
 
+interface simulatorProps{
+  
+}
+
 interface bnnmarketcallObject {
   bnnmarketcallObject: bnnmarketcall[]
 }

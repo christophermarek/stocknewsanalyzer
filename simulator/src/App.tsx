@@ -12,6 +12,7 @@ import {
   Link,
   Switch
 } from "react-router-dom";
+import Simulator from "./simulator/Simulator";
 
 function App() {
   
@@ -40,11 +41,15 @@ function App() {
           <nav className="navBar">
             <Link className={"navBtn" + (selectedNavItem == "home" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("home")} to="/">Home</Link>
             <Link className={"navBtn" + (selectedNavItem == "news" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("news")} to="/news">News</Link>
+            <Link className={"navBtn" + (selectedNavItem == "simulator" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("simulator")} to="/simulator">Simulator</Link>
           </nav>
 
           <Switch>
             <Route path="/news">
               <News bnnmarketcallObject={ bnnmarketcalls }/>
+            </Route>
+            <Route path="/simulator">
+              <Simulator />
             </Route>
             <Route path="/">
               <Default />

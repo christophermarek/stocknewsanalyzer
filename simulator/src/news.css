@@ -9,6 +9,10 @@
     flex-direction: column;
 }
 
+.Article{
+    padding-top: 1%;
+}
+
 .bnnmarketcallitemArticleButton{
     background-color: #bbb;
     color: #000;

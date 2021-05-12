@@ -6,7 +6,6 @@ import BnnMarketCallItemComponent from "./bnnmarketcallItemComponent";
 function News( bnnmarketcallObject: bnnmarketcallObject ) {
 
   const [currentArticleViewing, setCurrentArticleViewing] = useState<string>("none")
-
   return (
     <div className="News">
       {currentArticleViewing == "none" ? (
