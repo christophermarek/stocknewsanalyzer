@@ -16,7 +16,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "typescript": "^4.2.4",
-    "web-vitals": "^1.1.1"
+    "web-vitals": "^1.1.1",
+    "yahoo-stock-prices": "^1.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
