@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import './App.css';
 import News from "./news/News";
 import Default from "./Default";
-import { getBnnMarketCalls } from './API'
+import { getBnnMarketCalls, getCurrentData, getCurrentPrice, getHistoricalPrices } from './API'
 
 import './news.css'
 
@@ -22,6 +22,8 @@ function App() {
   useEffect(() => {
     fetchTodos()
   }, [])
+
+
 
   const fetchTodos = (): void => {
     getBnnMarketCalls()

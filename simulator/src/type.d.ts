@@ -37,3 +37,11 @@ type ApiDataType = {
   bnnmarketcalls: bnnmarketcall[]
   bnnmarketcall?: bnnmarketcall
 }
+
+type yahooStockPricesApiDataType = {
+  message: string
+  status: string
+  currentData?: any
+  currentPrice?: any
+  historicalPrice?: any
+}

@@ -26,9 +26,8 @@ const getHistoricalPrices = function (
     frequency: any,
     callback: any,
 ) {
-    const startDate = Math.floor(Date.UTC(startYear, startMonth, startDay, 0, 0, 0) / 1000);
-    const endDate = Math.floor(Date.UTC(endYear, endMonth, endDay, 0, 0, 0) / 1000);
-
+    const startDate = Math.floor(Date.UTC(Number(startYear), Number(startMonth), Number(startDay), 0, 0, 0) / 1000);
+    const endDate = Math.floor(Date.UTC(Number(endYear), Number(endMonth), Number(endDay), 0, 0, 0) / 1000);
     const promise = new Promise((resolve, reject) => {
         request(`${baseUrl + ticker}/history?period1=${startDate}&period2=${endDate}&interval=${frequency}&filter=history&frequency=${frequency}`, (err: any, res: any, body: any) => {
             if (err) {

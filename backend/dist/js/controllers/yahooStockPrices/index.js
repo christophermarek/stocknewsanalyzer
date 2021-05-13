@@ -44,8 +44,8 @@ const getHistoricalPricesController = (req, res) => __awaiter(void 0, void 0, vo
         frequency: any,
         callback: any,
     */
-        const historicalPrice = yield yahoo_stock_prices_fetch_1.getHistoricalPrices(req.params.startMonth, req.params.startDay, req.params.startYear, req.params.endMonth, req.params.endDay, req.params.endYear, req.params.ticker, req.params.frequency, false);
-        res.status(200).json({ historicalPrice });
+        const historicalPrices = yield yahoo_stock_prices_fetch_1.getHistoricalPrices(req.params.startMonth, req.params.startDay, req.params.startYear, req.params.endMonth, req.params.endDay, req.params.endYear, req.params.ticker, req.params.frequency, false);
+        res.status(200).json({ historicalPrices: historicalPrices });
     }
     catch (error) {
         res.status(400).json({ error: "Invalid request" });

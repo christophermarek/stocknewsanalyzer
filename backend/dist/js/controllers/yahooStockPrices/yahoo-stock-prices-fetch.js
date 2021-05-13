@@ -17,8 +17,8 @@ const baseUrl = 'https://finance.yahoo.com/quote/';
  * @return {Promise<{date: number, open: number, high:number, low:number, close:number, volume:number, adjclose:number}[]>|undefined} Returns a promise if no callback was supplied.
  */
 const getHistoricalPrices = function (startMonth, startDay, startYear, endMonth, endDay, endYear, ticker, frequency, callback) {
-    const startDate = Math.floor(Date.UTC(startYear, startMonth, startDay, 0, 0, 0) / 1000);
-    const endDate = Math.floor(Date.UTC(endYear, endMonth, endDay, 0, 0, 0) / 1000);
+    const startDate = Math.floor(Date.UTC(Number(startYear), Number(startMonth), Number(startDay), 0, 0, 0) / 1000);
+    const endDate = Math.floor(Date.UTC(Number(endYear), Number(endMonth), Number(endDay), 0, 0, 0) / 1000);
     const promise = new Promise((resolve, reject) => {
         request(`${baseUrl + ticker}/history?period1=${startDate}&period2=${endDate}&interval=${frequency}&filter=history&frequency=${frequency}`, (err, res, body) => {
             if (err) {

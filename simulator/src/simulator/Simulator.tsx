@@ -1,18 +1,9 @@
 import React, { useEffect, useState } from "react";
-const yahooStockPrices = require("yahoo-stock-prices");
 
 type Props = simulatorProps
 
-async function getStockPrices(){
-
-    const data = await yahooStockPrices.getCurrentData('AAPL');
-    console.log(data);
-
-}
 
 const Simulator: React.FC<Props> = (  ) => {
-
-    
 
     const [ticker, setTicker] = useState<string>('');
     const [market, setMarket] = useState<string>('');
@@ -80,7 +71,6 @@ const Simulator: React.FC<Props> = (  ) => {
         
     }
 
-    getStockPrices();
 
     return (
         <div className="Simulator">
