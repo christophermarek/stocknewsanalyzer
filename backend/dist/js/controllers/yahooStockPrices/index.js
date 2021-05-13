@@ -8,22 +8,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getbnnmarketcallData = void 0;
-const bnnmarketcall_1 = __importDefault(require("../../models/bnnmarketcall"));
-const getbnnmarketcallData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getCurrentPriceController = void 0;
+const yahoo_stock_prices_fetch_1 = require("./yahoo-stock-prices-fetch");
+const getCurrentPriceController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("hit");
     try {
-        //console.log(await bnnmarketcall.find({}));
-        console.log("request inc");
-        const bnnmarketcallData = yield bnnmarketcall_1.default.find().exec();
-        //console.log(bnnmarketcallData)
-        res.status(200).json({ bnnmarketcallData });
+        const price = yield yahoo_stock_prices_fetch_1.getCurrentData('AAPL');
+        //console.log(price);
+        res.status(200).json({ price });
     }
     catch (error) {
         throw error;
     }
 });
-exports.getbnnmarketcallData = getbnnmarketcallData;
+exports.getCurrentPriceController = getCurrentPriceController;
