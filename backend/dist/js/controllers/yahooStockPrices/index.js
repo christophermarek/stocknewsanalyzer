@@ -9,17 +9,46 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCurrentPriceController = void 0;
+exports.getHistoricalPricesController = exports.getCurrentPriceController = exports.getCurrentDataController = void 0;
 const yahoo_stock_prices_fetch_1 = require("./yahoo-stock-prices-fetch");
-const getCurrentPriceController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("hit");
+const getCurrentDataController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const price = yield yahoo_stock_prices_fetch_1.getCurrentData('AAPL');
-        //console.log(price);
-        res.status(200).json({ price });
+        const currentData = yield yahoo_stock_prices_fetch_1.getCurrentData(req.params.id);
+        res.status(200).json({ currentData });
     }
     catch (error) {
-        throw error;
+        res.status(400).json({ error: "Invalid ticker" });
+    }
+});
+exports.getCurrentDataController = getCurrentDataController;
+const getCurrentPriceController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const currentPrice = yield yahoo_stock_prices_fetch_1.getCurrentPrice(req.params.id, false);
+        res.status(200).json({ currentPrice });
+    }
+    catch (error) {
+        res.status(400).json({ error: "Invalid ticker" });
     }
 });
 exports.getCurrentPriceController = getCurrentPriceController;
+const getHistoricalPricesController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        /*
+        startMonth: any,
+        startDay: any,
+        startYear: any,
+        endMonth: any,
+        endDay: any,
+        endYear: any,
+        ticker: any,
+        frequency: any,
+        callback: any,
+    */
+        const historicalPrice = yield yahoo_stock_prices_fetch_1.getHistoricalPrices(req.params.startMonth, req.params.startDay, req.params.startYear, req.params.endMonth, req.params.endDay, req.params.endYear, req.params.ticker, req.params.frequency, false);
+        res.status(200).json({ historicalPrice });
+    }
+    catch (error) {
+        res.status(400).json({ error: "Invalid request" });
+    }
+});
+exports.getHistoricalPricesController = getHistoricalPricesController;
