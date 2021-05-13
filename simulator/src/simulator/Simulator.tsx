@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 
+import { getCurrentData, getCurrentPrice, getHistoricalPrices } from '../API'
+
 type Props = simulatorProps
 
+ 
 
 const Simulator: React.FC<Props> = (  ) => {
 
@@ -12,6 +15,13 @@ const Simulator: React.FC<Props> = (  ) => {
     const [cash, setCash] = useState<string>('');
     const [simulateBtnText, setSimulateBtnText] = useState<string>('Simulate');
     const [formDisabled, setFormDisabled] = useState<boolean>(false);
+    const [historicalPrices, setHistoricalPrices] = useState<object[]>([]);
+
+    const fetchHistoricalPrices = (_startMonth: string, _startDay: string, _startYear: string, _endMonth: string, _endDay: string, _endYear: string, _ticker: string, _frequency: string): any => {
+        getHistoricalPrices(_startMonth, _startDay, _startYear, _endMonth, _endDay, _endYear, _ticker, _frequency)
+        .then(({ data: { historicalPrices } }: any) => setHistoricalPrices(historicalPrices))
+        .catch((err: Error) => console.log(err))
+    }
 
     function simulateClicked(){
 
@@ -57,6 +67,18 @@ const Simulator: React.FC<Props> = (  ) => {
             //lock form
             setFormDisabled(true);
             
+            //for now date is just gonna be a split string delimited by , -> month, day, year
+            let dateSplit = date.split(",");
+
+            let today = new Date();
+
+            //test data
+            //date: 0,6,2020 ticker:AAPL, 
+            //dont forget about frequency parameter, add to form
+
+            //stores to a state
+            fetchHistoricalPrices(dateSplit[0], dateSplit[1], dateSplit[2], `${today.getMonth()+1}`, `${today.getDate()}`, `${today.getFullYear()}`, ticker, "1d");
+            
         }else{
             //reset logic
             setSimulateBtnText('Simulate');
@@ -66,9 +88,18 @@ const Simulator: React.FC<Props> = (  ) => {
             setDate('');
             setTime('');
             setCash('');
+            setHistoricalPrices([]);
             setFormDisabled(false);
         }
         
+    }
+
+    //parses the historical prices state when its not empty, ie after a valid input has been entered
+    function renderChart(){
+        
+        return(
+            <p>Hello</p>
+        )
     }
 
 
@@ -97,6 +128,8 @@ const Simulator: React.FC<Props> = (  ) => {
             </div>
 
             <input type="button" onClick={simulateClicked} value={simulateBtnText}/>
+
+            {historicalPrices.length > 0 ? (renderChart()) : (true)}
         </div>
     )
 }
