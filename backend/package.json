@@ -32,7 +32,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "startDev": "concurrently \"tsc -w\" \"nodemon dist/js/server.js\"",
+    "startDev": "concurrently \"tsc -w\" \"nodemon dist/server.js\"",
     "start": "node dist/server.js",
     "postinstall": "tsc"
   },
