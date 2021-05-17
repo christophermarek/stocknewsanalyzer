@@ -45,3 +45,17 @@ type yahooStockPricesApiDataType = {
   currentPrice?: any
   historicalPrice?: any
 }
+
+interface historicalPrices {
+  historicalPrices: yahooStockHistoricalPrices[]
+}
+
+type yahooStockHistoricalPrices = {
+  adjclose: string
+  close: string
+  date: any
+  high: string
+  low: string
+  open: string
+  volume: string
+} 
