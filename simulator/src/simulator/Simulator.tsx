@@ -18,7 +18,7 @@ const Simulator: React.FC<Props> = (  ) => {
     const [simulateBtnText, setSimulateBtnText] = useState<string>('Simulate');
     const [formDisabled, setFormDisabled] = useState<boolean>(false);
     const [historicalPrices, setHistoricalPrices] = useState<Array<yahooStockHistoricalPrices>>([]);
-    const [fixedHistoricalPrices, setFixedHistoricalPrices] = useState<Array<yahooStockHistoricalPrices>>([]);
+    const [fixedHistoricalPrices, setFixedHistoricalPrices] = useState<Array<areaSeriesType>>([]);
     const [historicalPricesFixed, setHistoricalPricesFixed] = useState<boolean>(false);
 
   
@@ -110,13 +110,17 @@ const Simulator: React.FC<Props> = (  ) => {
     //parses the historical prices state when its not empty, ie after a valid input has been entered
     function fixHistoricalPrices(){        
 
-        let tempHistoricalPrices: Array<yahooStockHistoricalPrices> = [];
+        let tempHistoricalPrices: Array<areaSeriesType> = [];
 
         //so the dates are inthe wrong order, sorting it is probably inneficient but we can just reverse it since we are already iterating over it.
         //can probably do this counter better, dont think I need a var but its just quick and easy
         let counter = 0;
         for(let i = historicalPrices.length - 1; i > 0; i--){
-            tempHistoricalPrices[counter] = historicalPrices[i];
+
+            //for area series graph we only want the values time and value inside our object
+            //the open and close are good for candle graphs. 
+            let object = {time: historicalPrices[i].date, value: Number(historicalPrices[i].close)}
+            tempHistoricalPrices[counter] = object;
             //console.log(counter);
             //let newDate = new Date(Number(tempHistoricalPrices[counter].date) * 1000).toUTCString();
             //console.log(tempHistoricalPrices[counter].date + " To: " + newDate + " at counter: " + counter);
@@ -146,47 +150,31 @@ const Simulator: React.FC<Props> = (  ) => {
         for(let i = 0; i < fixedHistoricalPrices.length; i++){
             console.log(fixedHistoricalPrices[i]);
         }
-        console.log(fixedHistoricalPrices);
         */
+        console.log(fixedHistoricalPrices);
+        
         let options:object = {
-            alignLabels: true,
-            timeScale: {
-              rightOffset: 12,
-              barSpacing: 3,
-              fixLeftEdge: true,
-              lockVisibleTimeRangeOnResize: true,
-              rightBarStaysOnScroll: true,
-              borderVisible: false,
-              borderColor: "#fff000",
-              visible: true,
-              timeVisible: true,
-              secondsVisible: false
-            }
+            topColor: 'rgba(21, 146, 230, 0.4)',
+            bottomColor: 'rgba(21, 146, 230, 0)',
+            lineColor: 'rgba(21, 146, 230, 1)',
+            lineStyle: 0,
+            lineWidth: 3,
+            crosshairMarkerVisible: false,
+            crosshairMarkerRadius: 3,
+            crosshairMarkerBorderColor: 'rgb(255, 255, 255, 1)',
+            crosshairMarkerBackgroundColor: 'rgb(34, 150, 243, 1)',
         }
-        let graphData:any = [{
-            data: [
-                { time: '2018-10-19', open: 180.34, high: 180.99, low: 178.57, close: 179.85 },
-                { time: '2018-10-22', open: 180.82, high: 181.40, low: 177.56, close: 178.75 },
-                { time: '2018-10-23', open: 175.77, high: 179.49, low: 175.44, close: 178.53 },
-                { time: '2018-10-24', open: 178.58, high: 182.37, low: 176.31, close: 176.97 },
-                { time: '2018-10-25', open: 177.52, high: 180.50, low: 176.83, close: 179.07 },
-                { time: '2018-10-26', open: 176.88, high: 177.34, low: 170.91, close: 172.23 },
-                { time: '2018-10-29', open: 173.74, high: 175.99, low: 170.95, close: 173.20 },
-                { time: '2018-10-30', open: 173.16, high: 176.43, low: 172.64, close: 176.24 },
-                { time: '2018-10-31', open: 177.98, high: 178.85, low: 175.59, close: 175.88 },
-                { time: '2018-11-01', open: 176.84, high: 180.86, low: 175.90, close: 180.46 },
-                { time: '2018-11-02', open: 182.47, high: 183.01, low: 177.39, close: 179.93 },
-                { time: '2018-11-05', open: 181.02, high: 182.41, low: 179.30, close: 182.19 }
-            ] 
+        let areaSeries:any = [{
+            data: fixedHistoricalPrices
         }]
-
-        console.log(graphData);
+        
         return(
             <>
                 <p>hi</p>
-                <Chart options={options} areaSeries={graphData} autoWidth height={320} />
+                <Chart options={options} areaSeries={areaSeries} autoWidth height={500} />
             </>
         )
+        
         
         
     }

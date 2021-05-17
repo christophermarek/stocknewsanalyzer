@@ -59,3 +59,8 @@ type yahooStockHistoricalPrices = {
   open: string
   volume: string
 } 
+
+type areaSeriesType = {
+  time: number
+  value: number
+}
