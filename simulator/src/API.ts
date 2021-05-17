@@ -1,7 +1,11 @@
 
 import axios, { AxiosResponse } from "axios"
 
-const baseUrl: string = "http://localhost:4000"
+let baseUrl: string = "http://localhost:4000"
+const local = false;
+if(!local){
+    baseUrl = "https://stock-news-analyze.herokuapp.com"
+}
 
 export const getBnnMarketCalls = async (): Promise<AxiosResponse<ApiDataType>> => {
     try{
