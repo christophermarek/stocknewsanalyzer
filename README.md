@@ -14,3 +14,13 @@ Trade simulator on dataset
 Step 4.
 
 Ai trader based on dataset
+
+
+Backend hosted on Heroku:
+https://stock-news-analyze.herokuapp.com/
+Api routes:
+- /bnnmarketcall
+- /yahoofinance/current-data/:id"
+- /yahoofinance/current-price/:id
+- /yahoofinance/historical-prices/:startMonth/:startDay/:startYear/:endMonth/:endDay/:endYear/:ticker/:frequency
+
