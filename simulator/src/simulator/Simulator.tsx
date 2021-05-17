@@ -8,9 +8,7 @@ type Props = simulatorProps
 const Simulator: React.FC<Props> = (  ) => {
 
     const [ticker, setTicker] = useState<string>('');
-    const [market, setMarket] = useState<string>('');
     const [date, setDate] = useState<string>('');
-    const [time, setTime] = useState<string>('');
     const [cash, setCash] = useState<string>('');
     const [simulateBtnText, setSimulateBtnText] = useState<string>('Simulate');
     const [formDisabled, setFormDisabled] = useState<boolean>(false);
@@ -25,17 +23,17 @@ const Simulator: React.FC<Props> = (  ) => {
         .catch((err: Error) => console.log(err))
     }
 
+    function loadSimulationPreset(){
+        setTicker("AAPL")
+        setDate("0,6,2017")
+        setCash("10000")
+    }
+
     function simulateClicked(){
 
         //set simulate text to reset
         if(simulateBtnText == 'Simulate'){
             setSimulateBtnText('Reset');
-
-            setTicker("AAPL")
-            setMarket("AAPL")
-            setDate("0,6,2017")
-            setTime("00")
-            setCash("10000")
 
             let failed = false;
             let failedText = "No text entered";
@@ -46,17 +44,9 @@ const Simulator: React.FC<Props> = (  ) => {
                 failed = true;
                 failedText = "No ticker entered";
             }
-            if(market == ''){
-                failed = true;
-                failedText = "No market entered";
-            }
             if(date == ''){
                 failed = true;
                 failedText = "No date entered";
-            }
-            if(time == ''){
-                failed = true;
-                failedText = "No time entered";
             }
             if(cash == ''){
                 failed = true;
@@ -93,12 +83,12 @@ const Simulator: React.FC<Props> = (  ) => {
             setSimulateBtnText('Simulate');
             //reset form
             setTicker('');
-            setMarket('');
             setDate('');
-            setTime('');
             setCash('');
             setHistoricalPrices([]);
             setFormDisabled(false);
+            setFixedHistoricalPrices([]);
+            setHistoricalPricesFixed(false);
         }
     }
 
@@ -191,16 +181,8 @@ const Simulator: React.FC<Props> = (  ) => {
                 <input type="text" disabled={formDisabled} value={ticker} onChange={(ev: React.ChangeEvent<HTMLInputElement>,): void => setTicker(ev.target.value)} />
             </div>
             <div className="formField">
-                <p className="formFieldLabel">Market: </p>
-                <input type="text" disabled={formDisabled} value={market} onChange={(ev: React.ChangeEvent<HTMLInputElement>,): void => setMarket(ev.target.value)} />
-            </div>
-            <div className="formField">
                 <p className="formFieldLabel">Date: </p>
                 <input type="text" disabled={formDisabled} value={date} onChange={(ev: React.ChangeEvent<HTMLInputElement>,): void => setDate(ev.target.value)} />
-            </div>
-            <div className="formField">
-                <p className="formFieldLabel">Time: </p>
-                <input type="text" disabled={formDisabled} value={time} onChange={(ev: React.ChangeEvent<HTMLInputElement>,): void => setTime(ev.target.value)} />
             </div>
             <div className="formField">
                 <p className="formFieldLabel">Cash: </p>
@@ -208,6 +190,7 @@ const Simulator: React.FC<Props> = (  ) => {
             </div>
 
             <input type="button" onClick={simulateClicked} value={simulateBtnText}/>
+            <input type="button" onClick={loadSimulationPreset} value={"Load form with preset data"} />
 
             {fixedHistoricalPrices.length > 0 &&
                 renderChart()
