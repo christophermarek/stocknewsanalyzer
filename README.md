@@ -29,4 +29,4 @@ Api routes:
 <br>
 Frontend hosted on Netlify:
 
-https://60a2f77f65d9b000cc635cde--stock-news-analyzer.netlify.app/
+https://stock-news-analyzer.netlify.app/
