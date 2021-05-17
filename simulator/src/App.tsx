@@ -23,8 +23,6 @@ function App() {
     fetchTodos()
   }, [])
 
-
-
   const fetchTodos = (): void => {
     getBnnMarketCalls()
     .then(({ data: { bnnmarketcallData } }: bnnmarketcall[] | any) => setBnnMarketCalls(bnnmarketcallData))
