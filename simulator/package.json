@@ -11,11 +11,12 @@
     "@types/react": "^17.0.4",
     "@types/react-dom": "^17.0.3",
     "axios": "^0.21.1",
+    "kaktana-react-lightweight-charts": "^2.0.0",
+    "lightweight-charts": "^3.3.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
-    "react-stockcharts": "^0.7.8",
     "typescript": "^4.2.4",
     "web-vitals": "^1.1.1",
     "yahoo-stock-prices": "^1.1.0"
