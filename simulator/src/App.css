@@ -45,3 +45,20 @@ body{
     font-family: 'Roboto Slab', sans-serif;
     padding: 1%;
 }
+
+.green{
+    color: green;
+}
+
+.red{
+    color: red;
+}
+
+.summaryContainer{
+    background-color: white;
+    outline: black;
+    color: black;
+    padding: 2%;
+    width: 25%;
+    margin-top: 2%;
+}

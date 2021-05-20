@@ -2,7 +2,7 @@
 import axios, { AxiosResponse } from "axios"
 
 let baseUrl: string = "http://localhost:4000"
-const local = false;
+const local = true;
 if(!local){
     baseUrl = "https://stock-news-analyze.herokuapp.com"
 }
@@ -39,6 +39,7 @@ export const getCurrentPrice = async (_ticker: string): Promise<AxiosResponse<ya
 
 export const getHistoricalPrices = async (_startMonth: string, _startDay: string, _startYear: string, _endMonth: string, _endDay: string, _endYear: string, _ticker: string, _frequency: string): Promise<AxiosResponse<yahooStockPricesApiDataType>> => {
     try{
+        //console.log("called");
         //yahoofinance/historical-prices/:startMonth/:startDay/:startYear/:endMonth/:endDay/:endYear/:ticker/:frequency
         const historicalPrices: AxiosResponse<ApiDataType> = await axios.get(`${baseUrl}/yahoofinance/historical-prices/${_startMonth}/${_startDay}/${_startYear}/${_endMonth}/${_endDay}/${_endYear}/${_ticker}/${_frequency}`)
         return historicalPrices

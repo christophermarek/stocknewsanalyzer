@@ -48,9 +48,6 @@ function main(){
     } catch(e) {
         console.log('Error:', e.stack);
     }
-    
-    //update script to also fetch the full html of the article. It will only be text so itll be light on sizes
-    //comment
 }
 
 main();
