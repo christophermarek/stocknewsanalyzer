@@ -59,7 +59,7 @@ function Default() {
             <p>S&P 500</p>
             <p>{`open: ${Number(snp500[0].open).toFixed(2)} close: ${Number(snp500[0].close).toFixed(2)}`}</p>
             <p>{`high: ${Number(snp500[0].high).toFixed(2)} low: ${Number(snp500[0].low).toFixed(2)} volume: ${Number(snp500[0].volume).toFixed(2)}`}</p>
-            <p className={`${Number(snp500[0].close) - Number(snp500[snp500.length-1].close) > 0 ? "green" : "red"}`}>24hr Change: {snpChange.toFixed(2)}</p>
+            <p className={`${Number(snp500[0].close) - Number(snp500[snp500.length-1].close) > 0 ? "green" : "red"}`}>24hr Change: {snpChange.toFixed(2)} %</p>
       </div>
     )
     
@@ -75,7 +75,7 @@ function Default() {
           <p>TSX/SNP</p>
           <p>{`open: ${tsxsnp[0].open} close: ${tsxsnp[0].close}`}</p>
           <p>{`high: ${tsxsnp[0].high} low: ${tsxsnp[0].low} volume: ${tsxsnp[0].volume}`}</p>
-          <p className={`${Number(tsxsnp[0].close) - Number(tsxsnp[tsxsnp.length-1].close) > 0 ? "green" : "red"}`}>24hr Change: {tsxChange.toFixed()}</p>
+          <p className={`${Number(tsxsnp[0].close) - Number(tsxsnp[tsxsnp.length-1].close) > 0 ? "green" : "red"}`}>24hr Change: {tsxChange.toFixed()} %</p>
       </div>
     )
     

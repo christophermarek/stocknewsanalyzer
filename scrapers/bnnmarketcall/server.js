@@ -130,16 +130,37 @@ async function bnnmarketcallscript(dbURI){
 	
 	for(let i = 0; i < textResponse.length; i++){
 
+
 		let foundCurrentEntry = await bnnmarketcall.findOne({day: textResponse[i].day, month: textResponse[i].month});
+
 		if(foundCurrentEntry === null){
 			try {
 				bnnmarketcall.create(textResponse[i], function (err, entry) {
-
+					//empty callback
 				});
 			} catch (err) {
-				//console.log(err);
+				console.log(err);
 			}
+		}else{
+			/*
+			if(foundCurrentEntry.text == undefined){
+				//console.log(foundCurrentEntry);
+				console.log(textResponse[i]);
+				//console.log(foundCurrentEntry._id);
+				
+				try{
+					bnnmarketcall.findByIdAndUpdate(foundCurrentEntry._id, textResponse[i], {new: true}, function(err, model){
+						console.log(model);
+					});
+	
+				} catch(err){
+					console.log(err);
+				}
+				
+			}
+			*/
 		}
+		
 	}
 	
 	process.exit(1);
