@@ -174,29 +174,34 @@ const Simulator: React.FC<Props> = (  ) => {
 
     return (
         <div className="Simulator">
-            <p>Simulate Purchase at time</p>
-            <div className="formField">
-                <p className="formFieldLabel">Ticker: </p>
-                <input type="text" disabled={formDisabled} value={ticker} onChange={(ev: React.ChangeEvent<HTMLInputElement>,): void => setTicker(ev.target.value)} />
-            </div>
-            <div className="formField">
-                <p className="formFieldLabel">Date: </p>
-                <input type="date" disabled={formDisabled} value={date} onChange={(ev: React.ChangeEvent<HTMLInputElement>,): void => setDate(ev.target.value)} />
-            </div>
-            <div className="formField">
-                <p className="formFieldLabel">Cash: </p>
-                <input type="string" disabled={formDisabled} value={cash} onChange={(ev: React.ChangeEvent<HTMLInputElement>,): void => setCash(ev.target.value)} />
-            </div>
+            <div className="simulationData">
+                <div className="simulationForm">
+                    <p>Simulate Purchase at time</p>
+                    <div className="formField">
+                        <p className="formFieldLabel">Ticker: </p>
+                        <input type="text" disabled={formDisabled} value={ticker} onChange={(ev: React.ChangeEvent<HTMLInputElement>,): void => setTicker(ev.target.value)} />
+                    </div>
+                    <div className="formField">
+                        <p className="formFieldLabel">Date: </p>
+                        <input type="date" disabled={formDisabled} value={date} onChange={(ev: React.ChangeEvent<HTMLInputElement>,): void => setDate(ev.target.value)} />
+                    </div>
+                    <div className="formField">
+                        <p className="formFieldLabel">Cash: </p>
+                        <input type="string" disabled={formDisabled} value={cash} onChange={(ev: React.ChangeEvent<HTMLInputElement>,): void => setCash(ev.target.value)} />
+                    </div>
 
-            <input type="button" onClick={simulateClicked} value={simulateBtnText}/>
-            <input type="button" onClick={loadSimulationPreset} value={"Load form with preset data"} />
+                    <input type="button" onClick={simulateClicked} value={simulateBtnText}/>
+                    <input type="button" onClick={loadSimulationPreset} value={"Load form with preset data"} />
+                </div>
+                {fixedHistoricalPrices.length > 0 &&
+                    renderSimulationOutput()
+                }
+            </div>
 
             {fixedHistoricalPrices.length > 0 &&
                 renderChart()
             }
-            {fixedHistoricalPrices.length > 0 &&
-                renderSimulationOutput()
-            }
+            
         </div>
     )
 }
