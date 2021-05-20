@@ -25,7 +25,7 @@ const Simulator: React.FC<Props> = (  ) => {
 
     function loadSimulationPreset(){
         setTicker("AAPL")
-        setDate("0,6,2017")
+        setDate("2017-06-01")
         setCash("10000")
     }
 
@@ -66,17 +66,16 @@ const Simulator: React.FC<Props> = (  ) => {
             setFormDisabled(true);
             
             //for now date is just gonna be a split string delimited by , -> month, day, year
-            let dateSplit = date.split(",");
+            let dateSplit = date.split("-");
 
             let today = new Date();
 
             //test data
-            //date: 0,6,2020 ticker:AAPL, 
             //dont forget about frequency parameter, add to form
             //frequency is part of the yahoo stock prices, its 1d, i forget the other options
 
             //stores to a state
-            fetchHistoricalPrices(dateSplit[0], dateSplit[1], dateSplit[2], `${today.getMonth()+1}`, `${today.getDate()}`, `${today.getFullYear()}`, ticker, "1d");
+            fetchHistoricalPrices(dateSplit[2], dateSplit[1], dateSplit[0], `${today.getMonth()+1}`, `${today.getDate()}`, `${today.getFullYear()}`, ticker, "1d");
             
         }else{
             //reset logic
@@ -182,7 +181,7 @@ const Simulator: React.FC<Props> = (  ) => {
             </div>
             <div className="formField">
                 <p className="formFieldLabel">Date: </p>
-                <input type="text" disabled={formDisabled} value={date} onChange={(ev: React.ChangeEvent<HTMLInputElement>,): void => setDate(ev.target.value)} />
+                <input type="date" disabled={formDisabled} value={date} onChange={(ev: React.ChangeEvent<HTMLInputElement>,): void => setDate(ev.target.value)} />
             </div>
             <div className="formField">
                 <p className="formFieldLabel">Cash: </p>
