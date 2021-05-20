@@ -21,6 +21,20 @@ function App() {
 
   useEffect(() => {
     fetchTodos()
+
+    const pathname = window.location.pathname
+    switch(pathname.toString().toLowerCase()){
+      case '/':
+        setSelectedNavItem('home');
+        break;
+      case '/simulator':
+        setSelectedNavItem('simulator');
+        break;
+      case '/news':
+        setSelectedNavItem('news');
+        break;
+    }
+
   }, [])
 
   const fetchTodos = (): void => {
