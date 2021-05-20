@@ -60,7 +60,7 @@ body{
     color: black;
     padding: 2%;
     width: 25%;
-    margin-top: 2%;
+    margin: 2%;
 }
 
 .simulationData {
@@ -71,4 +71,9 @@ body{
 
 .Simulator{
     box-shadow: 0px 0px 5px #fff;
+}
+
+.marketSummary{
+    display: flex;
+    flex-wrap: wrap;
 }
