@@ -44,8 +44,6 @@ async function getComments(commentIds){
     
     for(let i = 0; i < commentIds.length; i++){
         let comment = await r.getComment(commentIds[i]).body;
-        console.log(comment);
-        console.log(i);
     }
 
     //ok need to find what to actually set limit and depth too
@@ -69,10 +67,10 @@ async function getCommentText(commentIdStrings){
         const { data } = await axios.get(
             `https://api.pushshift.io/reddit/comment/search?ids=${commentIdStrings[i]}`
         );
-        
         //clean data
         for(let j = 0; j < data.data.length; j++){
-            commentTextList.push({createdAt: data.data[i].created_utc, text: data.data[i].body});
+
+            commentTextList.push({createdAtUTC: data.data[j].created_utc, text: data.data[j].body});
         }
 
     }
@@ -117,31 +115,41 @@ async function wsbScraper(){
     let commentTextList = await getCommentText(commentIdStrings);
     //this site gets us all the comment id's, we need this because the reddit api will 
     //block us because there are too many comments to request at once.
-    console.log(commentTextList.length);
 
-    //console.log(data.data);
     // Extracting every comment on a thread
-    //let comments = await getComments(data.data);
 
-    //console.log(comments.comments);
 
     //now i want to find the url for the new daily discussion thread
     //and try to just scrape that first
 
     //create dict for each ticker tickersMentioned[ticker] = count
 
-    //for each comment, parse text
-    /*
-    for(let i = 0; i < comments.comments.length; i++){
-        console.log(comments.comments[i].body);
-        console.log(i);
-    }
-    */
+    //then compare keywords to a stockkeywords list
+    let frequencyList = {}
+
+    //console.log(commentTextList);
     
 
-    //then compare keywords to a stockkeywords list
-
     //Then save the frequency of each keyword for that thread with the date of the thread & date of parse
+    for(let i = 0; i < commentTextList.length; i++){
+        //regex is to split strings but not include whitespace
+        let tokens = commentTextList[i].text.split(" ");
+        //console.log(tokens);  
+        for(let j = 0; j < tokens.length; j++){
+            let token = tokens[j].toLowerCase();
+            if(tickerList.includes(token)){
+
+                if(frequencyList[token] == undefined){
+                    frequencyList[token] = 1;
+                }else{
+                    frequencyList[token] += 1;
+                }
+            }
+        }
+        
+    }
+    console.log(frequencyList);
+
 
     //parse hisstoric threads? maybe separate funciton
 
@@ -149,4 +157,12 @@ async function wsbScraper(){
 
 }
 
-wsbScraper();
+function wsbExecutor(){
+    try{
+        wsbScraper();
+    }catch (error){
+        console.log(error);
+    }
+}
+
+wsbExecutor();
