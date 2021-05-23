@@ -3,6 +3,7 @@ const snoowrap = require('snoowrap');
 const dotenv = require("dotenv");
 const fs = require('fs');
 const readline = require('readline');
+const axios = require('axios');
 
 dotenv.config();
 
@@ -32,13 +33,7 @@ function generateTickerList(){
 
 }
 
-function wsbScraper(){
-
-    
-
-    let tickerList = generateTickerList();
-
-    // Create a new snoowrap requester with OAuth credentials.
+async function getComments(commentIds){
 
     const r = new snoowrap({
         userAgent: 'wsb scraper',
@@ -47,18 +42,45 @@ function wsbScraper(){
         refreshToken: process.env.REDDIT_REFRESH_TOKEN
     });
 
+    //ok need to find what to actually set limit and depth too
+    //I feel like too much depth might be useless since certain comments 
+    let comments = await r.getSubmission('nhoua8').expandReplies({limit: 20000, depth: 1});
+    return comments;
+}
+
+async function wsbScraper(){
+
+    
+
+    let tickerList = generateTickerList();
+
+    // Create a new snoowrap requester with OAuth credentials.
+
+    
+    //this site gets us all the comment id's, we need this because the reddit api will 
+    //block us because there are too many comments to request at once.
+    const { data } = await axios.get(
+        'https://api.pushshift.io/reddit/submission/comment_ids/nhoua8'
+    );
 
     // Extracting every comment on a thread
-    //r.getSubmission('4j8p6d').expandReplies({limit: 3, depth: 3}).then(console.log)
+    let comments = await getComments(data.data);
 
-    //ok need to find what to actually set limit and depth too
-    left-off: got ticker list now we just need to compare keyword in text to tickers in list
+    //console.log(comments.comments);
+
     //now i want to find the url for the new daily discussion thread
     //and try to just scrape that first
 
     //create dict for each ticker tickersMentioned[ticker] = count
 
     //for each comment, parse text
+    /*
+    for(let i = 0; i < comments.comments.length; i++){
+        console.log(comments.comments[i].body);
+        console.log(i);
+    }
+    */
+    
 
     //then compare keywords to a stockkeywords list
 
