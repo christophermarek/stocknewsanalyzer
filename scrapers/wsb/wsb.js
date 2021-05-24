@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const fs = require('fs');
 const readline = require('readline');
 const axios = require('axios');
+const cheerio = require('cheerio');
 
 dotenv.config();
 
@@ -78,7 +79,28 @@ async function getCommentText(commentIdStrings){
     return commentTextList;
 }
 
-async function wsbScraper(){
+async function getRedditThreads(){
+    const { data } = await axios.get(
+        'https://www.reddit.com/r/wallstreetbets/search?q=flair%3A%22Daily+Discussion%22&restrict_sr=on&sort=new&t=all'
+    );
+
+    const $ = cheerio.load(data);
+    let parsedData = [];
+    //console.log($);
+
+    // > div:nth-child(16) > div > header > a
+
+    $('a').each((i, link) => {
+        const href = link.attribs.href;
+        if(href[0] == "h" && href[href.length - 1] == '/' && !isNaN(href[href.length - 2])){
+            console.log(href);
+        }
+    });
+
+    //the next page starts at the last article
+}
+
+async function wsbScraper(dateToScrape){
 
     
 
@@ -118,25 +140,23 @@ async function wsbScraper(){
 
     // Extracting every comment on a thread
 
-
     //now i want to find the url for the new daily discussion thread
     //and try to just scrape that first
 
     //create dict for each ticker tickersMentioned[ticker] = count
 
     //then compare keywords to a stockkeywords list
-    let frequencyList = {}
-
-    //console.log(commentTextList);
-    
+    let frequencyList = {}    
 
     //Then save the frequency of each keyword for that thread with the date of the thread & date of parse
     for(let i = 0; i < commentTextList.length; i++){
         //regex is to split strings but not include whitespace
         let tokens = commentTextList[i].text.split(" ");
-        //console.log(tokens);  
         for(let j = 0; j < tokens.length; j++){
             let token = tokens[j].toLowerCase();
+            if(token.charAt(0) == $){
+                token = token.slice(1);
+            }
             if(tickerList.includes(token)){
 
                 if(frequencyList[token] == undefined){
@@ -148,18 +168,25 @@ async function wsbScraper(){
         }
         
     }
+
     console.log(frequencyList);
-
-
-    //parse hisstoric threads? maybe separate funciton
+    //can dump this whole thing to db since it is only 640 lines and 8kb. So i can run this script 125 times until i use a mb on average since each daily has about the same amount of comments.
+    //mongodb i have 512 mb of storage so I can run this script for 64000 times. 
 
     //have features to autoscrape
 
 }
 
-function wsbExecutor(){
+async function wsbExecutor(){
+
+    let d = new Date();
+    
+    let threads = await getRedditThreads();
+    console.log(threads);
+
+    //console.log();
     try{
-        wsbScraper();
+        //wsbScraper();
     }catch (error){
         console.log(error);
     }
