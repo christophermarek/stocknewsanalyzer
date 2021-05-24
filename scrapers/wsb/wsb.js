@@ -79,26 +79,32 @@ async function getCommentText(commentIdStrings){
     return commentTextList;
 }
 
+
+//Cheerio implementation, cant go back far enough
 async function getRedditThreads(){
     const { data } = await axios.get(
-        'https://www.reddit.com/r/wallstreetbets/search?q=flair%3A%22Daily+Discussion%22&restrict_sr=on&sort=new&t=all'
+        'https://old.reddit.com/r/wallstreetbets/search?q=flair%3ADaily+Discussion&restrict_sr=on&sort=relevance&t=all&count=50&after=t3_m144ua'
     );
 
     const $ = cheerio.load(data);
-    let parsedData = [];
-    //console.log($);
+    let submissionUrls = [];
 
-    // > div:nth-child(16) > div > header > a
 
     $('a').each((i, link) => {
+        //console.log(link.attribs.href);
+        
         const href = link.attribs.href;
-        if(href[0] == "h" && href[href.length - 1] == '/' && !isNaN(href[href.length - 2])){
-            console.log(href);
+        if(href != undefined && href[0] == "h" && href[href.length - 1] == '/' && !isNaN(href[href.length - 2]) & !(submissionUrls.includes(href))){
+            submissionUrls.push(href);
         }
+        
     });
 
-    //the next page starts at the last article
+    
+
+    return submissionUrls;
 }
+
 
 async function wsbScraper(dateToScrape){
 
@@ -181,8 +187,37 @@ async function wsbExecutor(){
 
     let d = new Date();
     
-    let threads = await getRedditThreads();
+    let threads = [];
+
+    let pagesToSearch = 1;
+
+    //let newThreads = await getRedditThreads();
+    //console.log(newThreads);
+
+    
+    for(let i = 0; i < pagesToSearch; i++){
+        let newThreads = await getRedditThreads();
+        for(let n = 0; n < newThreads.length; n++){
+            threads.push(newThreads[n]);
+        }
+
+        //the next page starts at the last article
+
+        //so we want to get the last article id to pass as params for next request
+        //so get last article id
+        
+        let lastArticle = threads[threads.length-1];
+        let splitUrl = lastArticle.split("/");
+        console.log(splitUrl[6]);
+        console.log("Last Article " + lastArticle);
+    }
+    
+    
+
     console.log(threads);
+
+
+    //console.log after each step has been completed so i can monitor script progress
 
     //console.log();
     try{
