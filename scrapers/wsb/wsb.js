@@ -56,12 +56,28 @@ async function getComments(commentIds){
 }
 
 async function getCommentIds(threadId){
-    //console.log(`https://api.pushshift.io/reddit/submission/comment_ids/${threadId}`);
-    const { data } = await axios.get(
-        `https://api.pushshift.io/reddit/submission/comment_ids/${threadId}`
-    );
 
-    return data.data;
+    const timer = ms => new Promise(res => setTimeout(res, ms))
+
+    let counter = 0;
+    let maxTries = 100;
+    console.log(`fetching thread ${threadId}`);
+    while(counter < maxTries){
+        try{
+            const { data } = await axios.get(
+                `https://api.pushshift.io/reddit/submission/comment_ids/${threadId}`
+            );
+            
+            return data.data;
+            
+        }catch(error){ 
+            const rndInt = Math.floor(Math.random() * 30) + 1;
+            console.log(`Error fetching ids' for ${threadId}, rate limited probably at counter: ${counter} waiting ${rndInt} seconds to try again on`); 
+            await timer(rndInt * 1000);
+        }
+    }
+
+
 }
 
 async function getCommentText(commentIdStrings){
@@ -89,7 +105,7 @@ async function getCommentText(commentIdStrings){
             counter = counter + 1;
         }catch(error){ 
             const rndInt = Math.floor(Math.random() * 30) + 1;
-            console.log(`Error fetching ids, rate limited probably at counter: ${counter} going to ${sizeCommentIds}, waiting ${rndInt} seconds to try again on, thread ${commentIdStrings.length}`); 
+            console.log(`Error fetching commentText, rate limited probably at counter: ${counter} going to ${sizeCommentIds}, waiting ${rndInt} seconds to try again on, thread ${commentIdStrings.length}`); 
             await timer(rndInt * 1000);
         }
     }
@@ -145,7 +161,7 @@ async function wsbScraper(threadData){
     //console.log(threadDate);
 
     let foundCurrentEntry = await wsb.findOne({date: threadDate});
-	if(foundCurrentEntry === null){
+	if(foundCurrentEntry !== null){
 		console.log("thread already posted to db");
         return 1;
     }
@@ -345,22 +361,20 @@ async function wsbExecutor(){
     console.log("converted to only submissionId's");
     console.log(`Fetched: ${urlCleaned.length} threads`);
 
-    /*
+    
+    console.log("now sending each thread id to main function to parse and post data for that thread");
+
     for(let i = 0; i < size2; i++){
-        console.log(`${urlCleaned[i].date.toDateString()}`);
+        //this will run async so size2 threads created.
+        wsbScraper(urlCleaned[i]);
+
     }
-    */
+    
     
     //console.log after each step has been completed so i can monitor script progress
 
-    console.log("now sending each thread id to main function to parse and post data for that thread");
-
-    let i = 0;
-    while (urlCleaned.length) {
-        await Promise.all(urlCleaned.splice(0, 5).map(wsbScraper));
-        console.log('Performed async operactions batch number', i);
-        i++;
-     }
+    console.log("scrape complete");
+    process.exit(1);
 
 
 
