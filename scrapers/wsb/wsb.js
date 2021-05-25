@@ -5,6 +5,8 @@ const fs = require('fs');
 const readline = require('readline');
 const axios = require('axios');
 const cheerio = require('cheerio');
+const mongoose = require('mongoose');
+const { wsb } = require('./wsbModel');
 
 dotenv.config();
 
@@ -67,7 +69,7 @@ async function getCommentText(commentIdStrings){
     //console.log(commentIdStrings);
     let commentTextList = [];
     let sizeCommentIds = commentIdStrings.length;
-    console.log(`${sizeCommentIds} comments to fetch`);
+    console.log(`${sizeCommentIds} comment blocks to fetch`);
     for(let i = 0; i < sizeCommentIds; i++){
         //console.log(commentIdStrings[i]);
         const { data } = await axios.get(
@@ -195,11 +197,11 @@ async function wsbScraper(threadData){
                 token = token.slice(1);
             }
             if(tickerList.includes(token)){
-
+                //console.log(token);
                 if(frequencyList[token] == undefined){
                     frequencyList[token] = 1;
                 }else{
-                    frequencyList[token].count += 1;
+                    frequencyList[token] += 1;
                 }
             }
         }
@@ -214,12 +216,37 @@ async function wsbScraper(threadData){
 
     console.log("posting to db");
 
-    let dbData = {freqList: frequencyList, date: date};
-
+    let dbData = {freqList: frequencyList, date: threadDate};
+    //console.log(dbData);
     //figure out how to post to db just look at other scraper
+
+    try {
+        wsb.create(dbData, function (err, entry) {
+            //empty callback
+            console.log("successfully pushed to db");
+        });
+    } catch (err) {
+        console.log(err);
+    }
+
 }
 
 async function wsbExecutor(){
+
+    let dbURI = process.env.MONGO_URI_DEV;
+
+    // Connect to Mongo
+	mongoose
+	.connect(dbURI, {
+		useNewUrlParser: true,
+		useCreateIndex: true,
+		useUnifiedTopology: true,
+		useFindAndModify: false,
+	})
+	.then(() => {
+		console.log('MongoDB Connected...');
+	})
+	.catch((err) => console.log(err));
 
     let d = new Date();
 
@@ -227,7 +254,7 @@ async function wsbExecutor(){
     
     let threads = [];
 
-    let pagesToSearch = 25;
+    let pagesToSearch = 50;
 
     //let newThreads = await getRedditThreads();
     //console.log(newThreads);
