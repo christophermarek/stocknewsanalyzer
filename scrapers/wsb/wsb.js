@@ -5,6 +5,7 @@ const fs = require('fs');
 const readline = require('readline');
 const axios = require('axios');
 const cheerio = require('cheerio');
+const { Console } = require('console');
 
 dotenv.config();
 
@@ -81,9 +82,9 @@ async function getCommentText(commentIdStrings){
 
 
 //Cheerio implementation, cant go back far enough
-async function getRedditThreads(){
+async function getRedditThreads(threadId){
     const { data } = await axios.get(
-        'https://old.reddit.com/r/wallstreetbets/search?q=flair%3ADaily+Discussion&restrict_sr=on&sort=relevance&t=all&count=50&after=t3_m144ua'
+        `https://old.reddit.com/r/wallstreetbets/search?q=flair%3ADaily+Discussion&restrict_sr=on&sort=relevance&t=all&after=t3_${threadId}`
     );
 
     const $ = cheerio.load(data);
@@ -94,12 +95,21 @@ async function getRedditThreads(){
         //console.log(link.attribs.href);
         
         const href = link.attribs.href;
-        if(href != undefined && href[0] == "h" && href[href.length - 1] == '/' && !isNaN(href[href.length - 2]) & !(submissionUrls.includes(href))){
-            submissionUrls.push(href);
+        if(href != undefined && href[0] == "h" && href[href.length - 1] == '/' && !isNaN(href[href.length - 2])){
+            let splitForDate = href.split('_');
+            if(splitForDate.length == 7){
+                let month = splitForDate[4];
+                let day = splitForDate[5];
+                let year = splitForDate[6];
+
+                submissionUrls.push({articleId: href, day: day, month: month, year: year});
+            }
+            
         }
         
     });
 
+    //console.log(submissionUrls);
     
 
     return submissionUrls;
@@ -186,17 +196,20 @@ async function wsbScraper(dateToScrape){
 async function wsbExecutor(){
 
     let d = new Date();
+
+    let firstArticleUrl = "njubrl";
     
     let threads = [];
 
-    let pagesToSearch = 1;
+    let pagesToSearch = 15;
 
     //let newThreads = await getRedditThreads();
     //console.log(newThreads);
 
-    
+    let lastArticleOfPage = firstArticleUrl;
+
     for(let i = 0; i < pagesToSearch; i++){
-        let newThreads = await getRedditThreads();
+        let newThreads = await getRedditThreads(lastArticleOfPage);
         for(let n = 0; n < newThreads.length; n++){
             threads.push(newThreads[n]);
         }
@@ -206,17 +219,57 @@ async function wsbExecutor(){
         //so we want to get the last article id to pass as params for next request
         //so get last article id
         
-        let lastArticle = threads[threads.length-1];
+        let lastArticle = threads[threads.length-1].articleId;
+        //console.log(lastArticle);
         let splitUrl = lastArticle.split("/");
-        console.log(splitUrl[6]);
-        console.log("Last Article " + lastArticle);
+        
+        //console.log("Last Article " + lastArticle);
+        lastArticleOfPage = splitUrl[6];
     }
+
+    let duplRemoved = [];
+
+    //OK NOW REMOVE DUPLICATES FROM THREADS
+    //just delete every second one because those are the duplicates
+    let size = threads.length;
+    for(let i = 0; i < size; i = i + 2){
+        duplRemoved.push(threads[i]);
+    }
+
+    //THEN SORT THREADS BY THE DAY,MONTH,YEAR
+    let monthArray = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+
+    function sortArticles(a, b) {
+        //new Date(year, monthIndex, day)
+        //a = new Date(a.year, monthArray.indexOf(a.))
+        return  (monthArray.indexOf(b.month.toUpperCase()) - monthArray.indexOf(a.month.toUpperCase())) || (Number(b.day) - Number(a.day));
+      }
+
+    duplRemoved.sort(sortArticles);
+
     
+    console.log("sorted array of urls");
+
     
 
-    console.log(threads);
+    //get the submission ids from each url in order
+    //can just transform the array 
+    let size2 = duplRemoved.length;
+    let submissionIds = duplRemoved;
+    for(let i = 0; i < size2; i++){
 
+        let splitForArticleId = duplRemoved[i].articleId.split("/");
+        //console.log(splitForArticleId[6]);
+        submissionIds[i] = splitForArticleId[6];
+    }
 
+    console.log("converted to only submissionId's");
+    console.log(submissionIds.length);
+    /*
+    for(let i = 0; i < size2; i++){
+        console.log(submissionIds[i]);
+    }
+    */
     //console.log after each step has been completed so i can monitor script progress
 
     //console.log();
