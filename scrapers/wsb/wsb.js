@@ -100,9 +100,12 @@ async function getRedditThreads(threadId){
             if(splitForDate.length == 7){
                 let month = splitForDate[4];
                 let day = splitForDate[5];
-                let year = splitForDate[6];
+                let year = splitForDate[6].slice(0, -1);
 
-                submissionUrls.push({articleId: href, day: day, month: month, year: year});
+                let monthArray = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+                //var time1 = new Date(arr1[0], arr1[1]-1, arr1[2]); // year, month, day
+                let date = new Date(year, monthArray.indexOf(month.toUpperCase()), day);
+                submissionUrls.push({articleId: href, date: date});
             }
             
         }
@@ -201,7 +204,7 @@ async function wsbExecutor(){
     
     let threads = [];
 
-    let pagesToSearch = 15;
+    let pagesToSearch = 5;
 
     //let newThreads = await getRedditThreads();
     //console.log(newThreads);
@@ -237,12 +240,11 @@ async function wsbExecutor(){
     }
 
     //THEN SORT THREADS BY THE DAY,MONTH,YEAR
-    let monthArray = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
 
     function sortArticles(a, b) {
         //new Date(year, monthIndex, day)
         //a = new Date(a.year, monthArray.indexOf(a.))
-        return  (monthArray.indexOf(b.month.toUpperCase()) - monthArray.indexOf(a.month.toUpperCase())) || (Number(b.day) - Number(a.day));
+        return  a.date - b.date;
       }
 
     duplRemoved.sort(sortArticles);
@@ -255,21 +257,21 @@ async function wsbExecutor(){
     //get the submission ids from each url in order
     //can just transform the array 
     let size2 = duplRemoved.length;
-    let submissionIds = duplRemoved;
+    let urlCleaned = duplRemoved;
     for(let i = 0; i < size2; i++){
 
         let splitForArticleId = duplRemoved[i].articleId.split("/");
         //console.log(splitForArticleId[6]);
-        submissionIds[i] = splitForArticleId[6];
+        urlCleaned[i].articleId = splitForArticleId[6];
     }
 
     console.log("converted to only submissionId's");
-    console.log(submissionIds.length);
-    /*
+    console.log(urlCleaned.length);
+
     for(let i = 0; i < size2; i++){
-        console.log(submissionIds[i]);
+        console.log(`${urlCleaned[i].date.toDateString()}`);
     }
-    */
+    
     //console.log after each step has been completed so i can monitor script progress
 
     //console.log();
