@@ -67,22 +67,33 @@ async function getCommentIds(threadId){
 async function getCommentText(commentIdStrings){
     //console.log("hello");
     //console.log(commentIdStrings);
-    let commentTextList = [];
-    let sizeCommentIds = commentIdStrings.length;
-    console.log(`${sizeCommentIds} comment blocks to fetch`);
-    for(let i = 0; i < sizeCommentIds; i++){
-        //console.log(commentIdStrings[i]);
-        const { data } = await axios.get(
-            `https://api.pushshift.io/reddit/comment/search?ids=${commentIdStrings[i]}`
-        );
-        //console.log(data);
-        //clean data
-        for(let j = 0; j < data.data.length; j++){
-            //console.log(`i: ${i} comment number: ${j} ${data.data[j].body}`);
-            commentTextList.push({createdAtUTC: data.data[j].created_utc, text: data.data[j].body});
-        }
 
+    const timer = ms => new Promise(res => setTimeout(res, ms))
+
+    let counter = 0;
+    let sizeCommentIds = commentIdStrings.length;
+    let commentTextList = [];
+    console.log(`${sizeCommentIds} comment blocks to fetch`);
+    while(counter < sizeCommentIds){
+        try{
+            //console.log(commentIdStrings[i]);
+            const { data } = await axios.get(
+                `https://api.pushshift.io/reddit/comment/search?ids=${commentIdStrings[counter]}`
+            );
+            //console.log(data);
+            //clean data
+            for(let j = 0; j < data.data.length; j++){
+                //console.log(`i: ${i} comment number: ${j} ${data.data[j].body}`);
+                commentTextList.push({createdAtUTC: data.data[j].created_utc, text: data.data[j].body});
+            }
+            counter = counter + 1;
+        }catch(error){ 
+            const rndInt = Math.floor(Math.random() * 30) + 1;
+            console.log(`Error fetching ids, rate limited probably at counter: ${counter} going to ${sizeCommentIds}, waiting ${rndInt} seconds to try again on, thread ${commentIdStrings.length}`); 
+            await timer(rndInt * 1000);
+        }
     }
+
 
     return commentTextList;
 }
@@ -130,7 +141,16 @@ async function wsbScraper(threadData){
 
     let threadId = threadData.articleId;
     let threadDate = threadData.date;
+    
+    //console.log(threadDate);
 
+    let foundCurrentEntry = await wsb.findOne({date: threadDate});
+	if(foundCurrentEntry === null){
+		console.log("thread already posted to db");
+        return 1;
+    }
+
+    
     console.log(`thread: ${threadId} date: ${threadDate}`);
     console.log("generating ticker list")
     let tickerList = generateTickerList();
@@ -169,7 +189,11 @@ async function wsbScraper(threadData){
     console.log("getting comment texts");
     //ok why is it not fetching this properly f
     //console.log(commentIdStrings);
+    
+    
+    
     let commentTextList = await getCommentText(commentIdStrings);
+
     console.log("fetched comment texts");
 
     //this site gets us all the comment id's, we need this because the reddit api will 
@@ -224,11 +248,13 @@ async function wsbScraper(threadData){
         wsb.create(dbData, function (err, entry) {
             //empty callback
             console.log("successfully pushed to db");
+            return 1;
         });
     } catch (err) {
         console.log(err);
+        return 1;
     }
-
+    
 }
 
 async function wsbExecutor(){
@@ -329,12 +355,16 @@ async function wsbExecutor(){
 
     console.log("now sending each thread id to main function to parse and post data for that thread");
 
-    for(let i = 0; i < size2; i++){
-        //think i need to run these 1 at a time 
-        await wsbScraper(urlCleaned[i]);
-    }
-}
+    let i = 0;
+    while (urlCleaned.length) {
+        await Promise.all(urlCleaned.splice(0, 5).map(wsbScraper));
+        console.log('Performed async operactions batch number', i);
+        i++;
+     }
 
+
+
+}
 
 
 wsbExecutor();
