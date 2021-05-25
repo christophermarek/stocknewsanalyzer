@@ -8,7 +8,8 @@ Api routes:
 - /yahoofinance/current-data/:id"
 - /yahoofinance/current-price/:id
 - /yahoofinance/historical-prices/:startMonth/:startDay/:startYear/:endMonth/:endDay/:endYear/:ticker/:frequency
-
+- /wsb/allFrequencyLists
+- /wsb/singleFrequencyList/:date
 
 <br>
 Frontend hosted on Netlify:

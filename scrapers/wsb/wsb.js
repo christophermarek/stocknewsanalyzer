@@ -370,6 +370,8 @@ async function wsbExecutor(){
 
     }
     
+    //would be nice to see how many active are running every like 30 seconds, but idk how to do that. Seems more trouble than its worth but its the only 
+    //way to estimate how close until the scrapers are done.
     
     //console.log after each step has been completed so i can monitor script progress
 
