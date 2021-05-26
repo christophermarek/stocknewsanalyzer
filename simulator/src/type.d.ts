@@ -46,6 +46,18 @@ type yahooStockPricesApiDataType = {
   historicalPrice?: any
 }
 
+type wsbApiDataType = {
+  message: string
+  status: string
+  wsbFrequencyLists?: wsbFrequencyListItem[]
+}
+
+type wsbFrequencyListItem = {
+  _id: string
+  freqList: object
+  date: Date
+}
+
 interface historicalPrices {
   historicalPrices: yahooStockHistoricalPrices[]
 }
@@ -59,6 +71,8 @@ type yahooStockHistoricalPrices = {
   open: string
   volume: string
 } 
+
+
 
 type areaSeriesType = {
   time: number

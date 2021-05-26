@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import './App.css';
 import News from "./news/News";
 import Default from "./Default";
+import FrequencyCharts from "./simulator/FrequencyCharts";
+import Simulator from "./simulator/Simulator";
+
 import { getBnnMarketCalls, getCurrentData, getCurrentPrice, getHistoricalPrices } from './API'
 
 import './news.css'
@@ -12,7 +15,6 @@ import {
   Link,
   Switch
 } from "react-router-dom";
-import Simulator from "./simulator/Simulator";
 
 function App() {
   
@@ -33,6 +35,9 @@ function App() {
       case '/news':
         setSelectedNavItem('news');
         break;
+      case 'frequencycharts':
+        setSelectedNavItem('frequencycharts');
+      break;
     }
 
   }, [])
@@ -56,6 +61,7 @@ function App() {
             <Link className={"navBtn" + (selectedNavItem == "home" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("home")} to="/">Home</Link>
             <Link className={"navBtn" + (selectedNavItem == "news" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("news")} to="/news">News</Link>
             <Link className={"navBtn" + (selectedNavItem == "simulator" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("simulator")} to="/simulator">Simulator</Link>
+            <Link className={"navBtn" + (selectedNavItem == "frequencycharts" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("frequencycharts")} to="/frequencycharts">Frequency Charts</Link>
           </nav>
 
           <Switch>
@@ -64,6 +70,9 @@ function App() {
             </Route>
             <Route path="/simulator">
               <Simulator />
+            </Route>
+            <Route path="/frequencycharts">
+                <FrequencyCharts />
             </Route>
             <Route path="/">
               <Default />

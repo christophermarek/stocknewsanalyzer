@@ -18,6 +18,27 @@ export const getBnnMarketCalls = async (): Promise<AxiosResponse<ApiDataType>> =
     }
 }
 
+export const getAllFrequencyLists = async (): Promise<AxiosResponse<wsbApiDataType>> => {
+    try{
+        const allFrequencyLists: AxiosResponse<wsbApiDataType> = await axios.get(
+            baseUrl + "/wsb/allFrequencyLists"
+        )
+        return allFrequencyLists
+    }catch (error){
+        throw new Error(error)
+    }
+}
+export const getSingleFrequencyList = async (_date: Date): Promise<AxiosResponse<wsbApiDataType>> => {
+    try{
+        const singleFrequencyList: AxiosResponse<wsbApiDataType> = await axios.get(
+            baseUrl + `/wsb/singleFrequencyList/${_date}`
+        )
+        return singleFrequencyList
+    }catch (error){
+        throw new Error(error)
+    }
+}
+
 //yahoo stock prices API from our server
 export const getCurrentData = async (_ticker: string): Promise<AxiosResponse<yahooStockPricesApiDataType>> => {
     try{
