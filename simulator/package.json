@@ -10,13 +10,22 @@
     "@types/node": "^12.20.11",
     "@types/react": "^17.0.4",
     "@types/react-dom": "^17.0.3",
+    "@visx/axis": "^1.11.1",
+    "@visx/gradient": "^1.7.0",
+    "@visx/group": "^1.7.0",
+    "@visx/scale": "^1.11.1",
+    "@visx/shape": "^1.11.1",
     "axios": "^0.21.1",
+    "chart.js": "^3.3.0",
     "kaktana-react-lightweight-charts": "^2.0.0",
     "lightweight-charts": "^3.3.0",
     "react": "^17.0.2",
+    "react-chartjs-2": "^3.0.3",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.3",
+    "react-scripts": "^4.0.3",
+    "react-select": "^4.3.1",
+    "save": "^2.4.0",
     "typescript": "^4.2.4",
     "web-vitals": "^1.1.1",
     "yahoo-stock-prices": "^1.1.0"
@@ -47,6 +56,7 @@
     ]
   },
   "devDependencies": {
-    "@types/react-router-dom": "^5.1.7"
+    "@types/react-router-dom": "^5.1.7",
+    "@types/react-select": "^4.0.15"
   }
 }
