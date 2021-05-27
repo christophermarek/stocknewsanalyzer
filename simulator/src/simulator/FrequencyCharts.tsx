@@ -1,39 +1,47 @@
 import React, { useEffect, useState } from "react";
-
+import { getAllFrequencyLists } from "../API";
 type Props = simulatorProps
 
 const Article: React.FC<Props> = ( { } ) => {
 
-    const [isDataInLocalStorage, setDataInLocalStorage] = useState<string>('false');
-    const [dateDataInLocalStorage, setDateDataInLocalStorage] = useState<String>('');
+    const [frequencyLists, setFrequencyLists] = useState<Array<wsbFrequencyListItem>>();
 
     useEffect(() => {
-        if(isDataInLocalStorage == 'false'){
-            let localStorageItem:any = getDataFromLocalStorage();
-            if(localStorageItem == null){
-                getFrequencyChartDataFromServer();
-            }else{
-                setDataInLocalStorage(localStorageItem.data);
-                setDataInLocalStorage(localStorage.date)
+    
+        async function loadFrequencyListsIntoState() {
+            if(frequencyLists == undefined){
+                let localStorageData = await getDataFromLocalStorage();
+                let parsedData = JSON.parse(localStorageData);
+                setFrequencyLists(parsedData);
             }
-        }
+          }
+
+          loadFrequencyListsIntoState();
     }, [])
 
-    function getFrequencyChartDataFromServer(){
+    //should really error handle here for if api returns error
+    async function getFrequencyChartDataFromServer(){
         
-        
-
-        let date = "fill in";
-        setDataInLocalStorage('true');
-        setDateDataInLocalStorage(date);
+        //keep these comments
+        console.log("pausing to get frequency data from server");
+        let data = await getAllFrequencyLists();
+        console.log("frequency data fetched");
+        //console.log(data.data.wsbFrequencyLists);
+        return data.data.wsbFrequencyLists;
     }
 
     function loadDataIntoLocalStorage(item: any){
         localStorage.setItem('frequencyData', item);
     }
 
-    function getDataFromLocalStorage(){
-       return localStorage.getItem('frequencyData'); 
+    async function getDataFromLocalStorage(){
+        let data:any = localStorage.getItem('frequencyData'); 
+        if(data == null){
+            data = await getFrequencyChartDataFromServer();
+            console.log(data);
+            loadDataIntoLocalStorage(JSON.stringify(data));
+        }
+        return data;
     }
 
     function deleteDataInLocalStorage(){
@@ -45,7 +53,6 @@ const Article: React.FC<Props> = ( { } ) => {
             <div className="loadDataForm">
                 <input type="button" onClick={loadDataIntoLocalStorage} value="Load data into local storage"/>
                 <input type="button" onClick={deleteDataInLocalStorage} value="Delete data in local storage"/>
-                <p>Data in local storage: {isDataInLocalStorage}  Last pulled: dateDataInLocalStorage</p>
             </div>
         </div>
     )
