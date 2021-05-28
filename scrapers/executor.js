@@ -1,7 +1,7 @@
 const fs = require('fs');
 const readline = require('readline');
 const { bnnmarketcallscript } = require('./bnnmarketcall/server.js');
-
+const { dailyScrape } = require('./wsb/wsb.js');
 /*
     Scraper executor file
 
@@ -14,6 +14,9 @@ function executeScript(scriptName){
     switch(scriptName){
         case 'bnnmarketcall':
             bnnmarketcallscript(dbURI);
+            break;
+        case 'wsb':
+            dailyScrape();
             break;
         default:
             console.log("no script found for passed script " + scriptName);

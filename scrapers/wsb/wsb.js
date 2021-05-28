@@ -427,6 +427,8 @@ async function dailyScrape(){
     wsbExecutor(articleId, pagesToSearch);
 }
 
-dailyScrape();
+module.exports = {
+    dailyScrape
+};
 
 //wsbScraper({articleId: 'ng1nlz'})
