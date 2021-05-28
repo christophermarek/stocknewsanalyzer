@@ -3,12 +3,15 @@ import { getAllFrequencyLists } from "../API";
 import Select from 'react-select';
 import VerticalBar from "../charts/VerticalBar";
 import LineChart from "../charts/LineChart";
+import Chart from 'kaktana-react-lightweight-charts'
 import { fetchCurrentPrice } from "../apiFunctions/yahooFinanceApiFunctions";
 import { findAllByPlaceholderText } from "@testing-library/dom";
+import { getCurrentData, getCurrentPrice, getHistoricalPrices } from '../API'
 
 type Props = simulatorProps
 
 const wsbSymbolsToFilter = ['is', 'at', 'are', 'open', 'for', 'lmao', 'now', 'on', 'bro', 'new', 'a', 'so', 'or', 'it', 'two', 'by', 'has', 'any', 'tell', 'out', 'hope', 'most', 'huge', 'pump', 'life', 'real', 'cash', 'apps', 'wow', 'very', 'link', 'find', 'best', 'big', 'low'];
+
 
 const Article: React.FC<Props> = ( { } ) => {
 
@@ -20,6 +23,8 @@ const Article: React.FC<Props> = ( { } ) => {
     const [sortDirection, setSortDirection] = useState<boolean>(false);
     const [selectedTicker, setSelectedTicker] = useState<any>("");
     const [frequencyOverTime, setFrequencyOverTime] = useState<any>(null);
+    const [historicalPrices, setHistoricalPrices] = useState<any>(null);
+    const [fixedHistoricalPrices, setFixedHistoricalPrices] = useState<any>(null);
 
     useEffect(() => {
     
@@ -32,6 +37,13 @@ const Article: React.FC<Props> = ( { } ) => {
 
           loadFrequencyListsIntoState();
     }, [])
+
+
+    const fetchHistoricalPrices = (_startMonth: string, _startDay: string, _startYear: string, _endMonth: string, _endDay: string, _endYear: string, _ticker: string, _frequency: string): void => {
+        getHistoricalPrices(_startMonth, _startDay, _startYear, _endMonth, _endDay, _endYear, _ticker, _frequency)
+        .then(({ data: { historicalPrices } }: any) => setHistoricalPrices(historicalPrices))
+        .catch((err: Error) => console.log(err))
+    }
 
     //should really error handle here for if api returns error
     async function getFrequencyChartDataFromServer(){
@@ -222,6 +234,14 @@ const Article: React.FC<Props> = ( { } ) => {
         //then create the config file
 
         setFrequencyOverTime(selectedTickerData);
+
+        console.log(new Date(selectedTickerData[0].date));
+        let startDate = new Date(selectedTickerData[0].date);
+        let endDate = new Date(selectedTickerData[selectedTickerData.length-1].date);
+
+        //first date, last date
+        fetchHistoricalPrices(`${startDate.getMonth()+1}`, `${startDate.getDate()}`, `${startDate.getFullYear()}`, `${endDate.getMonth()+1}`, `${endDate.getDate()}`, `${endDate.getFullYear()}`, selectedTicker, "1d");
+
         
     }
 
@@ -243,6 +263,55 @@ const Article: React.FC<Props> = ( { } ) => {
 
     function changeSortDirection(){
         setSortDirection(!sortDirection);
+    }
+
+    function fixHistoricalPrices(){
+
+        console.log("fixing historical prices");
+        
+        let tempHistoricalPrices: Array<areaSeriesType> = [];
+        //so the dates are inthe wrong order, sorting it is probably inneficient but we can just reverse it since we are already iterating over it.
+        //can probably do this counter better, dont think I need a var but its just quick and easy
+        let counter = 0;
+        for(let i = historicalPrices.length - 1; i > 0; i--){
+            //for area series graph we only want the values time and value inside our object
+            //the open and close are good for candle graphs. 
+            let object = {time: historicalPrices[i].date, value: Number(historicalPrices[i].close)}
+            tempHistoricalPrices[counter] = object;
+            counter++;
+        }
+        setFixedHistoricalPrices(tempHistoricalPrices);  
+    }
+
+    function renderStockChart(){
+
+
+        let options:object = {
+            topColor: 'rgba(21, 146, 230, 0.4)',
+            bottomColor: 'rgba(21, 146, 230, 0)',
+            lineColor: 'rgba(21, 146, 230, 1)',
+            lineStyle: 0,
+            lineWidth: 3,
+            crosshairMarkerVisible: true,
+            crosshairMarkerRadius: 3,
+            crosshairMarkerBorderColor: 'rgb(255, 255, 255, 1)',
+            crosshairMarkerBackgroundColor: 'rgb(34, 150, 243, 1)',
+        }
+        let areaSeries:any = [{
+            data: fixedHistoricalPrices
+        }]
+
+        return(
+            <div className="simulationChart">
+                <p>Chart for {selectedTicker} Date Range: {new Date(fixedHistoricalPrices[0].time * 1000).toDateString()} to {new Date(fixedHistoricalPrices[fixedHistoricalPrices.length - 1].time * 1000).toDateString()}</p>
+                <Chart options={options} areaSeries={areaSeries} autoWidth height={500} />
+            </div>
+        )
+
+    }
+    
+    if(historicalPrices != undefined && fixedHistoricalPrices == undefined){
+        fixHistoricalPrices();
     }
 
     return (
@@ -268,7 +337,7 @@ const Article: React.FC<Props> = ( { } ) => {
                             <p>Filtering Words: {printFilteredWords()}</p>
                             <input type="text" value={minFrequencyToDisplay} onChange={setValue}/>
                             <input type="button" value="Change Sort Direction" onClick={changeSortDirection}/>
-                            <VerticalBar data={getSingleDayFrequencyDataFixed()} options={{}} header={`Frequency Chart for ${selectedOneDay.value}`}/>
+                            <VerticalBar data={getSingleDayFrequencyDataFixed} options={{}} header={`Frequency Chart for ${selectedOneDay.value}`}/>
                         </>
                     }
                 </div>
@@ -281,7 +350,12 @@ const Article: React.FC<Props> = ( { } ) => {
                     {frequencyOverTime != undefined &&
                         <>
                             <p>Chart is active</p>
-                            <LineChart data={getFrequencyOverTimeFixed()} options={{}}/>
+                            <LineChart data={getFrequencyOverTimeFixed} options={{}}/>
+                            
+                            {fixedHistoricalPrices != undefined &&
+                                renderStockChart()
+                            }
+                           
                         </>
                     }
                 </div>
