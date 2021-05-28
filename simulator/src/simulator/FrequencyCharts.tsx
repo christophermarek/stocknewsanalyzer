@@ -240,7 +240,7 @@ const Article: React.FC<Props> = ( { } ) => {
         let endDate = new Date(selectedTickerData[selectedTickerData.length-1].date);
 
         //first date, last date
-        fetchHistoricalPrices(`${startDate.getMonth()+1}`, `${startDate.getDate()}`, `${startDate.getFullYear()}`, `${endDate.getMonth()+1}`, `${endDate.getDate()}`, `${endDate.getFullYear()}`, selectedTicker, "1d");
+        fetchHistoricalPrices(`${startDate.getMonth()}`, `${startDate.getDate()}`, `${startDate.getFullYear()}`, `${endDate.getMonth()}`, `${endDate.getDate()}`, `${endDate.getFullYear()}`, selectedTicker, "1d");
 
         
     }

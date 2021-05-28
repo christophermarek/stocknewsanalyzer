@@ -35,7 +35,7 @@ function App() {
       case '/news':
         setSelectedNavItem('news');
         break;
-      case 'frequencycharts':
+      case '/frequencycharts':
         setSelectedNavItem('frequencycharts');
       break;
     }

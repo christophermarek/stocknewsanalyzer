@@ -157,11 +157,10 @@ async function wsbScraper(threadData){
 
     let threadId = threadData.articleId;
     let threadDate = threadData.date;
-    
     //console.log(threadDate);
 
     let foundCurrentEntry = await wsb.findOne({date: threadDate});
-	if(foundCurrentEntry !== null){
+	if(foundCurrentEntry != null){
 		console.log("thread already posted to db");
         return 1;
     }
@@ -273,30 +272,13 @@ async function wsbScraper(threadData){
     
 }
 
-async function wsbExecutor(){
-
-    let dbURI = process.env.MONGO_URI_DEV;
-
-    // Connect to Mongo
-	mongoose
-	.connect(dbURI, {
-		useNewUrlParser: true,
-		useCreateIndex: true,
-		useUnifiedTopology: true,
-		useFindAndModify: false,
-	})
-	.then(() => {
-		console.log('MongoDB Connected...');
-	})
-	.catch((err) => console.log(err));
+async function wsbExecutor(articleId, pagesToSearch){
 
     let d = new Date();
 
-    let firstArticleUrl = "nhoua8";
+    let firstArticleUrl = articleId;
     
     let threads = [];
-
-    let pagesToSearch = 50;
 
     //let newThreads = await getRedditThreads();
     //console.log(newThreads);
@@ -364,6 +346,7 @@ async function wsbExecutor(){
     
     console.log("now sending each thread id to main function to parse and post data for that thread");
 
+    //console.log(urlCleaned);
     for(let i = 0; i < size2; i++){
         //this will run async so size2 threads created.
         wsbScraper(urlCleaned[i]);
@@ -376,13 +359,74 @@ async function wsbExecutor(){
     //console.log after each step has been completed so i can monitor script progress
 
     console.log("scrape complete");
-    process.exit(1);
+    //process.exit(1);
 
 
 
 }
 
+async function dailyScrape(){
+    let dbURI = process.env.MONGO_URI_DEV;
 
-wsbExecutor();
+    // Connect to Mongo
+	mongoose
+	.connect(dbURI, {
+		useNewUrlParser: true,
+		useCreateIndex: true,
+		useUnifiedTopology: true,
+		useFindAndModify: false,
+	})
+	.then(() => {
+		console.log('MongoDB Connected...');
+	})
+	.catch((err) => console.log(err));
+
+
+    //this will be called every 24 hours. 
+    //we want the most recent thread url, and we can just get the rest from there since we skip duplicates already so itll just keep it updated.
+    //and itll only be the first page so only 25 entries.
+
+    //body > div.content > div.listing.search-result-listing > div > div > div:nth-child(1) > div > header > a
+
+    let pagesToSearch = 1;
+    let threadUrl = '';
+
+    //this is the same as the get reddit threads but no thread id to go before. 
+    const { data } = await axios.get(
+        `https://old.reddit.com/r/wallstreetbets/search/?q=flair%3A%22Daily+Discussion%22&sort=new&restrict_sr=on`
+    );
+
+    const $ = cheerio.load(data);
+    let submissionUrls = [];
+
+    $('a').each((i, link) => {
+        //console.log(link.attribs.href);
+        
+        const href = link.attribs.href;
+        if(href != undefined && href[0] == "h" && href[href.length - 1] == '/' && !isNaN(href[href.length - 2])){
+            let splitForDate = href.split('_');
+            if(splitForDate.length == 7){
+                let month = splitForDate[4];
+                let day = splitForDate[5];
+                let year = splitForDate[6].slice(0, -1);
+
+                let monthArray = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+                //var time1 = new Date(arr1[0], arr1[1]-1, arr1[2]); // year, month, day
+                let date = new Date(year, monthArray.indexOf(month.toUpperCase()), day);
+                submissionUrls.push({articleId: href, date: date});
+            }
+            
+        }
+        
+    });
+
+    threadUrl = submissionUrls[0];
+    let splitForId = threadUrl.articleId.split("/");
+    let articleId = splitForId[6];
+    
+    wsbExecutor(articleId, pagesToSearch);
+}
+
+dailyScrape();
 
 //wsbScraper({articleId: 'ng1nlz'})
