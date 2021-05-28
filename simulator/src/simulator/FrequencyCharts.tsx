@@ -15,14 +15,14 @@ const Article: React.FC<Props> = ( { } ) => {
     const [oneDayFrequencyChartData, setOneDayFrequencyChartData] = useState<any>();
     const [minFrequencyToDisplay, setMinFrequencyToDisplay] = useState<string>('50');
     const [sortDirection, setSortDirection] = useState<boolean>(false);
-    
+    const [selectedTicker, setSelectedTicker] = useState<any>("");
+
     useEffect(() => {
     
         async function loadFrequencyListsIntoState() {
             if(frequencyLists == undefined){
-                let localStorageData = await getDataFromLocalStorage();
-                let parsedData = JSON.parse(localStorageData);
-                setFrequencyLists(parsedData);
+
+                setFrequencyLists(JSON.parse(await getDataFromLocalStorage()));
             }
           }
 
@@ -46,9 +46,10 @@ const Article: React.FC<Props> = ( { } ) => {
 
     async function getDataFromLocalStorage(){
         let data:any = localStorage.getItem('frequencyData'); 
+        //console.log(data);
         if(data == null){
             data = await getFrequencyChartDataFromServer();
-            console.log(data);
+            //console.log(JSON.stringify(data));
             loadDataIntoLocalStorage(JSON.stringify(data));
         }
         return data;
@@ -56,6 +57,7 @@ const Article: React.FC<Props> = ( { } ) => {
 
     function deleteDataInLocalStorage(){
         localStorage.removeItem('frequencyData');
+        setFrequencyLists(undefined);
     }
     
     function getFrequenclyListsDatesArray(){
@@ -86,6 +88,14 @@ const Article: React.FC<Props> = ( { } ) => {
         }
     }
 
+    function sortSubtract(a:any , b: any) {
+        if(!sortDirection){
+            return b.freq - a.freq;
+        }else{
+            return a.freq - b.freq;
+        }
+    }
+
     function getSingleDayFrequencyDataFixed(){
         //want to skip entries with frequency < n
         
@@ -106,13 +116,7 @@ const Article: React.FC<Props> = ( { } ) => {
 
         //sort listToSort
 
-        function sortSubtract(a:any , b: any) {
-            if(!sortDirection){
-                return b.freq - a.freq;
-            }else{
-                return a.freq - b.freq;
-            }
-        }
+        
         
         listToSort.sort(sortSubtract);
 
@@ -151,6 +155,10 @@ const Article: React.FC<Props> = ( { } ) => {
 
     }
 
+    function frequencyOverTime(){
+        //figure out what to do
+    }
+
     function printFilteredWords(){
         
         let size = wsbSymbolsToFilter.length;
@@ -165,6 +173,7 @@ const Article: React.FC<Props> = ( { } ) => {
     function setValue(e: any){
         setMinFrequencyToDisplay(e.target.value);
     }
+
 
     function changeSortDirection(){
         setSortDirection(!sortDirection);
@@ -196,6 +205,11 @@ const Article: React.FC<Props> = ( { } ) => {
                             <VerticalBar data={getSingleDayFrequencyDataFixed()} options={{}} header={`Frequency Chart for ${selectedOneDay.value}`}/>
                         </>
                     }
+                </div>
+                <div className="tickerFreqOverTime">
+                    <p>View the frequency of a ticker over time</p>
+                    <input type="text" value={selectedTicker} onChange={e => setSelectedTicker(e.target.value)}/>
+                    <input type="button" onClick={frequencyOverTime} value="View Ticker Frequency Over Time"/>
                 </div>
             </div>
         </div>

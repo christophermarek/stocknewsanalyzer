@@ -2,7 +2,7 @@
 import axios, { AxiosResponse } from "axios"
 
 let baseUrl: string = "http://localhost:4000"
-const local = false;
+const local = true;
 if(!local){
     baseUrl = "https://stock-news-analyze.herokuapp.com"
 }
