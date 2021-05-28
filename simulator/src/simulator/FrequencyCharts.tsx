@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { getAllFrequencyLists } from "../API";
 import Select from 'react-select';
 import VerticalBar from "../charts/VerticalBar";
+import LineChart from "../charts/LineChart";
+import { fetchCurrentPrice } from "../apiFunctions/yahooFinanceApiFunctions";
+import { findAllByPlaceholderText } from "@testing-library/dom";
 
 type Props = simulatorProps
 
@@ -16,6 +19,7 @@ const Article: React.FC<Props> = ( { } ) => {
     const [minFrequencyToDisplay, setMinFrequencyToDisplay] = useState<string>('50');
     const [sortDirection, setSortDirection] = useState<boolean>(false);
     const [selectedTicker, setSelectedTicker] = useState<any>("");
+    const [frequencyOverTime, setFrequencyOverTime] = useState<any>(null);
 
     useEffect(() => {
     
@@ -155,8 +159,70 @@ const Article: React.FC<Props> = ( { } ) => {
 
     }
 
-    function frequencyOverTime(){
+    function getFrequencyOverTimeFixed(){
+
+        let dateLabels = [];
+        let freqValues =[];
+        let size = frequencyOverTime.length;
+
+        for(let i = 0; i < size; i++){
+            dateLabels.push(frequencyOverTime[i].date);
+            freqValues.push(frequencyOverTime[i].freq);
+        }
+
+        const finalData = {
+            labels: dateLabels,
+            datasets: [
+              {
+                label: `Frequency of ${selectedTicker} over time`,
+                data: freqValues,
+                fill: false,
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgba(255, 99, 132, 0.2)',
+              },
+            ],
+        };
+
+        return finalData;
+    }
+
+    function frequencyOverTimeClicked(){
+
         //figure out what to do
+
+        let selectedTickerData = [];
+        //store the date and freq of the selectedTicker in a list
+        if(frequencyLists != undefined){
+            let size = frequencyLists.length;
+            for(let i = 0; i < size; i++){
+                if(frequencyLists[i].freqList != undefined){
+                    let currentFreqList: any = frequencyLists[i].freqList;
+                    let currentFreq:any = currentFreqList[selectedTicker];
+                    if(currentFreq != undefined){
+                        selectedTickerData.push({date: frequencyLists[i].date, freq: currentFreq});
+                    }
+                }
+            }
+        }
+
+        selectedTickerData.sort(function(a,b){
+            // Turn your strings into dates, and then subtract them
+            // to get a value that is either negative, positive, or zero.
+            if(a.date > b.date){
+                return 1
+            }else if(a.date == b.date){
+                return 0;
+            }else{
+                return -1;
+            }
+        });
+        
+        //sort the list by date
+
+        //then create the config file
+
+        setFrequencyOverTime(selectedTickerData);
+        
     }
 
     function printFilteredWords(){
@@ -209,7 +275,15 @@ const Article: React.FC<Props> = ( { } ) => {
                 <div className="tickerFreqOverTime">
                     <p>View the frequency of a ticker over time</p>
                     <input type="text" value={selectedTicker} onChange={e => setSelectedTicker(e.target.value)}/>
-                    <input type="button" onClick={frequencyOverTime} value="View Ticker Frequency Over Time"/>
+                    <input type="button" onClick={frequencyOverTimeClicked} value="View Ticker Frequency Over Time"/>
+
+                    
+                    {frequencyOverTime != undefined &&
+                        <>
+                            <p>Chart is active</p>
+                            <LineChart data={getFrequencyOverTimeFixed()} options={{}}/>
+                        </>
+                    }
                 </div>
             </div>
         </div>
