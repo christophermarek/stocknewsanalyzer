@@ -5,7 +5,7 @@ import VerticalBar from "../charts/VerticalBar";
 
 type Props = simulatorProps
 
-const wsbSymbolsToFilter = ['is', 'open', 'for', 'lmao', 'now', 'on', 'bro', 'new'];
+const wsbSymbolsToFilter = ['is', 'at', 'are', 'open', 'for', 'lmao', 'now', 'on', 'bro', 'new', 'a', 'so', 'or', 'it', 'two', 'by', 'has', 'any', 'tell', 'out', 'hope', 'most', 'huge', 'pump', 'life', 'real', 'cash', 'apps', 'wow', 'very', 'link', 'find', 'best', 'big', 'low'];
 
 const Article: React.FC<Props> = ( { } ) => {
 
@@ -13,7 +13,9 @@ const Article: React.FC<Props> = ( { } ) => {
     const [selectedOneDay, setSelectedOneDay] = useState<any>(null);
     const [singleDayFrequencyChartActive, setSingleDayFrequencyChartActive] = useState<boolean>(false);
     const [oneDayFrequencyChartData, setOneDayFrequencyChartData] = useState<any>();
-
+    const [minFrequencyToDisplay, setMinFrequencyToDisplay] = useState<string>('50');
+    const [sortDirection, setSortDirection] = useState<boolean>(false);
+    
     useEffect(() => {
     
         async function loadFrequencyListsIntoState() {
@@ -96,15 +98,32 @@ const Article: React.FC<Props> = ( { } ) => {
         //console.log(oneDayFrequencyChartData);
         //console.log(oneDayFrequencyChartData.freqList);
         
+        let listToSort = [];
+
         for (let [key, value] of Object.entries(oneDayFrequencyChartData.freqList)) {
-            
+            listToSort.push({ticker: key, freq: value});   
+        }
+
+        //sort listToSort
+
+        function sortSubtract(a:any , b: any) {
+            if(!sortDirection){
+                return b.freq - a.freq;
+            }else{
+                return a.freq - b.freq;
+            }
+        }
+        
+        listToSort.sort(sortSubtract);
+
+        let sizeOfList = listToSort.length;
+        for(let i = 0; i < sizeOfList; i++){
             //console.log(`key: ${key} value: ${value}`);
             //can filter words here
-            if(!wsbSymbolsToFilter.includes(key)){
-                if(Number(value) > 50){
-                    tickerLabels.push(key);
-                    tickerCount.push(value);
-                    
+            if(!wsbSymbolsToFilter.includes(listToSort[i].ticker)){
+                if(Number(listToSort[i].freq) > Number(minFrequencyToDisplay)){
+                    tickerLabels.push(listToSort[i].ticker);
+                    tickerCount.push(listToSort[i].freq);
                     var o = Math.round, r = Math.random, s = 255;
                     let barBorder = 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + 0.2 + ')';
                     let barColor = 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + 1 + ')'
@@ -112,9 +131,8 @@ const Article: React.FC<Props> = ( { } ) => {
                     borderColor.push(barBorder);
                 }
             }
-            
-            
         }
+
         
         const finalData = {
             labels: tickerLabels,
@@ -131,6 +149,25 @@ const Article: React.FC<Props> = ( { } ) => {
 
           return finalData;
 
+    }
+
+    function printFilteredWords(){
+        
+        let size = wsbSymbolsToFilter.length;
+
+        let string = "";
+        for(let i = 0; i < size; i++){
+            string += wsbSymbolsToFilter[i] + ", "
+        }
+        return string;
+    }
+
+    function setValue(e: any){
+        setMinFrequencyToDisplay(e.target.value);
+    }
+
+    function changeSortDirection(){
+        setSortDirection(!sortDirection);
     }
 
     return (
@@ -153,6 +190,9 @@ const Article: React.FC<Props> = ( { } ) => {
                     {singleDayFrequencyChartActive && selectedOneDay != null && oneDayFrequencyChartData != undefined &&
                         <>
                             <p>Chart is active</p>
+                            <p>Filtering Words: {printFilteredWords()}</p>
+                            <input type="text" value={minFrequencyToDisplay} onChange={setValue}/>
+                            <input type="button" value="Change Sort Direction" onClick={changeSortDirection}/>
                             <VerticalBar data={getSingleDayFrequencyDataFixed()} options={{}} header={`Frequency Chart for ${selectedOneDay.value}`}/>
                         </>
                     }
