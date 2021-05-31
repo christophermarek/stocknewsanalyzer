@@ -16,11 +16,38 @@ function executeScript(scriptName){
             bnnmarketcallscript(dbURI);
             break;
         case 'wsb':
-            dailyScrape();
+            dailyScrape(generateTickerList());
             break;
         default:
             console.log("no script found for passed script " + scriptName);
     }
+}
+
+function generateTickerList(){
+
+    //load all the tickers to check
+    let usTickers = {filepath: './tickers/usTickers.txt', encoding: 'utf8'};
+    //heroku cant find this text file for some reason. and make tickerList a global
+    let tickerListTemp = [];
+
+    try {
+        let data = fs.readFileSync(usTickers.filepath, usTickers.encoding);
+        let splitLines = data.split("\n");
+
+        for (let i = 0; i < splitLines.length; i++){
+            let line = splitLines[i];
+            let splitLine = line.split("\t");
+            //we really only care about the ticker, i dont know what the other column even means
+            let ticker = splitLine[0];
+            
+            tickerListTemp.push(ticker);
+        }
+
+        return tickerListTemp;
+    } catch(e) {
+        console.log('Error:', e.stack);
+    }
+
 }
 
 function main(){

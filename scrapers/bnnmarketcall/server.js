@@ -163,7 +163,7 @@ async function bnnmarketcallscript(dbURI){
 		
 	}
 	
-	process.exit(1);
+	//process.exit(1);
 }
 
 
