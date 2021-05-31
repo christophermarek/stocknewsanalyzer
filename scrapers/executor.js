@@ -44,6 +44,8 @@ function main(){
             scriptName = splitLine[0];
             active = splitLine[1];
             
+            console.log(`Executing ${scriptName}`);
+
             if(active == 1){
                 executeScript(scriptName);
             }

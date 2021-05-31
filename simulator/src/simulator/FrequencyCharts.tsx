@@ -25,6 +25,7 @@ const Article: React.FC<Props> = ( { } ) => {
     const [frequencyOverTime, setFrequencyOverTime] = useState<any>(null);
     const [historicalPrices, setHistoricalPrices] = useState<any>(null);
     const [fixedHistoricalPrices, setFixedHistoricalPrices] = useState<any>(null);
+    const [fixedVolumeData, setFixedVolumeData] = useState<any>(null);
 
     useEffect(() => {
     
@@ -200,6 +201,10 @@ const Article: React.FC<Props> = ( { } ) => {
 
     function frequencyOverTimeClicked(){
 
+        if(selectedTicker == undefined){
+            alert("must enter a ticker");
+            return;
+        }
         //figure out what to do
 
         let selectedTickerData = [];
@@ -235,7 +240,7 @@ const Article: React.FC<Props> = ( { } ) => {
 
         setFrequencyOverTime(selectedTickerData);
 
-        console.log(new Date(selectedTickerData[0].date));
+        //console.log(new Date(selectedTickerData[0].date));
         let startDate = new Date(selectedTickerData[0].date);
         let endDate = new Date(selectedTickerData[selectedTickerData.length-1].date);
 
@@ -283,6 +288,25 @@ const Article: React.FC<Props> = ( { } ) => {
         setFixedHistoricalPrices(tempHistoricalPrices);  
     }
 
+    function fixVolumeData(){
+
+        let tempVolumeData: Array<areaSeriesType> = [];
+
+        console.log("here");
+        let counter = 0;
+        let size = historicalPrices.length;
+        //console.log(size);
+        for(let i = size - 1; i > 0; i--){
+            //console.log(historicalPrices[i]);
+            let object = {time: historicalPrices[i].date, value: Number(historicalPrices[i].volume)}
+            //console.log(object);
+            tempVolumeData[counter] = object;
+            counter++;
+        }
+        console.log(tempVolumeData);
+        setFixedVolumeData(tempVolumeData);
+    }
+
     function renderStockChart(){
 
 
@@ -309,9 +333,37 @@ const Article: React.FC<Props> = ( { } ) => {
         )
 
     }
+
+    function renderVolumeChart(){
+        let options:object = {
+            topColor: 'rgba(21, 146, 230, 0.4)',
+            bottomColor: 'rgba(21, 146, 230, 0)',
+            lineColor: 'rgba(21, 146, 230, 1)',
+            lineStyle: 0,
+            lineWidth: 3,
+            crosshairMarkerVisible: true,
+            crosshairMarkerRadius: 3,
+            crosshairMarkerBorderColor: 'rgb(255, 255, 255, 1)',
+            crosshairMarkerBackgroundColor: 'rgb(34, 150, 243, 1)',
+        }
+        let areaSeries:any = [{
+            data: fixedVolumeData
+        }]
+
+        return(
+            <div className="simulationChart">
+                <p>Volume chart for {selectedTicker} Date Range: {new Date(fixedVolumeData[0].time * 1000).toDateString()} to {new Date(fixedVolumeData[fixedVolumeData.length - 1].time * 1000).toDateString()}</p>
+                <Chart options={options} areaSeries={areaSeries} autoWidth height={500} />
+            </div>
+        )
+    }
     
     if(historicalPrices != undefined && fixedHistoricalPrices == undefined){
         fixHistoricalPrices();
+    }
+
+    if(historicalPrices != undefined && fixedVolumeData == undefined){
+        fixVolumeData();
     }
 
     return (
@@ -330,7 +382,7 @@ const Article: React.FC<Props> = ( { } ) => {
                         options={getFrequenclyListsDatesArray()}
                     />
                     <input type="button" onClick={singleDayFrequencyChartClicked} value="View Frequency Chart"/>
-
+                    
                     {singleDayFrequencyChartActive && selectedOneDay != null && oneDayFrequencyChartData != undefined &&
                         <>
                             <p>Chart is active</p>
@@ -345,16 +397,24 @@ const Article: React.FC<Props> = ( { } ) => {
                     <p>View the frequency of a ticker over time</p>
                     <input type="text" value={selectedTicker} onChange={e => setSelectedTicker(e.target.value)}/>
                     <input type="button" onClick={frequencyOverTimeClicked} value="View Ticker Frequency Over Time"/>
-
+                    
                     
                     {frequencyOverTime != undefined &&
                         <>
-                            <p>Chart is active</p>
-                            <LineChart data={getFrequencyOverTimeFixed} options={{}}/>
+                            <div className="charts">
+                                <div className="chart-container">
+                                    <LineChart data={getFrequencyOverTimeFixed} options={{}}/>
+                                </div>
+                                
+                                {fixedHistoricalPrices != undefined &&
+                                    renderStockChart()
+                                }
+
+                                {fixedVolumeData != undefined &&
+                                    renderVolumeChart()
+                                }
+                            </div>
                             
-                            {fixedHistoricalPrices != undefined &&
-                                renderStockChart()
-                            }
                            
                         </>
                     }

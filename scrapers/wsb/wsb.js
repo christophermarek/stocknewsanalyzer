@@ -13,7 +13,8 @@ dotenv.config();
 function generateTickerList(){
 
     //load all the tickers to check
-    let usTickers = {filepath: '../tickers/usTickers.txt', encoding: 'utf8'};
+    let usTickers = {filepath: './../tickers/usTickers.txt', encoding: 'utf8'};
+    //heroku cant find this text file for some reason. and make tickerList a global
     let tickerListTemp = [];
 
     try {

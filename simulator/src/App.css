@@ -54,6 +54,9 @@ body{
     color: red;
 }
 
+.chart-container{
+}
+
 .summaryContainer{
     background-color: white;
     outline: black;
