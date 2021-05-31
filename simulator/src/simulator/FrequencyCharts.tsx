@@ -216,6 +216,10 @@ const Article: React.FC<Props> = ( { } ) => {
 
     function frequencyOverTimeClicked(){
 
+        setFixedHistoricalPrices(undefined);
+        setFixedVolumeData(undefined);
+        setHistoricalPrices(undefined);
+
         if(selectedTicker == undefined){
             alert("must enter a ticker");
             return;
@@ -457,11 +461,11 @@ const Article: React.FC<Props> = ( { } ) => {
                                     <LineChart data={getFrequencyOverTimeFixed} options={{}}/>
                                 </div>
                                 
-                                {fixedHistoricalPrices != undefined &&
+                                {fixedHistoricalPrices &&
                                     renderStockChart()
                                 }
 
-                                {fixedVolumeData != undefined &&
+                                {fixedVolumeData &&
                                     renderVolumeChart()
                                 }
                             </div>
