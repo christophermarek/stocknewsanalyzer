@@ -7,6 +7,7 @@ import Chart from 'kaktana-react-lightweight-charts'
 import { fetchCurrentPrice } from "../apiFunctions/yahooFinanceApiFunctions";
 import { findAllByPlaceholderText } from "@testing-library/dom";
 import { getCurrentData, getCurrentPrice, getHistoricalPrices } from '../API'
+import { createModuleResolutionCache } from "typescript";
 
 type Props = simulatorProps
 
@@ -33,8 +34,16 @@ const Article: React.FC<Props> = ( { } ) => {
     useEffect(() => {
 
         if(symbolsToFilter == undefined || symbolsToFilter.length < 1){
-            console.log("resetting symbols to filter");
-            setSymbolsToFilter(wsbSymbolsToFilter);
+            let wsbWordsToFilterLocalStorage:any = localStorage.getItem('wsbWordsToFilter');
+            wsbWordsToFilterLocalStorage = JSON.parse(wsbWordsToFilterLocalStorage);
+            if(wsbWordsToFilterLocalStorage == null){
+                console.log("resetting symbols to filter");
+                setSymbolsToFilter(wsbSymbolsToFilter);
+            }else{
+                console.log("setting symbols to filter from localStorage");
+                setSymbolsToFilter(wsbWordsToFilterLocalStorage);
+            }
+            
         }
     
         async function loadFrequencyListsIntoState() {
@@ -382,8 +391,14 @@ const Article: React.FC<Props> = ( { } ) => {
 
     function addSymbolToFilter(){
         if(symbolsToFilter != undefined){
+
+            let localStorageUpdate:any = [...symbolsToFilter];
+            localStorageUpdate.push(symbolsToFilterUpdate);
+            console.log("adding new symbol to filter");
             setSymbolsToFilter((symbolsToFilter) => [...symbolsToFilter, symbolsToFilterUpdate]);
             setSymbolsToFilterUpdate("");
+            
+            localStorage.setItem("wsbWordsToFilter", JSON.stringify(localStorageUpdate));
         }else{
             console.log("symbols to filter is undefined");
         }
@@ -392,6 +407,9 @@ const Article: React.FC<Props> = ( { } ) => {
 
     function removeSymbolFromFilter(){
         setSymbolsToFilter(symbolsToFilter.filter(item => item !== symbolsToFilterUpdate));
+        let localStorageUpdate:any =  symbolsToFilter.filter(item => item !== symbolsToFilterUpdate)
+        localStorage.setItem("wsbWordsToFilter", JSON.stringify(localStorageUpdate));
+
         setSymbolsToFilterUpdate("");
 
     }
