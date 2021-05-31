@@ -26,8 +26,16 @@ const Article: React.FC<Props> = ( { } ) => {
     const [historicalPrices, setHistoricalPrices] = useState<any>(null);
     const [fixedHistoricalPrices, setFixedHistoricalPrices] = useState<any>(null);
     const [fixedVolumeData, setFixedVolumeData] = useState<any>(null);
+    const [symbolsToFilterUpdate, setSymbolsToFilterUpdate] = useState<string>('');
+    //new Array so the ts compiler knows its an array not an object so we can use [...spread]
+    const [symbolsToFilter, setSymbolsToFilter] = useState<Array<String>> (new Array());
 
     useEffect(() => {
+
+        if(symbolsToFilter == undefined || symbolsToFilter.length < 1){
+            console.log("resetting symbols to filter");
+            setSymbolsToFilter(wsbSymbolsToFilter);
+        }
     
         async function loadFrequencyListsIntoState() {
             if(frequencyLists == undefined){
@@ -37,7 +45,7 @@ const Article: React.FC<Props> = ( { } ) => {
           }
 
           loadFrequencyListsIntoState();
-    }, [])
+    }, [symbolsToFilter])
 
 
     const fetchHistoricalPrices = (_startMonth: string, _startDay: string, _startYear: string, _endMonth: string, _endDay: string, _endYear: string, _ticker: string, _frequency: string): void => {
@@ -91,9 +99,11 @@ const Article: React.FC<Props> = ( { } ) => {
 
 
     function singleDayFrequencyChartClicked(){
+        console.log("hi im here");
         if(selectedOneDay != null && frequencyLists != undefined){
             setSingleDayFrequencyChartActive(true);
             
+            console.log("here inside");
             let size = frequencyLists.length;
             for(let i = 0; i < size; i++){
                 if(frequencyLists[i].date == selectedOneDay.value){
@@ -115,8 +125,6 @@ const Article: React.FC<Props> = ( { } ) => {
 
     function getSingleDayFrequencyDataFixed(){
         //want to skip entries with frequency < n
-        
-
         let tickerLabels = [];
         let tickerCount = [];
         let backgroundColor = [];
@@ -132,8 +140,6 @@ const Article: React.FC<Props> = ( { } ) => {
         }
 
         //sort listToSort
-
-        
         
         listToSort.sort(sortSubtract);
 
@@ -141,7 +147,7 @@ const Article: React.FC<Props> = ( { } ) => {
         for(let i = 0; i < sizeOfList; i++){
             //console.log(`key: ${key} value: ${value}`);
             //can filter words here
-            if(!wsbSymbolsToFilter.includes(listToSort[i].ticker)){
+            if(!symbolsToFilter.includes(listToSort[i].ticker)){
                 if(Number(listToSort[i].freq) > Number(minFrequencyToDisplay)){
                     tickerLabels.push(listToSort[i].ticker);
                     tickerCount.push(listToSort[i].freq);
@@ -251,14 +257,18 @@ const Article: React.FC<Props> = ( { } ) => {
     }
 
     function printFilteredWords(){
-        
-        let size = wsbSymbolsToFilter.length;
+        if(symbolsToFilter != undefined){
+            let size = symbolsToFilter.length;
 
-        let string = "";
-        for(let i = 0; i < size; i++){
-            string += wsbSymbolsToFilter[i] + ", "
+            let string = "";
+            for(let i = 0; i < size; i++){
+                string += symbolsToFilter[i] + ", "
+            }
+            return string;
+        }else{
+            return "symbol list not loaded";
         }
-        return string;
+
     }
 
     function setValue(e: any){
@@ -366,6 +376,26 @@ const Article: React.FC<Props> = ( { } ) => {
         fixVolumeData();
     }
 
+    function updateSymbolsToFilterUpdate(event: any){
+        setSymbolsToFilterUpdate(event.target.value)
+    }
+
+    function addSymbolToFilter(){
+        if(symbolsToFilter != undefined){
+            setSymbolsToFilter((symbolsToFilter) => [...symbolsToFilter, symbolsToFilterUpdate]);
+            setSymbolsToFilterUpdate("");
+        }else{
+            console.log("symbols to filter is undefined");
+        }
+        
+    }
+
+    function removeSymbolFromFilter(){
+        setSymbolsToFilter(symbolsToFilter.filter(item => item !== symbolsToFilterUpdate));
+        setSymbolsToFilterUpdate("");
+
+    }
+
     return (
         <div className="FrequencyCharts">
             <div className="loadDataForm">
@@ -383,10 +413,14 @@ const Article: React.FC<Props> = ( { } ) => {
                     />
                     <input type="button" onClick={singleDayFrequencyChartClicked} value="View Frequency Chart"/>
                     
+                    <p>Filtering Words: {printFilteredWords()}</p>
+                    <input type="text" value={symbolsToFilterUpdate} onChange={updateSymbolsToFilterUpdate} />
+                    <input type="button" onClick={addSymbolToFilter} value="Add"/>
+                    <input type="button" onClick={removeSymbolFromFilter} value="Remove"></input>
+
                     {singleDayFrequencyChartActive && selectedOneDay != null && oneDayFrequencyChartData != undefined &&
                         <>
                             <p>Chart is active</p>
-                            <p>Filtering Words: {printFilteredWords()}</p>
                             <input type="text" value={minFrequencyToDisplay} onChange={setValue}/>
                             <input type="button" value="Change Sort Direction" onClick={changeSortDirection}/>
                             <VerticalBar data={getSingleDayFrequencyDataFixed} options={{}} header={`Frequency Chart for ${selectedOneDay.value}`}/>
@@ -397,7 +431,6 @@ const Article: React.FC<Props> = ( { } ) => {
                     <p>View the frequency of a ticker over time</p>
                     <input type="text" value={selectedTicker} onChange={e => setSelectedTicker(e.target.value)}/>
                     <input type="button" onClick={frequencyOverTimeClicked} value="View Ticker Frequency Over Time"/>
-                    
                     
                     {frequencyOverTime != undefined &&
                         <>
@@ -414,8 +447,6 @@ const Article: React.FC<Props> = ( { } ) => {
                                     renderVolumeChart()
                                 }
                             </div>
-                            
-                           
                         </>
                     }
                 </div>
