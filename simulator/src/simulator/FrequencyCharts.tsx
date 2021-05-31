@@ -83,8 +83,10 @@ const Article: React.FC<Props> = ( { } ) => {
         //console.log(data);
         if(data == null){
             data = await getFrequencyChartDataFromServer();
+            
+            data = JSON.stringify(data);
             //console.log(JSON.stringify(data));
-            loadDataIntoLocalStorage(JSON.stringify(data));
+            loadDataIntoLocalStorage(data);
         }
         return data;
     }
