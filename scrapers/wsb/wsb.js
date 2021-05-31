@@ -402,7 +402,6 @@ async function dailyScrape(tickerList){
     
     try{
         wsbExecutor(articleId, pagesToSearch, tickerList);
-
     }catch (error){
         console.log(error);
     }
