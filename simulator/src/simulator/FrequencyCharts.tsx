@@ -108,11 +108,9 @@ const Article: React.FC<Props> = ( { } ) => {
 
 
     function singleDayFrequencyChartClicked(){
-        console.log("hi im here");
         if(selectedOneDay != null && frequencyLists != undefined){
             setSingleDayFrequencyChartActive(true);
             
-            console.log("here inside");
             let size = frequencyLists.length;
             for(let i = 0; i < size; i++){
                 if(frequencyLists[i].date == selectedOneDay.value){

@@ -2,8 +2,8 @@
 import axios, { AxiosResponse } from "axios"
 
 let baseUrl: string = "http://localhost:4000"
-const local = true;
-if(!local){
+const isProduction = process.env.PRODUCTION;
+if(isProduction == "TRUE"){
     baseUrl = "https://stock-news-analyze.herokuapp.com"
 }
 
