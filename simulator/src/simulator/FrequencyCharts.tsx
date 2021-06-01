@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { getAllFrequencyLists } from "../API";
-import { fetchCurrentPrice } from "../apiFunctions/yahooFinanceApiFunctions";
-import { findAllByPlaceholderText } from "@testing-library/dom";
 import AllFrequencyData from './AllFrequencyData';
 import SingleTickerData from './SingleTickerData';
 
 type Props = simulatorProps
-
-
 
 const Article: React.FC<Props> = ({ }) => {
 
@@ -28,7 +24,6 @@ const Article: React.FC<Props> = ({ }) => {
 
     //should really error handle here for if api returns error
     async function getFrequencyChartDataFromServer() {
-
         //keep these comments
         console.log("pausing to get frequency data from server");
         let data = await getAllFrequencyLists();

@@ -39,6 +39,19 @@ interface allFrequencyDataProps {
   frequencyLists: any
 }
 
+interface wordFilterControlsProps{
+  symbolsToFilter: String[]
+  setSymbolsToFilter: any
+}
+
+interface selectDayControlsProps{
+  frequencyLists: any
+  setSelectedOneDay: any
+  selectedOneDay: any
+  setSingleDayFrequencyChartActive: any
+  setOneDayFrequencyChartData: any
+}
+
 type ApiDataType = {
   message: string
   status: string
