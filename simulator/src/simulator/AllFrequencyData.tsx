@@ -6,10 +6,15 @@ const wsbSymbolsToFilter = ['is', 'at', 'are', 'open', 'for', 'lmao', 'now', 'on
 
 type Props = allFrequencyDataProps;
 
-const AllFrequencyData: React.FC<Props> = ({ oneDayFrequencyChartData, sortSubtract, minFrequencyToDisplay, selectedOneDay, frequencyLists, setSelectedOneDay, singleDayFrequencyChartClicked, singleDayFrequencyChartActive, setValue, changeSortDirection }) => {
+const AllFrequencyData: React.FC<Props> = ({ frequencyLists }) => {
 
     const [symbolsToFilter, setSymbolsToFilter] = useState<Array<String>>(new Array());
     const [symbolsToFilterUpdate, setSymbolsToFilterUpdate] = useState<string>('');
+    const [oneDayFrequencyChartData, setOneDayFrequencyChartData] = useState<any>();
+    const [singleDayFrequencyChartActive, setSingleDayFrequencyChartActive] = useState<boolean>(false);
+    const [sortDirection, setSortDirection] = useState<boolean>(false);
+    const [minFrequencyToDisplay, setMinFrequencyToDisplay] = useState<string>('50');
+    const [selectedOneDay, setSelectedOneDay] = useState<any>(null);
 
     useEffect(() => {
 
@@ -28,6 +33,19 @@ const AllFrequencyData: React.FC<Props> = ({ oneDayFrequencyChartData, sortSubtr
 
     }, [symbolsToFilter])
 
+    function sortSubtract(a: any, b: any) {
+        if (!sortDirection) {
+            return b.freq - a.freq;
+        } else {
+            return a.freq - b.freq;
+        }
+    }
+
+    //need better name
+    function setValue(e: any) {
+        setMinFrequencyToDisplay(e.target.value);
+    }
+
     function printFilteredWords() {
         if (symbolsToFilter != undefined) {
             let size = symbolsToFilter.length;
@@ -41,6 +59,21 @@ const AllFrequencyData: React.FC<Props> = ({ oneDayFrequencyChartData, sortSubtr
             return "symbol list not loaded";
         }
 
+    }
+
+    function singleDayFrequencyChartClicked() {
+        if (selectedOneDay != null && frequencyLists != undefined) {
+            setSingleDayFrequencyChartActive(true);
+
+            let size = frequencyLists.length;
+            for (let i = 0; i < size; i++) {
+                if (frequencyLists[i].date == selectedOneDay.value) {
+                    setOneDayFrequencyChartData(frequencyLists[i]);
+                }
+            }
+        } else {
+            alert("Must select a date from the dropdown");
+        }
     }
 
     function addSymbolToFilter() {
@@ -137,6 +170,10 @@ const AllFrequencyData: React.FC<Props> = ({ oneDayFrequencyChartData, sortSubtr
         }
 
         return datesToPass.reverse();
+    }
+
+    function changeSortDirection() {
+        setSortDirection(!sortDirection);
     }
 
 

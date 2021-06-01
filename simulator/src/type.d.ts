@@ -44,16 +44,7 @@ interface singleTickerDataProps {
 }
 
 interface allFrequencyDataProps {
-  oneDayFrequencyChartData: any
-  sortSubtract: any
-  minFrequencyToDisplay: any
-  selectedOneDay: any
   frequencyLists: any
-  setSelectedOneDay: any
-  singleDayFrequencyChartClicked: any
-  singleDayFrequencyChartActive: any
-  setValue: any
-  changeSortDirection: any
 }
 
 type ApiDataType = {

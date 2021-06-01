@@ -15,11 +15,6 @@ type Props = simulatorProps
 const Article: React.FC<Props> = ({ }) => {
 
     const [frequencyLists, setFrequencyLists] = useState<Array<wsbFrequencyListItem>>();
-    const [selectedOneDay, setSelectedOneDay] = useState<any>(null);
-    const [singleDayFrequencyChartActive, setSingleDayFrequencyChartActive] = useState<boolean>(false);
-    const [oneDayFrequencyChartData, setOneDayFrequencyChartData] = useState<any>();
-    const [minFrequencyToDisplay, setMinFrequencyToDisplay] = useState<string>('50');
-    const [sortDirection, setSortDirection] = useState<boolean>(false);
     const [selectedTicker, setSelectedTicker] = useState<any>("");
     const [frequencyOverTime, setFrequencyOverTime] = useState<any>(null);
     const [historicalPrices, setHistoricalPrices] = useState<any>(null);
@@ -79,34 +74,6 @@ const Article: React.FC<Props> = ({ }) => {
         localStorage.removeItem('frequencyData');
         setFrequencyLists(undefined);
     }
-
-
-
-
-    function singleDayFrequencyChartClicked() {
-        if (selectedOneDay != null && frequencyLists != undefined) {
-            setSingleDayFrequencyChartActive(true);
-
-            let size = frequencyLists.length;
-            for (let i = 0; i < size; i++) {
-                if (frequencyLists[i].date == selectedOneDay.value) {
-                    setOneDayFrequencyChartData(frequencyLists[i]);
-                }
-            }
-        } else {
-            alert("Must select a date from the dropdown");
-        }
-    }
-
-    function sortSubtract(a: any, b: any) {
-        if (!sortDirection) {
-            return b.freq - a.freq;
-        } else {
-            return a.freq - b.freq;
-        }
-    }
-
-
 
     function getFrequencyOverTimeFixed() {
 
@@ -191,14 +158,6 @@ const Article: React.FC<Props> = ({ }) => {
     }
 
 
-    function setValue(e: any) {
-        setMinFrequencyToDisplay(e.target.value);
-    }
-
-
-    function changeSortDirection() {
-        setSortDirection(!sortDirection);
-    }
 
     function fixHistoricalPrices() {
 
@@ -310,16 +269,7 @@ const Article: React.FC<Props> = ({ }) => {
             <div className="dataVisualizer">
                 {pageSelected == "allData" ? (
                     <AllFrequencyData
-                        oneDayFrequencyChartData={oneDayFrequencyChartData}
-                        sortSubtract={sortSubtract}
-                        minFrequencyToDisplay={minFrequencyToDisplay}
-                        selectedOneDay={selectedOneDay}
                         frequencyLists={frequencyLists}
-                        setSelectedOneDay={setSelectedOneDay}
-                        singleDayFrequencyChartClicked={singleDayFrequencyChartClicked}
-                        singleDayFrequencyChartActive={singleDayFrequencyChartActive}
-                        setValue={setValue}
-                        changeSortDirection={changeSortDirection}
                     />
                 ) : (
                     <SingleTickerData
