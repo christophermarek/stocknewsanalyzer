@@ -31,6 +31,24 @@ interface bnnmarketcallProps {
   setCurrentArticleViewing: Function
 }
 
+interface allFrequencyDataProps{
+  symbolsToFilter: any
+  oneDayFrequencyChartData: any
+  sortSubtract: any
+  minFrequencyToDisplay: any
+  selectedOneDay: any
+  frequencyLists: any
+  setSelectedOneDay: any
+  singleDayFrequencyChartClicked: any
+  symbolsToFilterUpdate: any
+  updateSymbolsToFilterUpdate: any
+  addSymbolToFilter: any
+  removeSymbolFromFilter: any
+  singleDayFrequencyChartActive: any
+  setValue: any
+  changeSortDirection: any
+}
+
 type ApiDataType = {
   message: string
   status: string
