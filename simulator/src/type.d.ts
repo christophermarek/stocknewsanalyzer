@@ -32,15 +32,7 @@ interface bnnmarketcallProps {
 }
 
 interface singleTickerDataProps {
-  selectedTicker: any
-  setSelectedTicker: any
-  frequencyOverTimeClicked: any
-  frequencyOverTime: any
-  getFrequencyOverTimeFixed: any
-  fixedHistoricalPrices: any
-  renderStockChart: any
-  renderVolumeChart: any
-  fixedVolumeData: any
+  frequencyLists: any
 }
 
 interface allFrequencyDataProps {
