@@ -104,7 +104,7 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
         return (
             <div className="simulationChart">
                 <p>Volume chart for {selectedTicker} Date Range: {new Date(fixedVolumeData[0].time * 1000).toDateString()} to {new Date(fixedVolumeData[fixedVolumeData.length - 1].time * 1000).toDateString()}</p>
-                <Chart options={options} areaSeries={areaSeries} autoWidth height={500} />
+                <Chart options={options} darkTheme={true} areaSeries={areaSeries} autoWidth height={500} />
             </div>
         )
     }
@@ -185,7 +185,7 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
         return (
             <div className="simulationChart">
                 <p>Chart for {selectedTicker} Date Range: {new Date(fixedHistoricalPrices[0].time * 1000).toDateString()} to {new Date(fixedHistoricalPrices[fixedHistoricalPrices.length - 1].time * 1000).toDateString()}</p>
-                <Chart options={options} areaSeries={areaSeries} autoWidth height={500} />
+                <Chart options={options} darkTheme={true} areaSeries={areaSeries} autoWidth height={500} />
             </div>
         )
 
