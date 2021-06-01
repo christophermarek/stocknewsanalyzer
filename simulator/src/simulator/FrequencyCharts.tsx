@@ -10,7 +10,6 @@ import SingleTickerData from './SingleTickerData';
 
 type Props = simulatorProps
 
-const wsbSymbolsToFilter = ['is', 'at', 'are', 'open', 'for', 'lmao', 'now', 'on', 'bro', 'new', 'a', 'so', 'or', 'it', 'two', 'by', 'has', 'any', 'tell', 'out', 'hope', 'most', 'huge', 'pump', 'life', 'real', 'cash', 'apps', 'wow', 'very', 'link', 'find', 'best', 'big', 'low'];
 
 
 const Article: React.FC<Props> = ({ }) => {
@@ -26,25 +25,10 @@ const Article: React.FC<Props> = ({ }) => {
     const [historicalPrices, setHistoricalPrices] = useState<any>(null);
     const [fixedHistoricalPrices, setFixedHistoricalPrices] = useState<any>(null);
     const [fixedVolumeData, setFixedVolumeData] = useState<any>(null);
-    const [symbolsToFilterUpdate, setSymbolsToFilterUpdate] = useState<string>('');
     //new Array so the ts compiler knows its an array not an object so we can use [...spread]
-    const [symbolsToFilter, setSymbolsToFilter] = useState<Array<String>>(new Array());
     const [pageSelected, setPageSelected] = useState<string>("allData");
 
     useEffect(() => {
-
-        if (symbolsToFilter == undefined || symbolsToFilter.length < 1) {
-            let wsbWordsToFilterLocalStorage: any = localStorage.getItem('wsbWordsToFilter');
-            wsbWordsToFilterLocalStorage = JSON.parse(wsbWordsToFilterLocalStorage);
-            if (wsbWordsToFilterLocalStorage == null) {
-                console.log("resetting symbols to filter");
-                setSymbolsToFilter(wsbSymbolsToFilter);
-            } else {
-                console.log("setting symbols to filter from localStorage");
-                setSymbolsToFilter(wsbWordsToFilterLocalStorage);
-            }
-
-        }
 
         async function loadFrequencyListsIntoState() {
             if (frequencyLists == undefined) {
@@ -54,7 +38,7 @@ const Article: React.FC<Props> = ({ }) => {
         }
 
         loadFrequencyListsIntoState();
-    }, [symbolsToFilter])
+    }, [])
 
 
     const fetchHistoricalPrices = (_startMonth: string, _startDay: string, _startYear: string, _endMonth: string, _endDay: string, _endYear: string, _ticker: string, _frequency: string): void => {
@@ -312,35 +296,6 @@ const Article: React.FC<Props> = ({ }) => {
         fixVolumeData();
     }
 
-    function updateSymbolsToFilterUpdate(event: any) {
-        setSymbolsToFilterUpdate(event.target.value)
-    }
-
-    function addSymbolToFilter() {
-        if (symbolsToFilter != undefined) {
-
-            let localStorageUpdate: any = [...symbolsToFilter];
-            localStorageUpdate.push(symbolsToFilterUpdate);
-            console.log("adding new symbol to filter");
-            setSymbolsToFilter((symbolsToFilter) => [...symbolsToFilter, symbolsToFilterUpdate]);
-            setSymbolsToFilterUpdate("");
-
-            localStorage.setItem("wsbWordsToFilter", JSON.stringify(localStorageUpdate));
-        } else {
-            console.log("symbols to filter is undefined");
-        }
-
-    }
-
-    function removeSymbolFromFilter() {
-        setSymbolsToFilter(symbolsToFilter.filter(item => item !== symbolsToFilterUpdate));
-        let localStorageUpdate: any = symbolsToFilter.filter(item => item !== symbolsToFilterUpdate)
-        localStorage.setItem("wsbWordsToFilter", JSON.stringify(localStorageUpdate));
-
-        setSymbolsToFilterUpdate("");
-
-    }
-
     return (
         <div className="FrequencyCharts">
             <div className="loadDataForm">
@@ -353,10 +308,8 @@ const Article: React.FC<Props> = ({ }) => {
             </div>
 
             <div className="dataVisualizer">
-
                 {pageSelected == "allData" ? (
                     <AllFrequencyData
-                        symbolsToFilter={symbolsToFilter}
                         oneDayFrequencyChartData={oneDayFrequencyChartData}
                         sortSubtract={sortSubtract}
                         minFrequencyToDisplay={minFrequencyToDisplay}
@@ -364,16 +317,12 @@ const Article: React.FC<Props> = ({ }) => {
                         frequencyLists={frequencyLists}
                         setSelectedOneDay={setSelectedOneDay}
                         singleDayFrequencyChartClicked={singleDayFrequencyChartClicked}
-                        symbolsToFilterUpdate={symbolsToFilterUpdate}
-                        updateSymbolsToFilterUpdate={updateSymbolsToFilterUpdate}
-                        addSymbolToFilter={addSymbolToFilter}
-                        removeSymbolFromFilter={removeSymbolFromFilter}
                         singleDayFrequencyChartActive={singleDayFrequencyChartActive}
                         setValue={setValue}
                         changeSortDirection={changeSortDirection}
                     />
                 ) : (
-                    <SingleTickerData 
+                    <SingleTickerData
                         selectedTicker={selectedTicker}
                         setSelectedTicker={setSelectedTicker}
                         frequencyOverTimeClicked={frequencyOverTimeClicked}
@@ -385,8 +334,6 @@ const Article: React.FC<Props> = ({ }) => {
                         fixedVolumeData={fixedVolumeData}
                     />
                 )}
-
-
             </div>
         </div>
 

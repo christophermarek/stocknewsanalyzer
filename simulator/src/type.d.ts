@@ -44,7 +44,6 @@ interface singleTickerDataProps {
 }
 
 interface allFrequencyDataProps {
-  symbolsToFilter: any
   oneDayFrequencyChartData: any
   sortSubtract: any
   minFrequencyToDisplay: any
@@ -52,10 +51,6 @@ interface allFrequencyDataProps {
   frequencyLists: any
   setSelectedOneDay: any
   singleDayFrequencyChartClicked: any
-  symbolsToFilterUpdate: any
-  updateSymbolsToFilterUpdate: any
-  addSymbolToFilter: any
-  removeSymbolFromFilter: any
   singleDayFrequencyChartActive: any
   setValue: any
   changeSortDirection: any

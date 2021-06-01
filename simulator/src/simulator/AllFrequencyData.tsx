@@ -1,10 +1,32 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import Select from 'react-select';
 import VerticalBar from "../charts/VerticalBar";
 
+const wsbSymbolsToFilter = ['is', 'at', 'are', 'open', 'for', 'lmao', 'now', 'on', 'bro', 'new', 'a', 'so', 'or', 'it', 'two', 'by', 'has', 'any', 'tell', 'out', 'hope', 'most', 'huge', 'pump', 'life', 'real', 'cash', 'apps', 'wow', 'very', 'link', 'find', 'best', 'big', 'low'];
+
 type Props = allFrequencyDataProps;
 
-const AllFrequencyData: React.FC<Props> = ({ symbolsToFilter, oneDayFrequencyChartData, sortSubtract, minFrequencyToDisplay, selectedOneDay, frequencyLists, setSelectedOneDay, singleDayFrequencyChartClicked, symbolsToFilterUpdate, updateSymbolsToFilterUpdate, addSymbolToFilter, removeSymbolFromFilter, singleDayFrequencyChartActive, setValue, changeSortDirection }) => {
+const AllFrequencyData: React.FC<Props> = ({ oneDayFrequencyChartData, sortSubtract, minFrequencyToDisplay, selectedOneDay, frequencyLists, setSelectedOneDay, singleDayFrequencyChartClicked, singleDayFrequencyChartActive, setValue, changeSortDirection }) => {
+
+    const [symbolsToFilter, setSymbolsToFilter] = useState<Array<String>>(new Array());
+    const [symbolsToFilterUpdate, setSymbolsToFilterUpdate] = useState<string>('');
+
+    useEffect(() => {
+
+        if (symbolsToFilter == undefined || symbolsToFilter.length < 1) {
+            let wsbWordsToFilterLocalStorage: any = localStorage.getItem('wsbWordsToFilter');
+            wsbWordsToFilterLocalStorage = JSON.parse(wsbWordsToFilterLocalStorage);
+            if (wsbWordsToFilterLocalStorage == null) {
+                console.log("resetting symbols to filter");
+                setSymbolsToFilter(wsbSymbolsToFilter);
+            } else {
+                console.log("setting symbols to filter from localStorage");
+                setSymbolsToFilter(wsbWordsToFilterLocalStorage);
+            }
+
+        }
+
+    }, [symbolsToFilter])
 
     function printFilteredWords() {
         if (symbolsToFilter != undefined) {
@@ -19,6 +41,35 @@ const AllFrequencyData: React.FC<Props> = ({ symbolsToFilter, oneDayFrequencyCha
             return "symbol list not loaded";
         }
 
+    }
+
+    function addSymbolToFilter() {
+        if (symbolsToFilter != undefined) {
+
+            let localStorageUpdate: any = [...symbolsToFilter];
+            localStorageUpdate.push(symbolsToFilterUpdate);
+            console.log("adding new symbol to filter");
+            setSymbolsToFilter((symbolsToFilter) => [...symbolsToFilter, symbolsToFilterUpdate]);
+            setSymbolsToFilterUpdate("");
+
+            localStorage.setItem("wsbWordsToFilter", JSON.stringify(localStorageUpdate));
+        } else {
+            console.log("symbols to filter is undefined");
+        }
+
+    }
+
+    function removeSymbolFromFilter() {
+        setSymbolsToFilter(symbolsToFilter.filter(item => item !== symbolsToFilterUpdate));
+        let localStorageUpdate: any = symbolsToFilter.filter(item => item !== symbolsToFilterUpdate)
+        localStorage.setItem("wsbWordsToFilter", JSON.stringify(localStorageUpdate));
+
+        setSymbolsToFilterUpdate("");
+
+    }
+
+    function updateSymbolsToFilterUpdate(event: any) {
+        setSymbolsToFilterUpdate(event.target.value)
     }
 
     function getSingleDayFrequencyDataFixed() {
