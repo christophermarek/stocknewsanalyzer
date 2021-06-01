@@ -12,26 +12,38 @@ interface bnnmarketcall {
   updatedAt?: string
 }
 
-interface simulatorProps{
-  
+interface simulatorProps {
+
 }
 
 interface bnnmarketcallObject {
   bnnmarketcallObject: bnnmarketcall[]
 }
 
-interface articleProps{
+interface articleProps {
   articleText: string
   setCurrentArticleViewing: Function
 }
- 
+
 
 interface bnnmarketcallProps {
-  bnnmarketcallItem: bnnmarketcall 
+  bnnmarketcallItem: bnnmarketcall
   setCurrentArticleViewing: Function
 }
 
-interface allFrequencyDataProps{
+interface singleTickerDataProps {
+  selectedTicker: any
+  setSelectedTicker: any
+  frequencyOverTimeClicked: any
+  frequencyOverTime: any
+  getFrequencyOverTimeFixed: any
+  fixedHistoricalPrices: any
+  renderStockChart: any
+  renderVolumeChart: any
+  fixedVolumeData: any
+}
+
+interface allFrequencyDataProps {
   symbolsToFilter: any
   oneDayFrequencyChartData: any
   sortSubtract: any
@@ -88,7 +100,7 @@ type yahooStockHistoricalPrices = {
   low: string
   open: string
   volume: string
-} 
+}
 
 
 

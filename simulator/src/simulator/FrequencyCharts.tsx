@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { getAllFrequencyLists } from "../API";
-import LineChart from "../charts/LineChart";
 import Chart from 'kaktana-react-lightweight-charts'
 import { fetchCurrentPrice } from "../apiFunctions/yahooFinanceApiFunctions";
 import { findAllByPlaceholderText } from "@testing-library/dom";
 import { getCurrentData, getCurrentPrice, getHistoricalPrices } from '../API'
 import { createModuleResolutionCache } from "typescript";
 import AllFrequencyData from './AllFrequencyData';
+import SingleTickerData from './SingleTickerData';
 
 type Props = simulatorProps
 
@@ -371,35 +371,19 @@ const Article: React.FC<Props> = ({ }) => {
                         singleDayFrequencyChartActive={singleDayFrequencyChartActive}
                         setValue={setValue}
                         changeSortDirection={changeSortDirection}
-
-
                     />
                 ) : (
-                    <div className="tickerFreqOverTime">
-                        <p>View the frequency of a ticker over time</p>
-                        <input type="text" value={selectedTicker} onChange={e => setSelectedTicker(e.target.value)} />
-                        <input type="button" onClick={frequencyOverTimeClicked} value="View Ticker Frequency Over Time" />
-
-
-
-                        {frequencyOverTime != undefined &&
-                            <>
-                                <div className="charts">
-                                    <div className="chart-container">
-                                        <LineChart data={getFrequencyOverTimeFixed} options={{}} />
-                                    </div>
-
-                                    {fixedHistoricalPrices &&
-                                        renderStockChart()
-                                    }
-
-                                    {fixedVolumeData &&
-                                        renderVolumeChart()
-                                    }
-                                </div>
-                            </>
-                        }
-                    </div>
+                    <SingleTickerData 
+                        selectedTicker={selectedTicker}
+                        setSelectedTicker={setSelectedTicker}
+                        frequencyOverTimeClicked={frequencyOverTimeClicked}
+                        frequencyOverTime={frequencyOverTime}
+                        getFrequencyOverTimeFixed={getFrequencyOverTimeFixed}
+                        fixedHistoricalPrices={fixedHistoricalPrices}
+                        renderStockChart={renderStockChart}
+                        renderVolumeChart={renderVolumeChart}
+                        fixedVolumeData={fixedVolumeData}
+                    />
                 )}
 
 
