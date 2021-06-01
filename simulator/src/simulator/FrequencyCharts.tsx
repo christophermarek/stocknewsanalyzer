@@ -56,10 +56,13 @@ const Article: React.FC<Props> = ({ }) => {
 
     return (
         <div className="FrequencyCharts">
-            <div className="loadDataForm">
-                <input type="button" onClick={loadDataIntoLocalStorage} value="Load data into local storage" />
-                <input type="button" onClick={deleteDataInLocalStorage} value="Delete data in local storage" />
-            </div>
+            {   false &&
+                <div className="loadDataForm">
+                    <input type="button" onClick={loadDataIntoLocalStorage} value="Load data into local storage" />
+                    <input type="button" onClick={deleteDataInLocalStorage} value="Delete data in local storage" />
+                </div>
+            }
+
             <div className="loadPageForm">
                 <input type="button" onClick={() => setPageSelected("allData")} value="All Data" />
                 <input type="button" onClick={() => setPageSelected("singleTicker")} value="Single Ticker" />

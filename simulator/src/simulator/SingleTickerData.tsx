@@ -13,6 +13,7 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
     const [fixedHistoricalPrices, setFixedHistoricalPrices] = useState<any>(null);
     const [fixedVolumeData, setFixedVolumeData] = useState<any>(null);
     const [historicalPrices, setHistoricalPrices] = useState<any>(null);
+    const [isCondensedView, setCondensedview] = useState<boolean>(true);
 
     const fetchHistoricalPrices = (_startMonth: string, _startDay: string, _startYear: string, _endMonth: string, _endDay: string, _endYear: string, _ticker: string, _frequency: string): void => {
         getHistoricalPrices(_startMonth, _startDay, _startYear, _endMonth, _endDay, _endYear, _ticker, _frequency)
@@ -189,7 +190,7 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
         )
 
     }
-    
+
     if (historicalPrices != undefined && fixedHistoricalPrices == undefined) {
         fixHistoricalPrices();
     }
@@ -204,25 +205,28 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
             <input type="text" value={selectedTicker} onChange={e => setSelectedTicker(e.target.value)} />
             <input type="button" onClick={frequencyOverTimeClicked} value="View Ticker Frequency Over Time" />
 
-
+            <input type="button" value={isCondensedView ? 'Expand' : 'Condense'} onClick={() => setCondensedview(!isCondensedView)} />
 
             {frequencyOverTime != undefined &&
                 <>
                     <div className="charts">
-                        <div className="chart-container">
-                            <LineChart data={getFrequencyOverTimeFixed} options={{}} />
+                        <LineChart data={getFrequencyOverTimeFixed} options={{}} />
+                        <div className={isCondensedView ? "twoChartsCondensed" : "twoChartsExpanded"}>
+                            <div className={isCondensedView ? "chartCondensed" : "chartExpanded"}>
+                                {fixedHistoricalPrices &&
+                                    renderStockChart()
+                                }
+                            </div>
+                            <div className={isCondensedView ? "chartCondensed" : "chartExpanded"}>
+                                {fixedVolumeData &&
+                                    renderVolumeChart()
+                                }
+                            </div>
                         </div>
-
-                        {fixedHistoricalPrices &&
-                            renderStockChart()
-                        }
-
-                        {fixedVolumeData &&
-                            renderVolumeChart()
-                        }
                     </div>
                 </>
             }
+
         </div>
     )
 }

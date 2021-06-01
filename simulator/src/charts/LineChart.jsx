@@ -15,6 +15,8 @@ const example_data = {
 };
 
 const example_options = {
+  responsive: true,
+  maintainAspectRatio: true,
   scales: {
     yAxes: [
       {
@@ -25,6 +27,9 @@ const example_options = {
     ],
   },
 };
+
+//https://stackoverflow.com/questions/53872165/cant-resize-react-chartjs-2-doughnut-chart
+// to control chart sizes i passed this into the options, and can just control with css width
 
 const LineChart = ({ data, options }) => (
   <>

@@ -80,3 +80,21 @@ body{
     display: flex;
     flex-wrap: wrap;
 }
+
+.twoChartsCondensed{
+    display: flex;
+    flex-flow: row;
+}
+
+.twoChartsExpanded{
+    display: flex;
+    flex-direction: column;
+}
+
+.chartCondensed{
+    width: 50%;
+}
+
+.chartExpanded{
+    width: 100%;
+}
