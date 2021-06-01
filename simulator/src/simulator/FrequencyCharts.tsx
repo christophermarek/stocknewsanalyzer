@@ -64,8 +64,8 @@ const Article: React.FC<Props> = ({ }) => {
             }
 
             <div className="loadPageForm">
-                <input type="button" onClick={() => setPageSelected("allData")} value="All Data" />
-                <input type="button" onClick={() => setPageSelected("singleTicker")} value="Single Ticker" />
+                <input type="button" className={"subButton" + (pageSelected == 'allData' ? ' navItemSelected' : '' )} onClick={() => setPageSelected("allData")} value="All Data" />
+                <input type="button" className={"subButton" + (pageSelected == 'singleTicker' ? ' navItemSelected' : '' )} onClick={() => setPageSelected("singleTicker")} value="Single Ticker" />
             </div>
 
             <div className="dataVisualizer">

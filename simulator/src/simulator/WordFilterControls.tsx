@@ -50,9 +50,9 @@ const WordFilterControls: React.FC<Props> = ({ symbolsToFilter, setSymbolsToFilt
     return (
         <div className="wordFilterControls">
             <p>Filtering Words: {printFilteredWords()}</p>
-            <input type="text" value={symbolsToFilterUpdate} onChange={updateSymbolsToFilterUpdate} />
-            <input type="button" onClick={addSymbolToFilter} value="Add" />
-            <input type="button" onClick={removeSymbolFromFilter} value="Remove"></input>
+            <input type="text" className="textInput" value={symbolsToFilterUpdate} onChange={updateSymbolsToFilterUpdate} />
+            <input type="button" className="subButton" onClick={addSymbolToFilter} value="Add" />
+            <input type="button" className="subButton" onClick={removeSymbolFromFilter} value="Remove"></input>
         </div>
 
 

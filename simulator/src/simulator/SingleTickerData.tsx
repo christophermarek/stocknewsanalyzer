@@ -202,15 +202,17 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
     return (
         <div className="tickerFreqOverTime">
             <p>View the frequency of a ticker over time</p>
-            <input type="text" value={selectedTicker} onChange={e => setSelectedTicker(e.target.value)} />
-            <input type="button" onClick={frequencyOverTimeClicked} value="View Ticker Frequency Over Time" />
+            <input type="text" className="textInput" value={selectedTicker} onChange={e => setSelectedTicker(e.target.value)} />
+            <input type="button" className="subButton" onClick={frequencyOverTimeClicked} value="View Ticker Frequency Over Time" />
 
-            <input type="button" value={isCondensedView ? 'Expand' : 'Condense'} onClick={() => setCondensedview(!isCondensedView)} />
+            <input type="button" className="subButton" value={isCondensedView ? 'Expand' : 'Condense'} onClick={() => setCondensedview(!isCondensedView)} />
 
             {frequencyOverTime != undefined &&
                 <>
                     <div className="charts">
-                        <LineChart data={getFrequencyOverTimeFixed} options={{}} />
+                        <div className="topChart">
+                            <LineChart data={getFrequencyOverTimeFixed} options={{}} />
+                        </div>
                         <div className={isCondensedView ? "twoChartsCondensed" : "twoChartsExpanded"}>
                             <div className={isCondensedView ? "chartCondensed" : "chartExpanded"}>
                                 {fixedHistoricalPrices &&

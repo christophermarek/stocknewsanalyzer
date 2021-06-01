@@ -40,8 +40,9 @@ const SelectDayControls: React.FC<Props> = ({ frequencyLists, setSelectedOneDay,
                 defaultValue={selectedOneDay}
                 onChange={setSelectedOneDay}
                 options={getFrequenclyListsDatesArray()}
+                className="dateInput"
             />
-            <input type="button" onClick={singleDayFrequencyChartClicked} value="View Frequency Chart" />
+            <input type="button" className="subButton" onClick={singleDayFrequencyChartClicked} value="View Frequency Chart" />
         </div>
     )
 }

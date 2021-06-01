@@ -1,7 +1,5 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab');
-
-.navBar{
+.navBar {
     display: flex;
     justify-content: space-evenly;
     background-color: #111;
@@ -9,55 +7,124 @@
     border: 1px solid transparent;
 }
 
-.navBtn{
+.loadPageForm {
+    display: flex;
+    background-color: #111;
+    border-color: #111;
+    border: 1px solid transparent;
+    margin-top: 1%;
+}
+
+.navBtn {
     text-decoration: none;
     color: #8e8e8e;
     font-size: 1.5em;
     margin: 1%;
 }
 
-.formField{
+.subButton {
+    color: #8e8e8e;
+    background-color: #111;
+    border: none;
+    padding: 1%;
+}
+
+.minFrequencyToDisplayControl{
     display: flex;
-    align-items: center;
+    flex-direction: row;
+    padding-top: 1%;
 }
 
-.formFieldLabel{
-    padding-right: 1%;
+.sortDirectionControl{
+    margin-top: 1%;
 }
 
-.navBtn:hover{
-    color: white;
-}
-
-.navItemSelected{
+.subButton:hover {
     color: white;
     border-bottom: 1px solid white;
 }
 
-.articleDivider{
+.textInput {
+    background-color: #111;
+    border: none;
+    padding: 1%;
+    color: white;
+    margin-right: 0.5%;
+}
+
+/* This is for the npm react-select picker */
+.css-yk16xz-control{
+    background-color: black !important;
+}
+/*background text for this*/
+.css-1uccc91-singleValue{
+    color: white !important;
+}
+/*dropdown of options*/
+.css-1pahdxg-control{
+    background-color: black !important;
+    color: #8e8e8e !important;
+}
+.css-26l3qy-menu{
+    background-color: black !important;
+}
+/*option currently hovering over*/
+.css-1n7v3ny-option{
+    color: white !important;
+    background-color: #8e8e8e !important;
+}
+/*option currently selected*/
+.css-9gakcf-option{
+    background-color: black !important;
+    color: white !important;
+}
+/*all other options*/
+.css-yt9ioa-option{
+
+}
+
+
+.formField {
+    display: flex;
+    align-items: center;
+}
+
+.formFieldLabel {
+    padding-right: 1%;
+}
+
+.navBtn:hover {
+    color: white;
+}
+
+.navItemSelected {
+    color: white;
+    border-bottom: 1px solid white;
+}
+
+.articleDivider {
     width: 100%;
     border-color: #444;
 }
 
-body{
+body {
     background-color: #191919;
     color: #8e8e8e;
     font-family: 'Roboto Slab', sans-serif;
     padding: 1%;
 }
 
-.green{
+.green {
     color: green;
 }
 
-.red{
+.red {
     color: red;
 }
 
-.chart-container{
-}
+.chart-container {}
 
-.summaryContainer{
+.summaryContainer {
     background-color: white;
     outline: black;
     color: black;
@@ -72,29 +139,29 @@ body{
     justify-content: space-around;
 }
 
-.Simulator{
+.Simulator {
     box-shadow: 0px 0px 5px #fff;
 }
 
-.marketSummary{
+.marketSummary {
     display: flex;
     flex-wrap: wrap;
 }
 
-.twoChartsCondensed{
+.twoChartsCondensed {
     display: flex;
     flex-flow: row;
 }
 
-.twoChartsExpanded{
+.twoChartsExpanded {
     display: flex;
     flex-direction: column;
 }
 
-.chartCondensed{
+.chartCondensed {
     width: 50%;
 }
 
-.chartExpanded{
+.chartExpanded {
     width: 100%;
 }

@@ -112,9 +112,13 @@ const AllFrequencyData: React.FC<Props> = ({ frequencyLists }) => {
             />
             {singleDayFrequencyChartActive && selectedOneDay != null && oneDayFrequencyChartData != undefined &&
                 <>
-                    <p>Chart is active</p>
-                    <input type="text" value={minFrequencyToDisplay} onChange={setValue} />
-                    <input type="button" value="Change Sort Direction" onClick={changeSortDirection} />
+                    <div className="minFrequencyToDisplayControl">
+                        <input type="text" className="textInput" value={minFrequencyToDisplay} onChange={setValue} />
+                        <p>Minimum Frequency To Display</p>
+                    </div>
+                    <div className="sortDirectionControl">
+                        <input type="button" className="subButton" value="Change Sort Direction" onClick={changeSortDirection} />
+                    </div>
                     <VerticalBar data={getSingleDayFrequencyDataFixed} options={{}} header={`Frequency Chart for ${selectedOneDay.value}`} />
                 </>
             }
