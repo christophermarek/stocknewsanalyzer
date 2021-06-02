@@ -44,6 +44,10 @@ interface wordFilterControlsProps{
   setSymbolsToFilter: any
 }
 
+interface SingleTickerQueriesProps{
+  selectedTicker: any
+}
+
 interface selectDayControlsProps{
   frequencyLists: any
   setSelectedOneDay: any

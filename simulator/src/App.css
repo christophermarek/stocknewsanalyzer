@@ -148,6 +148,12 @@ body {
     flex-wrap: wrap;
 }
 
+.dateOccurencesForm{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
 .twoChartsCondensed {
     display: flex;
     flex-flow: row;
@@ -163,5 +169,6 @@ body {
 }
 
 .chartExpanded {
-    width: 100%;
+
+    display: flex;
 }

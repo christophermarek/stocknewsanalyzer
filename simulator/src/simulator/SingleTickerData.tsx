@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import LineChart from "../charts/LineChart";
 import { getCurrentData, getCurrentPrice, getHistoricalPrices } from '../API'
 import Chart from 'kaktana-react-lightweight-charts'
-
+import SingleTickerQueries from './SingleTickerQueries';
 
 type Props = singleTickerDataProps;
 
@@ -65,7 +65,8 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
         let size = frequencyOverTime.length;
 
         for (let i = 0; i < size; i++) {
-            dateLabels.push(frequencyOverTime[i].date);
+            let dateObj = new Date(frequencyOverTime[i].date); 
+            dateLabels.push(dateObj.toDateString());
             freqValues.push(frequencyOverTime[i].freq);
         }
 
@@ -156,7 +157,8 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
 
         //console.log(new Date(selectedTickerData[0].date));
         let startDate = new Date(selectedTickerData[0].date);
-        let endDate = new Date(selectedTickerData[selectedTickerData.length - 1].date);
+        let endDate = new Date(Date.now())
+        //let endDate = new Date(selectedTickerData[selectedTickerData.length - 1].date);
 
         //first date, last date
         fetchHistoricalPrices(`${startDate.getMonth()}`, `${startDate.getDate()}`, `${startDate.getFullYear()}`, `${endDate.getMonth()}`, `${endDate.getDate()}`, `${endDate.getFullYear()}`, selectedTicker, "1d");
@@ -226,6 +228,11 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
                             </div>
                         </div>
                     </div>
+                    
+                    <SingleTickerQueries 
+                        selectedTicker={selectedTicker}
+                    />
+                    
                 </>
             }
 
