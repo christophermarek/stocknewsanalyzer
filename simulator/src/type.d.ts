@@ -46,6 +46,8 @@ interface wordFilterControlsProps{
 
 interface SingleTickerQueriesProps{
   selectedTicker: any
+  frequencyOverTime: any
+  historicalPrices: any
 }
 
 interface selectDayControlsProps{

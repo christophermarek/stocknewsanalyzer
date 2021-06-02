@@ -231,6 +231,8 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
                     
                     <SingleTickerQueries 
                         selectedTicker={selectedTicker}
+                        frequencyOverTime={frequencyOverTime}
+                        historicalPrices={historicalPrices}
                     />
                     
                 </>
