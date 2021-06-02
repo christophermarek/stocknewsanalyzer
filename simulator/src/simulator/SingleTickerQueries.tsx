@@ -7,7 +7,15 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
     const [comparisonValue, setComparisonValue] = useState<string>('');
     const [comparisonSign, setComparisonSign] = useState<string>('greater');
     //not sure how I want this to endup
-    const [singleTickerQuery, setSingleTickerQuery] = useState<any>();
+    interface singleTickerQuery {
+        dayBefore: yahooStockHistoricalPrices
+        dayOf: yahooStockHistoricalPrices
+        dayAfter: yahooStockHistoricalPrices
+        dayAfter1: yahooStockHistoricalPrices
+        dayAfter2: yahooStockHistoricalPrices
+
+    }
+    const [singleTickerQuery, setSingleTickerQuery] = useState<Array<singleTickerQuery>>();
 
     function executeQuery() {
         console.log(`Executing query on ${selectedTicker}, checking occurences when ${comparisonValue} times ${comparisonSign} than the past day`);
@@ -23,6 +31,9 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
         let count2 = 0;
 
         console.log(historicalPrices);
+
+        //historicalPrices is the wrong way
+        let reversed = historicalPrices.reverse();
 
         //skip first day since we are checking the past days to compare
         for (let i = 1; i < size; i++) {
@@ -40,7 +51,7 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
                 for (let n = 0; n < sizeOfHistoricalPrices; n++) {
 
                     //since we cant control for exact seconds we need to compare day
-                    let historicalPrice = new Date(historicalPrices[n].date * 1000);
+                    let historicalPrice = new Date(reversed[n].date * 1000);
 
                     let currYear = currentDate.getFullYear();
                     let currMonth = currentDate.getMonth();
@@ -55,11 +66,11 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
                             if (currYear == compYear) {
                                 count2 += 1;
                                 result.push({
-                                    dayBefore: historicalPrices[n - 1],
-                                    dayOf: historicalPrices[n],
-                                    dayAfter: historicalPrices[n + 1],
-                                    dayAfter1: historicalPrices[n + 2],
-                                    dayAfter2: historicalPrices[n + 3],
+                                    dayBefore: reversed[n - 1],
+                                    dayOf: reversed[n],
+                                    dayAfter: reversed[n + 1],
+                                    dayAfter1: reversed[n + 2],
+                                    dayAfter2: reversed[n + 3],
                                 });
                             }
                         }
@@ -70,11 +81,67 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
             }
         }
         console.log(`Count: ${count} Count2: ${count2}`);
-        
+        setSingleTickerQuery(result);
     }
 
     function updateComparisonValue(event: any) {
         setComparisonValue(event.target.value)
+    }
+
+    function renderTable(currentEntry: singleTickerQuery) {
+        //dont like hardcoding this but doing it dynamically sucks just as much
+        return (
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Open</th>
+                    <th>Close</th>
+                    <th>Low</th>
+                    <th>High</th>
+                    <th>Volume</th>
+                </tr>
+                <tr>
+                    <td>{new Date(currentEntry.dayBefore.date * 1000).toDateString()}</td>
+                    <td>{Number(currentEntry.dayBefore.open).toFixed(3)}</td>
+                    <td>{Number(currentEntry.dayBefore.close).toFixed(3)}</td>
+                    <td>{Number(currentEntry.dayBefore.low).toFixed(3)}</td>
+                    <td>{Number(currentEntry.dayBefore.high).toFixed(3)}</td>
+                    <td>{currentEntry.dayBefore.volume}</td>
+                </tr>
+                <tr>
+                    <td>{new Date(currentEntry.dayOf.date * 1000).toDateString()}</td>
+                    <td>{Number(currentEntry.dayOf.open).toFixed(3)}</td>
+                    <td>{Number(currentEntry.dayOf.close).toFixed(3)}</td>
+                    <td>{Number(currentEntry.dayOf.low).toFixed(3)}</td>
+                    <td>{Number(currentEntry.dayOf.high).toFixed(3)}</td>
+                    <td>{currentEntry.dayOf.volume}</td>
+                </tr>
+                <tr>
+                    <td>{new Date(currentEntry.dayAfter.date * 1000).toDateString()}</td>
+                    <td>{Number(currentEntry.dayAfter.open).toFixed(3)}</td>
+                    <td>{Number(currentEntry.dayAfter.close).toFixed(3)}</td>
+                    <td>{Number(currentEntry.dayAfter.low).toFixed(3)}</td>
+                    <td>{Number(currentEntry.dayAfter.high).toFixed(3)}</td>
+                    <td>{currentEntry.dayAfter.volume}</td>
+                </tr>
+                <tr>
+                    <td>{new Date(currentEntry.dayAfter1.date * 1000).toDateString()}</td>
+                    <td>{Number(currentEntry.dayAfter1.open).toFixed(3)}</td>
+                    <td>{Number(currentEntry.dayAfter1.close).toFixed(3)}</td>
+                    <td>{Number(currentEntry.dayAfter1.low).toFixed(3)}</td>
+                    <td>{Number(currentEntry.dayAfter1.high).toFixed(3)}</td>
+                    <td>{currentEntry.dayAfter1.volume}</td>
+                </tr>
+                <tr>
+                    <td>{new Date(currentEntry.dayAfter2.date * 1000).toDateString()}</td>
+                    <td>{Number(currentEntry.dayAfter2.open).toFixed(3)}</td>
+                    <td>{Number(currentEntry.dayAfter2.close).toFixed(3)}</td>
+                    <td>{Number(currentEntry.dayAfter2.low).toFixed(3)}</td>
+                    <td>{Number(currentEntry.dayAfter2.high).toFixed(3)}</td>
+                    <td>{currentEntry.dayAfter2.volume}</td>
+                </tr>
+            </table>
+        )
     }
 
     return (
@@ -89,6 +156,12 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
             </div>
 
             <input type="button" onClick={executeQuery} value="Execute" />
+
+            {singleTickerQuery != undefined &&
+                singleTickerQuery.map((dataPoint: singleTickerQuery) =>
+                    renderTable(dataPoint)
+                )
+            }
         </div>
     )
 }
