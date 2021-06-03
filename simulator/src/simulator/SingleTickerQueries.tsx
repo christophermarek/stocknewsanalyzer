@@ -1,3 +1,4 @@
+import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from "node:constants";
 import React, { useEffect, useState } from "react";
 
 type Props = SingleTickerQueriesProps;
@@ -50,6 +51,7 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
 
         //historicalPrices is the wrong way
         let reversed = [...historicalPrices.reverse()];
+        
 
         //skip first day since we are checking the past days to compare
         for (let i = 1; i < size; i++) {
@@ -128,9 +130,22 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
             alert('No entries found, returning');
             return;
         }
-        console.log(result);
-        //setNumEntries(`${count2}`);
-        //setSingleTickerQuery(result);
+
+        let resultsInDateRange = [];
+        let count3 = 0;
+        //now filter results that are not at the right day.
+        let dateFilterObj = new Date(dateFilter);
+        let sizeResults = result.length;
+        for(let i = 0; i < sizeResults; i++){
+            let newDate = new Date(result[i].dayOf.date * 1000);
+            if(newDate >= dateFilterObj){
+                count3 += 1;
+                resultsInDateRange.push(result[i]);
+            }
+        }
+
+        setNumEntries(`${count3}`);
+        setSingleTickerQuery(resultsInDateRange);
     }
 
     function updateComparisonValue(event: any) {
