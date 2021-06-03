@@ -9,6 +9,7 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
     const [numEntries, setNumEntries] = useState<string>('');
     const [daysBetweenFilter, setDaysbetweenFilter] = useState<string>('');
     const [minimumFrequency, setMinimumFrequency] = useState<string>('');
+    const [dateFilter, setDateFilter] = useState<string>('');
 
     //not sure how I want this to endup
     interface singleTickerQuery {
@@ -107,6 +108,8 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
                                         dayAfter1: reversed[n + 2],
                                         dayAfter2: reversed[n + 3],
                                     });
+                                } else {
+                                    console.log("err");
                                 }
                             }
                         }
@@ -115,31 +118,34 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
                     //in historicalPrices array date is a unix time int
                 }
             }
-            //console.log(`Count: ${count} Count2: ${count2}`);
+            console.log(`Count: ${count} Count2: ${count2}`);
 
         }
+
+        console.log(`Count: ${count} Count2: ${count2}`);
+
         if (result.length == 0) {
             alert('No entries found, returning');
             return;
         }
         console.log(result);
-        setNumEntries(`${count2}`);
-        setSingleTickerQuery(result);
+        //setNumEntries(`${count2}`);
+        //setSingleTickerQuery(result);
     }
 
     function updateComparisonValue(event: any) {
         setComparisonValue(event.target.value)
     }
 
-    function getPercentChange(initial: number, final: number){
+    function getPercentChange(initial: number, final: number) {
         let change = final - initial;
         let ratio = change / initial;
         let percent = ratio * 100;
         return percent;
     }
 
-    function removeDecimals(inNum: number){
-        
+    function removeDecimals(inNum: number) {
+
         return Number(inNum.toFixed(2));
     }
     function renderCaluclations(currentEntry: singleTickerQuery) {
@@ -151,7 +157,7 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
         let openToDayAfterClose = getPercentChange(Number(currentEntry.dayOf.open), Number(currentEntry.dayAfter.close));
         let openToDayAfterHigh = getPercentChange(Number(currentEntry.dayOf.open), Number(currentEntry.dayAfter.high));
 
-        return(
+        return (
             <ul>
                 <li>Open to high <span className={openToHigh > 0 ? 'green' : 'red'}>{removeDecimals(openToHigh)} %</span></li>
                 <li>Open to close <span className={openToClose > 0 ? 'green' : 'red'}>{removeDecimals(openToClose)} %</span></li>
@@ -251,6 +257,8 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
                 <input type="text" value={daysBetweenFilter} onChange={(e) => setDaysbetweenFilter(e.target.value)} />
                 <p>Minimum frequency filter</p>
                 <input type="text" value={minimumFrequency} onChange={(e) => setMinimumFrequency(e.target.value)} />
+                <p>Select Days after: </p>
+                <input type="date" value={dateFilter} onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => setDateFilter(ev.target.value)} />
             </div>
 
             <input type="button" onClick={executeQuery} value="Execute" />
