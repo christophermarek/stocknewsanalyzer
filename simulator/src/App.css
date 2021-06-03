@@ -143,6 +143,19 @@ body {
     box-shadow: 0px 0px 5px #fff;
 }
 
+.red{
+    color: red !important;
+}
+
+.green{
+    color: green !important;
+}
+
+.dataSegment{
+    display: flex;
+    flex-direction: row;
+}
+
 .marketSummary {
     display: flex;
     flex-wrap: wrap;
