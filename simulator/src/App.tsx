@@ -4,7 +4,7 @@ import News from "./news/News";
 import Default from "./Default";
 import FrequencyCharts from "./simulator/FrequencyCharts";
 import Simulator from "./simulator/Simulator";
-
+import ReactGA from 'react-ga';
 import { getBnnMarketCalls, getCurrentData, getCurrentPrice, getHistoricalPrices } from './API'
 
 import './news.css'
@@ -20,6 +20,8 @@ function App() {
   
   const [bnnmarketcalls, setBnnMarketCalls] = useState<bnnmarketcall[]>([]);
   const [selectedNavItem, setSelectedNavItem] = useState<string>("none");
+
+  ReactGA.initialize('UA-58064641-9');
 
   useEffect(() => {
     fetchTodos()
@@ -50,6 +52,7 @@ function App() {
   
   const navBtnClicked = (navItem: string): void => {
     setSelectedNavItem(navItem)
+    ReactGA.pageview(navItem);
   }
 
   return (

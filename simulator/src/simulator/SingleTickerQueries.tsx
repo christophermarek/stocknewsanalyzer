@@ -50,8 +50,8 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
         console.log(historicalPrices);
 
         //historicalPrices is the wrong way
-        let reversed = [...historicalPrices.reverse()];
-        
+        let reversed = [...historicalPrices];
+        reversed.reverse();
 
         //skip first day since we are checking the past days to compare
         for (let i = 1; i < size; i++) {
