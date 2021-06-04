@@ -11,26 +11,6 @@ const { wsb } = require('./wsbModel');
 dotenv.config();
 
 
-
-async function getComments(commentIds){
-
-    const r = new snoowrap({
-        userAgent: 'wsb scraper',
-        clientId: process.env.REDDIT_CLIENT_ID,
-        clientSecret: process.env.REDDIT_CLIENT_SECRET,
-        refreshToken: process.env.REDDIT_REFRESH_TOKEN
-    });
-    
-    for(let i = 0; i < commentIds.length; i++){
-        let comment = await r.getComment(commentIds[i]).body;
-    }
-
-    //ok need to find what to actually set limit and depth too
-    //I feel like too much depth might be useless since certain comments 
-    
-    //return comments;
-}
-
 async function getCommentIds(threadId){
 
     const timer = ms => new Promise(res => setTimeout(res, ms))
@@ -144,7 +124,6 @@ async function wsbScraper(threadData, tickerList){
     
     console.log(`thread: ${threadId} date: ${threadDate}`);
     console.log("generating ticker list")
-    //let tickerList = generateTickerList();
 
     // Create a new snoowrap requester with OAuth credentials.
 

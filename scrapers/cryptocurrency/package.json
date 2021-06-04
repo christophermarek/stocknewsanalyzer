@@ -1,0 +1,16 @@
+{
+  "name": "cryptocurrency",
+  "version": "1.0.0",
+  "description": "",
+  "main": "cryptocurrency.js",
+  "scripts": {
+    "start": "node cryptocurrency.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "cheerio": "^1.0.0-rc.9"
+  }
+}
