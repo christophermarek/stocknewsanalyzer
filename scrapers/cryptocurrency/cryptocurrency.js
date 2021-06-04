@@ -13,7 +13,19 @@ function generateCryptoList() {
     let cryptoList = { filepath: '../tickers/coingeckoCryptoTickers.txt', encoding: 'utf8' };
     try {
         let data = fs.readFileSync(cryptoList.filepath, cryptoList.encoding);
-        return JSON.parse(data);
+
+        let parsedData = JSON.parse(data);
+        let size = parsedData.length;
+
+        let tickerList = [];
+
+        for(let i = 0; i < size; i++){
+            //can check for occurences of name and coin name
+            tickerList.push(parsedData.symbol);
+            tickerList.push(parsedData.name);
+        }
+        
+        return tickerList;
     } catch (e) {
         console.log('Error:', e.stack);
     }
@@ -239,6 +251,7 @@ async function getThreadCommentsAndPost(threadData, tickerList){
 
     //Then save the frequency of each keyword for that thread with the date of the thread & date of parse
     let sizeOfCommentList = commentTextList.length;
+    
     console.log("cc generating frequency list")
     for (let i = 0; i < sizeOfCommentList; i++) {
         //regex is to split strings but not include whitespace
@@ -258,6 +271,7 @@ async function getThreadCommentsAndPost(threadData, tickerList){
         }
 
     }
+    console.log(frequencyList)
 
     console.log("cc posting to db");
     let dbData = { freqList: frequencyList, date: threadDate, numComments: commentIds.length, threadId: threadId };
@@ -300,7 +314,7 @@ async function cryptoCurrency() {
     //dataset for comparison
     let cryptoList = generateCryptoList()
     let firstArticleId = await getFirstArticleId();
-    let pagesToSearch = 25;
+    let pagesToSearch = 1;
 
     //DONT COPY WSB ONES, CAN DO THEIR EXECUTOR FUNCTION JUST INSIDE OF HERE,
     //WITH BETTER CODE SPLITTING SINCE NOW I KNOW WHAT TO DO
@@ -320,6 +334,8 @@ async function cryptoCurrency() {
         getThreadCommentsAndPost(threads[i], cryptoList);
     }
     
+    //getThreadCommentsAndPost(threads[0], cryptoList);
+
     console.log("cc scrape complete");
 
 }

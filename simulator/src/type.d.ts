@@ -79,6 +79,20 @@ type wsbApiDataType = {
   wsbFrequencyLists?: wsbFrequencyListItem[]
 }
 
+type cryptoCurrencyApiDataType = {
+  message: string
+  status: string
+  cryptocurrencyFrequencyLists: cryptoCurrencyFrequencyListItem
+}
+
+type cryptoCurrencyFrequencyListItem = {
+  _id: string
+  freqList: object
+  date: Date
+  numComments: number
+  threadId: string
+}
+
 type wsbFrequencyListItem = {
   _id: string
   freqList: object
