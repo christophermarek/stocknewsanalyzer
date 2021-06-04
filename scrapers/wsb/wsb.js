@@ -17,7 +17,7 @@ async function getCommentIds(threadId){
 
     let counter = 0;
     let maxTries = 100;
-    console.log(`fetching thread ${threadId}`);
+    console.log(`wsb fetching thread ${threadId}`);
     while(counter < maxTries){
         try{
             const { data } = await axios.get(
@@ -28,7 +28,7 @@ async function getCommentIds(threadId){
             
         }catch(error){ 
             const rndInt = Math.floor(Math.random() * 30) + 1;
-            console.log(`Error fetching ids' for ${threadId}, rate limited probably at counter: ${counter} waiting ${rndInt} seconds to try again on`); 
+            console.log(`wsb Error fetching ids' for ${threadId}, rate limited probably at counter: ${counter} waiting ${rndInt} seconds to try again on`); 
             await timer(rndInt * 1000);
         }
     }
@@ -37,15 +37,13 @@ async function getCommentIds(threadId){
 }
 
 async function getCommentText(commentIdStrings){
-    //console.log("hello");
-    //console.log(commentIdStrings);
 
     const timer = ms => new Promise(res => setTimeout(res, ms))
 
     let counter = 0;
     let sizeCommentIds = commentIdStrings.length;
     let commentTextList = [];
-    console.log(`${sizeCommentIds} comment blocks to fetch`);
+    console.log(`wsb ${sizeCommentIds} comment blocks to fetch`);
     while(counter < sizeCommentIds){
         try{
             //console.log(commentIdStrings[i]);
@@ -61,7 +59,7 @@ async function getCommentText(commentIdStrings){
             counter = counter + 1;
         }catch(error){ 
             const rndInt = Math.floor(Math.random() * 30) + 1;
-            console.log(`Error fetching commentText, rate limited probably at counter: ${counter} going to ${sizeCommentIds}, waiting ${rndInt} seconds to try again on, thread ${commentIdStrings.length}`); 
+            console.log(`wsb Error fetching commentText, rate limited probably at counter: ${counter} going to ${sizeCommentIds}, waiting ${rndInt} seconds to try again on, thread ${commentIdStrings.length}`); 
             await timer(rndInt * 1000);
         }
     }
@@ -117,20 +115,20 @@ async function wsbScraper(threadData, tickerList){
 
     let foundCurrentEntry = await wsb.findOne({date: threadDate});
 	if(foundCurrentEntry != null){
-		console.log("thread already posted to db");
+		console.log("wsb thread already posted to db");
         return 1;
     }
 
     
-    console.log(`thread: ${threadId} date: ${threadDate}`);
-    console.log("generating ticker list")
+    console.log(`wsb thread: ${threadId} date: ${threadDate}`);
+    console.log("wsb generating ticker list")
 
     // Create a new snoowrap requester with OAuth credentials.
 
-    console.log("fetching comment ids");
+    console.log("wsb fetching comment ids");
     let commentIds = await getCommentIds(threadId);
     //console.log(commentIds);
-    console.log("fetched comment ids");
+    console.log("wsb fetched comment ids");
 
     //the comment id string must be less than 2048 per request or the server wont be able to handle it
     //i got a 414 error and im just assuming 2048 because that is url length limit of most browsers
@@ -156,7 +154,7 @@ async function wsbScraper(threadData, tickerList){
         }
     }
 
-    console.log("getting comment texts");
+    console.log("wsb getting comment texts");
     //ok why is it not fetching this properly f
     //console.log(commentIdStrings);
     
@@ -164,7 +162,7 @@ async function wsbScraper(threadData, tickerList){
     
     let commentTextList = await getCommentText(commentIdStrings);
 
-    console.log("fetched comment texts");
+    console.log("wsb fetched comment texts");
 
     //this site gets us all the comment id's, we need this because the reddit api will 
     //block us because there are too many comments to request at once.
@@ -181,7 +179,7 @@ async function wsbScraper(threadData, tickerList){
 
     //Then save the frequency of each keyword for that thread with the date of the thread & date of parse
     let sizeOfCommentList = commentTextList.length;
-    console.log("generating frequency list")
+    console.log("wsb generating frequency list")
     for(let i = 0; i < sizeOfCommentList; i++){
         //regex is to split strings but not include whitespace
         let tokens = commentTextList[i].text.split(" ");
@@ -208,7 +206,7 @@ async function wsbScraper(threadData, tickerList){
 
     //have features to autoscrape
 
-    console.log("posting to db");
+    console.log("wsb posting to db");
 
     let dbData = {freqList: frequencyList, date: threadDate};
     //console.log(dbData);
@@ -217,7 +215,7 @@ async function wsbScraper(threadData, tickerList){
     try {
         wsb.create(dbData, function (err, entry) {
             //empty callback
-            console.log("successfully pushed to db");
+            console.log("wsb successfully pushed to db");
             return 1;
         });
     } catch (err) {
@@ -240,7 +238,7 @@ async function wsbExecutor(articleId, pagesToSearch, tickerList){
 
     let lastArticleOfPage = firstArticleUrl;
 
-    console.log("Fetching reddit threads")
+    console.log("wsb Fetching reddit threads")
     for(let i = 0; i < pagesToSearch; i++){
         let newThreads = await getRedditThreads(lastArticleOfPage);
         for(let n = 0; n < newThreads.length; n++){
@@ -264,7 +262,7 @@ async function wsbExecutor(articleId, pagesToSearch, tickerList){
 
     //OK NOW REMOVE DUPLICATES FROM THREADS
     //just delete every second one because those are the duplicates
-    console.log("removing duplicates");
+    console.log("wsb removing duplicates");
     let size = threads.length;
     for(let i = 0; i < size; i = i + 2){
         duplRemoved.push(threads[i]);
@@ -273,7 +271,7 @@ async function wsbExecutor(articleId, pagesToSearch, tickerList){
 
     //THEN SORT THREADS BY THE DAY,MONTH,YEAR
 
-    console.log("sorting by date")
+    console.log("wsb sorting by date")
     function sortArticles(a, b) {
         //new Date(year, monthIndex, day)
         //a = new Date(a.year, monthArray.indexOf(a.))
@@ -283,7 +281,7 @@ async function wsbExecutor(articleId, pagesToSearch, tickerList){
     duplRemoved.sort(sortArticles);
 
     
-    console.log("sorted array of urls");
+    console.log("wsb sorted array of urls");
     //get the submission ids from each url in order
     //can just transform the array 
     let size2 = duplRemoved.length;
@@ -295,11 +293,11 @@ async function wsbExecutor(articleId, pagesToSearch, tickerList){
         urlCleaned[i].articleId = splitForArticleId[6];
     }
 
-    console.log("converted to only submissionId's");
-    console.log(`Fetched: ${urlCleaned.length} threads`);
+    console.log("wsb converted to only submissionId's");
+    console.log(`wsb Fetched: ${urlCleaned.length} threads`);
 
     
-    console.log("now sending each thread id to main function to parse and post data for that thread");
+    console.log("wsb now sending each thread id to main function to parse and post data for that thread");
 
     //console.log(urlCleaned);
     for(let i = 0; i < size2; i++){
@@ -313,10 +311,8 @@ async function wsbExecutor(articleId, pagesToSearch, tickerList){
     
     //console.log after each step has been completed so i can monitor script progress
 
-    console.log("scrape complete");
+    console.log("wsb scrape complete");
     //process.exit(1);
-
-
 
 }
 
@@ -332,7 +328,7 @@ async function dailyScrape(tickerList){
 		useFindAndModify: false,
 	})
 	.then(() => {
-		console.log('MongoDB Connected...');
+		console.log('wsb MongoDB Connected...');
 	})
 	.catch((err) => console.log(err));
 
