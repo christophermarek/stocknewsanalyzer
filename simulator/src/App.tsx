@@ -17,18 +17,21 @@ import {
 } from "react-router-dom";
 
 function App() {
-  
+
   const [bnnmarketcalls, setBnnMarketCalls] = useState<bnnmarketcall[]>([]);
   const [selectedNavItem, setSelectedNavItem] = useState<string>("none");
 
-  ReactGA.initialize('UA-58064641-10');
-  ReactGA.pageview(window.location.pathname + window.location.search);
+  if (process.env.REACT_APP_GA != undefined) {
+    ReactGA.initialize(process.env.REACT_APP_GA);
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  }
+
 
   useEffect(() => {
     fetchTodos()
 
     const pathname = window.location.pathname
-    switch(pathname.toString().toLowerCase()){
+    switch (pathname.toString().toLowerCase()) {
       case '/':
         setSelectedNavItem('home');
         break;
@@ -40,17 +43,17 @@ function App() {
         break;
       case '/frequencycharts':
         setSelectedNavItem('frequencycharts');
-      break;
+        break;
     }
 
   }, [])
 
   const fetchTodos = (): void => {
     getBnnMarketCalls()
-    .then(({ data: { bnnmarketcallData } }: bnnmarketcall[] | any) => setBnnMarketCalls(bnnmarketcallData))
-    .catch((err: Error) => console.log(err))
+      .then(({ data: { bnnmarketcallData } }: bnnmarketcall[] | any) => setBnnMarketCalls(bnnmarketcallData))
+      .catch((err: Error) => console.log(err))
   }
-  
+
   const navBtnClicked = (navItem: string): void => {
     setSelectedNavItem(navItem)
     ReactGA.pageview(navItem);
@@ -70,13 +73,13 @@ function App() {
 
           <Switch>
             <Route path="/news">
-              <News bnnmarketcallObject={ bnnmarketcalls }/>
+              <News bnnmarketcallObject={bnnmarketcalls} />
             </Route>
             <Route path="/simulator">
               <Simulator />
             </Route>
             <Route path="/frequencycharts">
-                <FrequencyCharts />
+              <FrequencyCharts />
             </Route>
             <Route path="/">
               <Default />
