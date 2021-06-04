@@ -21,7 +21,8 @@ function App() {
   const [bnnmarketcalls, setBnnMarketCalls] = useState<bnnmarketcall[]>([]);
   const [selectedNavItem, setSelectedNavItem] = useState<string>("none");
 
-  ReactGA.initialize('UA-58064641-9');
+  ReactGA.initialize('UA-58064641-10');
+  ReactGA.pageview(window.location.pathname + window.location.search);
 
   useEffect(() => {
     fetchTodos()
