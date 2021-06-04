@@ -264,6 +264,7 @@ async function getThreadCommentsAndPost(threadData, tickerList){
 
     try {
         if(foundCurrentEntry != null){
+            console.log("cc overwritting data");
             foundCurrentEntry = dbData;
             foundCurrentEntry.save();
         }else{

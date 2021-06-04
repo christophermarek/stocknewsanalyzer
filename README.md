@@ -10,7 +10,8 @@ Api routes:
 - /yahoofinance/historical-prices/:startMonth/:startDay/:startYear/:endMonth/:endDay/:endYear/:ticker/:frequency
 - /wsb/allFrequencyLists
 - /wsb/singleFrequencyList/:date
-
+- /cryptocurrency/allFrequencyLists
+- /cryptocurrency/singleFrequencyList/:date
 <br>
 Frontend hosted on Netlify:
 
