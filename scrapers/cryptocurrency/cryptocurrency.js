@@ -19,12 +19,12 @@ function generateCryptoList() {
 
         let tickerList = [];
 
-        for(let i = 0; i < size; i++){
+        for (let i = 0; i < size; i++) {
             //can check for occurences of name and coin name
-            tickerList.push(parsedData.symbol);
-            tickerList.push(parsedData.name);
+            tickerList.push(parsedData[i].symbol);
+            tickerList.push(parsedData[i].name);
         }
-        
+
         return tickerList;
     } catch (e) {
         console.log('Error:', e.stack);
@@ -93,23 +93,23 @@ async function getRedditThreads(threadId) {
     return submissionUrls;
 }
 
-async function getCommentIds(threadId){
+async function getCommentIds(threadId) {
 
     const timer = ms => new Promise(res => setTimeout(res, ms))
 
     let counter = 0;
     let maxTries = 100;
     console.log(`cc fetching thread ${threadId}`);
-    while(counter < maxTries){
-        try{
+    while (counter < maxTries) {
+        try {
             const { data } = await axios.get(
                 `https://api.pushshift.io/reddit/submission/comment_ids/${threadId}`
             );
             return data.data;
-            
-        }catch(error){ 
+
+        } catch (error) {
             const rndInt = Math.floor(Math.random() * 30) + 1;
-            console.log(`cc Error fetching ids' for ${threadId}, rate limited probably at counter: ${counter} waiting ${rndInt} seconds to try again on`); 
+            console.log(`cc Error fetching ids' for ${threadId}, rate limited probably at counter: ${counter} waiting ${rndInt} seconds to try again on`);
             await timer(rndInt * 1000);
         }
     }
@@ -117,25 +117,25 @@ async function getCommentIds(threadId){
 
 }
 
-async function getCommentText(commentIdStrings){
+async function getCommentText(commentIdStrings) {
     const timer = ms => new Promise(res => setTimeout(res, ms))
     let counter = 0;
     let sizeCommentIds = commentIdStrings.length;
     let commentTextList = [];
     console.log(`cc ${sizeCommentIds} comment blocks to fetch`);
-    while(counter < sizeCommentIds){
-        try{
+    while (counter < sizeCommentIds) {
+        try {
             const { data } = await axios.get(
                 `https://api.pushshift.io/reddit/comment/search?ids=${commentIdStrings[counter]}`
             );
             //clean data
-            for(let j = 0; j < data.data.length; j++){
-                commentTextList.push({createdAtUTC: data.data[j].created_utc, text: data.data[j].body});
+            for (let j = 0; j < data.data.length; j++) {
+                commentTextList.push({ createdAtUTC: data.data[j].created_utc, text: data.data[j].body });
             }
             counter = counter + 1;
-        }catch(error){ 
+        } catch (error) {
             const rndInt = Math.floor(Math.random() * 30) + 1;
-            console.log(`cc Error fetching commentText, rate limited probably at counter: ${counter} going to ${sizeCommentIds}, waiting ${rndInt} seconds to try again on, thread ${commentIdStrings.length}`); 
+            console.log(`cc Error fetching commentText, rate limited probably at counter: ${counter} going to ${sizeCommentIds}, waiting ${rndInt} seconds to try again on, thread ${commentIdStrings.length}`);
             await timer(rndInt * 1000);
         }
 
@@ -199,7 +199,7 @@ async function getAllThreadIds(firstArticleId, pagesToSearch) {
 
 }
 
-async function getThreadCommentsAndPost(threadData, tickerList){
+async function getThreadCommentsAndPost(threadData, tickerList) {
 
     let threadId = threadData.articleId;
     let threadDate = threadData.date;
@@ -211,10 +211,10 @@ async function getThreadCommentsAndPost(threadData, tickerList){
     let foundCurrentEntry = await cryptocurrency.findOne({ date: threadDate });
     if (foundCurrentEntry != null) {
         console.log("cc thread already posted to db");
-        if(foundCurrentEntry.numComments >= commentIds.length){
+        if (foundCurrentEntry.numComments >= commentIds.length) {
             console.log("cc duplicate thread");
             return 1;
-        }else{
+        } else {
             console.log("cc continuing scrape since there are new comments");
         }
     }
@@ -242,7 +242,7 @@ async function getThreadCommentsAndPost(threadData, tickerList){
             commentIdString += commentIds[i] + ",";
         }
     }
-    
+
     console.log("cc getting comment texts");
     let commentTextList = await getCommentText(commentIdStrings);
     console.log("cc fetched comment texts");
@@ -251,7 +251,7 @@ async function getThreadCommentsAndPost(threadData, tickerList){
 
     //Then save the frequency of each keyword for that thread with the date of the thread & date of parse
     let sizeOfCommentList = commentTextList.length;
-    
+
     console.log("cc generating frequency list")
     for (let i = 0; i < sizeOfCommentList; i++) {
         //regex is to split strings but not include whitespace
@@ -271,27 +271,31 @@ async function getThreadCommentsAndPost(threadData, tickerList){
         }
 
     }
-    console.log(frequencyList)
+    //console.log(frequencyList)
 
-    console.log("cc posting to db");
-    let dbData = { freqList: frequencyList, date: threadDate, numComments: commentIds.length, threadId: threadId };
+    if (Object.keys(frequencyList).length === 0) {
+        console.log("skipping entry, empty frequency list");
+    } else {
+        console.log("cc posting to db");
+        let dbData = { freqList: frequencyList, date: threadDate, numComments: commentIds.length, threadId: threadId };
 
-    try {
-        if(foundCurrentEntry != null){
-            console.log("cc overwritting data");
-            foundCurrentEntry = dbData;
-            foundCurrentEntry.save();
-        }else{
-            cryptocurrency.create(dbData, function (err, entry) {
-                //empty callback
-                console.log("cc successfully pushed to db");
-                return 1;
-            });
+        try {
+            if (foundCurrentEntry != null) {
+                console.log("cc overwritting data");
+                foundCurrentEntry = dbData;
+                foundCurrentEntry.save();
+            } else {
+                cryptocurrency.create(dbData, function (err, entry) {
+                    //empty callback
+                    console.log("cc successfully pushed to db");
+                    return 1;
+                });
+            }
+        } catch (err) {
+            console.log(err);
+            return 1;
         }
-    } catch (err) {
-        console.log(err);
-        return 1;
-    }   
+    }
 }
 
 async function cryptoCurrency() {
@@ -299,22 +303,22 @@ async function cryptoCurrency() {
     let dbURI = process.env.MONGO_URI_DEV;
 
     // Connect to Mongo
-	mongoose
-	.connect(dbURI, {
-		useNewUrlParser: true,
-		useCreateIndex: true,
-		useUnifiedTopology: true,
-		useFindAndModify: false,
-	})
-	.then(() => {
-		console.log('cc MongoDB Connected...');
-	})
-	.catch((err) => console.log(err));
+    mongoose
+        .connect(dbURI, {
+            useNewUrlParser: true,
+            useCreateIndex: true,
+            useUnifiedTopology: true,
+            useFindAndModify: false,
+        })
+        .then(() => {
+            console.log('cc MongoDB Connected...');
+        })
+        .catch((err) => console.log(err));
 
     //dataset for comparison
     let cryptoList = generateCryptoList()
     let firstArticleId = await getFirstArticleId();
-    let pagesToSearch = 1;
+    let pagesToSearch = 25;
 
     //DONT COPY WSB ONES, CAN DO THEIR EXECUTOR FUNCTION JUST INSIDE OF HERE,
     //WITH BETTER CODE SPLITTING SINCE NOW I KNOW WHAT TO DO
@@ -325,15 +329,16 @@ async function cryptoCurrency() {
     id, symbol, name
     */
 
-    
+
     console.log("cc now sending each thread id to main function to parse and post data for that thread");
 
-    
+
     let size = threads.length;
-    for(let i = 0; i < size; i++){
+    for (let i = 0; i < size; i++) {
         getThreadCommentsAndPost(threads[i], cryptoList);
     }
-    
+
+
     //getThreadCommentsAndPost(threads[0], cryptoList);
 
     console.log("cc scrape complete");

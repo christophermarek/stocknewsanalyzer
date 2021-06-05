@@ -43,7 +43,7 @@ export const getSingleFrequencyList = async (_date: Date): Promise<AxiosResponse
 export const getCryptoCurrencyAllFrequencyLists = async (): Promise<AxiosResponse<cryptoCurrencyApiDataType>> => {
     try{
         const allFrequencyLists: AxiosResponse<cryptoCurrencyApiDataType> = await axios.get(
-            baseUrl + "/wsb/allFrequencyLists"
+            baseUrl + "/cryptocurrency/allFrequencyLists"
         )
         return allFrequencyLists
     }catch (error){
@@ -53,7 +53,7 @@ export const getCryptoCurrencyAllFrequencyLists = async (): Promise<AxiosRespons
 export const getCryptoCurrencySingleFrequencyList = async (_date: Date): Promise<AxiosResponse<cryptoCurrencyApiDataType>> => {
     try{
         const singleFrequencyList: AxiosResponse<cryptoCurrencyApiDataType> = await axios.get(
-            baseUrl + `/wsb/singleFrequencyList/${_date}`
+            baseUrl + `/cryptocurrency/singleFrequencyList/${_date}`
         )
         return singleFrequencyList
     }catch (error){
