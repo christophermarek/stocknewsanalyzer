@@ -12,6 +12,7 @@ const Article: React.FC<Props> = ({ }) => {
     const [cryptoFrequencyLists, setCryptoFrequencyLists] = useState<Array<cryptoCurrencyFrequencyListItem>>();
     //new Array so the ts compiler knows its an array not an object so we can use [...spread]
     const [pageSelected, setPageSelected] = useState<string>("allData");
+    const [dataSourceSelected, setDataSourceSelected] = useState<string>();
 
     useEffect(() => {
 
@@ -88,6 +89,11 @@ const Article: React.FC<Props> = ({ }) => {
             <div className="loadPageForm">
                 <input type="button" className={"subButton" + (pageSelected == 'allData' ? ' navItemSelected' : '')} onClick={() => setPageSelected("allData")} value="All Data" />
                 <input type="button" className={"subButton" + (pageSelected == 'singleTicker' ? ' navItemSelected' : '')} onClick={() => setPageSelected("singleTicker")} value="Single Ticker" />
+            </div>
+
+            <div className="loadPageForm">
+                <input type="button" className={"subButton" + (dataSourceSelected == 'wsb' ? ' navItemSelected' : '')} onClick={() => setDataSourceSelected("wsb")} value="WSB" />
+                <input type="button" className={"subButton" + (dataSourceSelected == 'crypto' ? ' navItemSelected' : '')} onClick={() => setDataSourceSelected("crypto")} value="Crypto Currency" />
             </div>
 
             <div className="dataVisualizer">
