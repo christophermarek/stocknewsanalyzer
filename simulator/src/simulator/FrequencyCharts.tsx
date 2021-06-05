@@ -99,7 +99,7 @@ const Article: React.FC<Props> = ({ }) => {
             <div className="dataVisualizer">
                 {pageSelected == "allData" ? (
                     <AllFrequencyData
-                        frequencyLists={frequencyLists}
+                        frequencyLists={dataSourceSelected == 'wsb' ? frequencyLists : cryptoFrequencyLists}
                     />
                 ) : (
                     <SingleTickerData

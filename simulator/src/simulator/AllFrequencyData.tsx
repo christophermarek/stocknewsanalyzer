@@ -3,7 +3,7 @@ import VerticalBar from '../charts/VerticalBar';
 import SelectDayControls from "./SelectDayControls";
 import WordFilterControls from './WordFilterControls';
 
-const wsbSymbolsToFilter = ['is', 'at', 'are', 'open', 'for', 'lmao', 'now', 'on', 'bro', 'new', 'a', 'so', 'or', 'it', 'two', 'by', 'has', 'any', 'tell', 'out', 'hope', 'most', 'huge', 'pump', 'life', 'real', 'cash', 'apps', 'wow', 'very', 'link', 'find', 'best', 'big', 'low'];
+const wsbSymbolsToFilter = ['is', 'at', 'are', 'open', 'for', 'lmao', 'now', 'on', 'bro', 'new', 'a', 'so', 'or', 'it', 'two', 'by', 'has', 'any', 'tell', 'out', 'hope', 'most', 'huge', 'pump', 'life', 'real', 'cash', 'apps', 'wow', 'very', 'link', 'find', 'best', 'big', 'low', 'can', 'be', 'all', 'go', 'when', 'good', 'see', 'am', 'the', 'you', 'in', 'but', 'if', 'like', 'buy', 'up', 'was', 'more', 'some', 'get', 'me', 'time', 'dip', 'got', 'bear', 'day', 'lol', 'long', 'did', 'well', 'lot', 'sure', 'better', 'bull', 'keep', 'use', 'yes', 'many', 'put', 'dca', 'red', 'try', 'gues', 'chart', 'value', 'own', 'less', 'shit', 'may', 'give', 'hodl', 'let', 'man', 'seen', 'top', 'fud', 'news', 'hate'];
 
 type Props = allFrequencyDataProps;
 
