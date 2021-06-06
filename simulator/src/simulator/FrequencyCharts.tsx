@@ -12,7 +12,7 @@ const Article: React.FC<Props> = ({ }) => {
     const [cryptoFrequencyLists, setCryptoFrequencyLists] = useState<Array<cryptoCurrencyFrequencyListItem>>();
     //new Array so the ts compiler knows its an array not an object so we can use [...spread]
     const [pageSelected, setPageSelected] = useState<string>("allData");
-    const [dataSourceSelected, setDataSourceSelected] = useState<string>();
+    const [dataSourceSelected, setDataSourceSelected] = useState<string>('wsb');
 
     useEffect(() => {
 
@@ -103,7 +103,8 @@ const Article: React.FC<Props> = ({ }) => {
                     />
                 ) : (
                     <SingleTickerData
-                        frequencyLists={frequencyLists}
+                        frequencyLists={dataSourceSelected == 'wsb' ? frequencyLists : cryptoFrequencyLists}
+                        dataSourceSelected={dataSourceSelected}
                     />
                 )}
             </div>

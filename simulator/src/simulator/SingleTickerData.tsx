@@ -3,10 +3,11 @@ import LineChart from "../charts/LineChart";
 import { getCurrentData, getCurrentPrice, getHistoricalPrices } from '../API'
 import Chart from 'kaktana-react-lightweight-charts'
 import SingleTickerQueries from './SingleTickerQueries';
+import CoinGecko from 'coingecko-api';
 
 type Props = singleTickerDataProps;
 
-const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
+const SingleTickerData: React.FC<Props> = ({ frequencyLists, dataSourceSelected }) => {
 
     const [selectedTicker, setSelectedTicker] = useState<any>("");
     const [frequencyOverTime, setFrequencyOverTime] = useState<any>(null);
@@ -39,6 +40,41 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
         setFixedHistoricalPrices(tempHistoricalPrices);
     }
 
+    function fetchCryptoHistoricalPrices(startDate: Date, endDate: Date, selectedTicker: string) {
+        console.log(`fetching historical prices for ${selectedTicker}`);
+
+        //get coin id
+
+        const CoinGeckoClient:any = new CoinGecko();
+
+        var func = async () => {
+            let response = await CoinGeckoClient.coins.list();
+            //console.log(response.data);
+
+            let size = response.data.length;
+
+            for(let i = 0; i < size; i++){
+                if(response.data[i].symbol == selectedTicker || response.data[i].name == selectedTicker){
+
+                    //need to convert dates to unix time to pass
+                    //correct id found, can do other api call out of this loop
+                    let data = await CoinGeckoClient.coins.fetchMarketChartRange('bitcoin', {
+                        from: 1392577232,
+                        to: 1422577232,
+                        include_market_cap: true,
+                        include_24hr_change: true,
+                      });
+                    //set data, 
+                    //then break
+                    break;
+                }
+            }
+        };
+
+        func();
+        //get and set coin historical data
+    }
+
     function fixVolumeData() {
 
         let tempVolumeData: Array<areaSeriesType> = [];
@@ -65,7 +101,7 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
         let size = frequencyOverTime.length;
 
         for (let i = 0; i < size; i++) {
-            let dateObj = new Date(frequencyOverTime[i].date); 
+            let dateObj = new Date(frequencyOverTime[i].date);
             dateLabels.push(dateObj.toDateString());
             freqValues.push(frequencyOverTime[i].freq);
         }
@@ -120,7 +156,6 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
             alert("must enter a ticker");
             return;
         }
-        //figure out what to do
 
         let selectedTickerData = [];
         //store the date and freq of the selectedTicker in a list
@@ -135,6 +170,10 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
                     }
                 }
             }
+        }
+
+        if (selectedTickerData.length == 0) {
+            alert(`${selectedTicker} is  not a valid entry`);
         }
 
         selectedTickerData.sort(function (a, b) {
@@ -160,9 +199,12 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
         let endDate = new Date(Date.now())
         //let endDate = new Date(selectedTickerData[selectedTickerData.length - 1].date);
 
-        //first date, last date
-        fetchHistoricalPrices(`${startDate.getMonth()}`, `${startDate.getDate()}`, `${startDate.getFullYear()}`, `${endDate.getMonth()}`, `${endDate.getDate()}`, `${endDate.getFullYear()}`, selectedTicker, "1d");
-
+        if (dataSourceSelected == 'wsb') {
+            fetchHistoricalPrices(`${startDate.getMonth()}`, `${startDate.getDate()}`, `${startDate.getFullYear()}`, `${endDate.getMonth()}`, `${endDate.getDate()}`, `${endDate.getFullYear()}`, selectedTicker, "1d");
+        }
+        if (dataSourceSelected == 'crypto') {
+            fetchCryptoHistoricalPrices(startDate, endDate, selectedTicker);
+        }
 
     }
 
@@ -194,16 +236,20 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
     }
 
     if (historicalPrices != undefined && fixedHistoricalPrices == undefined) {
-        fixHistoricalPrices();
+        if (dataSourceSelected == 'wsb') {
+            fixHistoricalPrices();
+        }
     }
 
     if (historicalPrices != undefined && fixedVolumeData == undefined) {
-        fixVolumeData();
+        if (dataSourceSelected == 'wsb') {
+            fixVolumeData();
+        }
     }
 
     return (
         <div className="tickerFreqOverTime">
-            <p>View the frequency of a ticker over time</p>
+            <p>View the frequency of a {dataSourceSelected == 'wsb' ? 'ticker' : 'coin'} over time</p>
             <input type="text" className="textInput" value={selectedTicker} onChange={e => setSelectedTicker(e.target.value)} />
             <input type="button" className="subButton" onClick={frequencyOverTimeClicked} value="View Ticker Frequency Over Time" />
 
@@ -228,13 +274,13 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists }) => {
                             </div>
                         </div>
                     </div>
-                    
-                    <SingleTickerQueries 
+
+                    <SingleTickerQueries
                         selectedTicker={selectedTicker}
                         frequencyOverTime={frequencyOverTime}
                         historicalPrices={historicalPrices}
                     />
-                    
+
                 </>
             }
 

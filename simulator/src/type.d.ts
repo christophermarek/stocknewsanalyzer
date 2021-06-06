@@ -33,6 +33,7 @@ interface bnnmarketcallProps {
 
 interface singleTickerDataProps {
   frequencyLists: any
+  dataSourceSelected: string
 }
 
 interface allFrequencyDataProps {
