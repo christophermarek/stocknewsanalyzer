@@ -3,13 +3,18 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const wsbSchema = new Schema({
-    freqList: {} ,
-    date: { type: Date } ,
-    
-});
+    freqList: {},
+    date: { type: Date },
+    numComments: Number,
+    threadId: { type: String },
+    },
+    { timestamps: true }
+);
 
 const wsb = mongoose.model('wsb', wsbSchema);
+const realtimeWsb = mongoose.model('wsbRealTime', wsbSchema);
 
 module.exports = {
-    wsb
+    wsb,
+    realtimeWsb
 };
