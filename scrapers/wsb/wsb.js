@@ -32,8 +32,30 @@ async function getCommentIds(threadId) {
             await timer(rndInt * 1000);
         }
     }
+}
 
+async function getRealTimeCommentIds(threadId) {
+    const timer = ms => new Promise(res => setTimeout(res, ms))
 
+    let counter = 0;
+    let maxTries = 100;
+    console.log(`wsb realtime fetching thread ${threadId}`);
+    while (counter < maxTries) {
+        try {
+            const { data } = await axios.get(
+                `https://old.reddit.com/r/wallstreetbets/comments/${threadId}.json`
+            );
+            console.log(`https://old.reddit.com/r/wallstreetbets/comments/${threadId}.json`);
+
+            console.log(data.length);
+            return data;
+
+        } catch (error) {
+            const rndInt = Math.floor(Math.random() * 30) + 1;
+            console.log(`wsb Error fetching ids' for ${threadId}, rate limited probably at counter: ${counter} waiting ${rndInt} seconds to try again on`);
+            await timer(rndInt * 1000);
+        }
+    }
 }
 
 async function getCommentText(commentIdStrings) {
@@ -107,7 +129,7 @@ async function getRedditThreads(threadId) {
 }
 
 
-async function wsbScraper(threadData, tickerList) {
+async function wsbScraper(threadData, tickerList, isRealTime) {
 
     let threadId = threadData.articleId;
     let threadDate = threadData.date;
@@ -115,20 +137,28 @@ async function wsbScraper(threadData, tickerList) {
     console.log(`wsb thread: ${threadId} date: ${threadDate}`);
 
     console.log("wsb fetching comment ids");
-    let commentIds = await getCommentIds(threadId);
+    let commentIds;
+    if (isRealTime) {
+        commentIds = await getRealTimeCommentIds(threadId);
+    } else {
+        commentIds = await getCommentIds(threadId);
+    }
     console.log("wsb fetched comment ids");
 
-
-    let foundCurrentEntry = await wsb.findOne({ date: threadDate });
-    if (foundCurrentEntry != null) {
-        console.log("wsb thread already posted to db");
-        if (foundCurrentEntry.numComments >= commentIds.length) {
-            console.log("cc duplicate thread");
-            return 1;
-        } else {
-            console.log("cc continuing scrape since there are new comments");
+    let foundCurrentEntry;
+    if (!isRealTime) {
+        foundCurrentEntry = await wsb.findOne({ date: threadDate });
+        if (foundCurrentEntry != null) {
+            console.log("wsb thread already posted to db");
+            if (foundCurrentEntry.numComments >= commentIds.length) {
+                console.log("cc duplicate thread");
+                return 1;
+            } else {
+                console.log("cc continuing scrape since there are new comments");
+            }
         }
     }
+
 
     //the comment id string must be less than 2048 per request or the server wont be able to handle it
     //i got a 414 error and im just assuming 2048 because that is url length limit of most browsers
@@ -155,10 +185,6 @@ async function wsbScraper(threadData, tickerList) {
     }
 
     console.log("wsb getting comment texts");
-    //ok why is it not fetching this properly f
-    //console.log(commentIdStrings);
-
-
 
     let commentTextList = await getCommentText(commentIdStrings);
 
@@ -202,21 +228,33 @@ async function wsbScraper(threadData, tickerList) {
     //console.log(dbData);
     //figure out how to post to db just look at other scraper
 
-    try {
-        if (foundCurrentEntry != null) {
-            console.log("wsb overwritting data");
-            foundCurrentEntry = dbData;
-            foundCurrentEntry.save();
-        } else {
-            wsb.create(dbData, function (err, entry) {
+    if (isRealTime) {
+        try {
+            realtimeWsb.create(dbData, function (err, entry) {
                 //empty callback
-                console.log("wsb successfully pushed to db");
+                console.log("wsb realtime successfully pushed to db");
                 return 1;
             });
+        } catch (error) {
+            console.log("wsb realtime error " + error);
         }
-    } catch (err) {
-        console.log(err);
-        return 1;
+    } else {
+        try {
+            if (foundCurrentEntry != null) {
+                console.log("wsb overwritting data");
+                foundCurrentEntry = dbData;
+                foundCurrentEntry.save();
+            } else {
+                wsb.create(dbData, function (err, entry) {
+                    //empty callback
+                    console.log("wsb successfully pushed to db");
+                    return 1;
+                });
+            }
+        } catch (err) {
+            console.log(err);
+            return 1;
+        }
     }
 
 }
@@ -298,7 +336,7 @@ async function wsbExecutor(articleId, pagesToSearch, tickerList) {
     //console.log(urlCleaned);
     for (let i = 0; i < size2; i++) {
         //this will run async so size2 threads created.
-        wsbScraper(urlCleaned[i], tickerList);
+        wsbScraper(urlCleaned[i], tickerList, false);
 
     }
 
@@ -380,6 +418,9 @@ async function dailyScrape(tickerList) {
 
 async function wsbRealtimeData(tickerList) {
 
+    console.log("wsb real time data starting");
+
+
     const { data } = await axios.get(
         `https://old.reddit.com/r/wallstreetbets/search/?q=flair%3A%22Daily+Discussion%22&sort=new&restrict_sr=on`
     );
@@ -418,19 +459,20 @@ async function wsbRealtimeData(tickerList) {
 
     //verify date fetched is correct 
     //console.log(articleId);
-
+    console.log("wsb realtime found article for today");
     //5 is 5 minutes
     let interval = 5 * 60000;
 
+    let threadData = { articleId: articleId, date: currentDay };
+    wsbScraper(threadData, tickerList, true);
+    //then start interval
     setInterval(function run() {
-        let threadData = {articleId: articleId, threadDate: currentDay};
-        wsbScraper(threadData);
+        console.log("running interval");
+        wsbScraper(threadData, tickerList, true);
     }, interval);
 
-    
-}
 
-wsbRealtimeData();
+}
 
 module.exports = {
     dailyScrape,
