@@ -111,24 +111,24 @@ async function wsbScraper(threadData, tickerList){
 
     let threadId = threadData.articleId;
     let threadDate = threadData.date;
-    //console.log(threadDate);
 
-    let foundCurrentEntry = await wsb.findOne({date: threadDate});
-	if(foundCurrentEntry != null){
-		console.log("wsb thread already posted to db");
-        return 1;
-    }
-
-    
     console.log(`wsb thread: ${threadId} date: ${threadDate}`);
-    console.log("wsb generating ticker list")
-
-    // Create a new snoowrap requester with OAuth credentials.
 
     console.log("wsb fetching comment ids");
     let commentIds = await getCommentIds(threadId);
-    //console.log(commentIds);
     console.log("wsb fetched comment ids");
+
+
+    let foundCurrentEntry = await wsb.findOne({ date: threadDate });
+    if (foundCurrentEntry != null) {
+		console.log("wsb thread already posted to db");
+        if (foundCurrentEntry.numComments >= commentIds.length) {
+            console.log("cc duplicate thread");
+            return 1;
+        } else {
+            console.log("cc continuing scrape since there are new comments");
+        }
+    }
 
     //the comment id string must be less than 2048 per request or the server wont be able to handle it
     //i got a 414 error and im just assuming 2048 because that is url length limit of most browsers
@@ -208,21 +208,27 @@ async function wsbScraper(threadData, tickerList){
 
     console.log("wsb posting to db");
 
-    let dbData = {freqList: frequencyList, date: threadDate};
+    let dbData = {freqList: frequencyList, date: threadDate, numComments: commentIds.length, threadId: threadId};
     //console.log(dbData);
     //figure out how to post to db just look at other scraper
 
     try {
-        wsb.create(dbData, function (err, entry) {
-            //empty callback
-            console.log("wsb successfully pushed to db");
-            return 1;
-        });
+        if (foundCurrentEntry != null) {
+            console.log("wsb overwritting data");
+            foundCurrentEntry = dbData;
+            foundCurrentEntry.save();
+        } else {
+            wsb.create(dbData, function (err, entry) {
+                //empty callback
+                console.log("wsb successfully pushed to db");
+                return 1;
+            });
+        }
     } catch (err) {
         console.log(err);
         return 1;
     }
-    
+
 }
 
 async function wsbExecutor(articleId, pagesToSearch, tickerList){

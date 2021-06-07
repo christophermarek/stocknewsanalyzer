@@ -2,6 +2,8 @@ const fs = require('fs');
 const readline = require('readline');
 const { bnnmarketcallscript } = require('./bnnmarketcall/server.js');
 const { dailyScrape } = require('./wsb/wsb.js');
+const { dailyCryptoCurrency } = require('./cryptocurrency/cryptocurrency.js');
+
 /*
     Scraper executor file
 
@@ -18,6 +20,9 @@ function executeScript(scriptName){
         case 'wsb':
             dailyScrape(generateTickerList());
             break;
+        case 'cryptocurrency':
+            dailyCryptoCurrency(generateCryptoList());
+        break;
         default:
             console.log("no script found for passed script " + scriptName);
     }
@@ -27,6 +32,7 @@ function generateTickerList(){
 
     //load all the tickers to check
     let usTickers = {filepath: './tickers/usTickers.txt', encoding: 'utf8'};
+
     //heroku cant find this text file for some reason. and make tickerList a global
     let tickerListTemp = [];
 
@@ -45,6 +51,30 @@ function generateTickerList(){
 
         return tickerListTemp;
     } catch(e) {
+        console.log('Error:', e.stack);
+    }
+
+}
+
+function generateCryptoList() {
+
+    let cryptoList = { filepath: './tickers/coingeckoCryptoTickers.txt', encoding: 'utf8' };
+    try {
+        let data = fs.readFileSync(cryptoList.filepath, cryptoList.encoding);
+
+        let parsedData = JSON.parse(data);
+        let size = parsedData.length;
+
+        let tickerList = [];
+
+        for (let i = 0; i < size; i++) {
+            //can check for occurences of name and coin name
+            tickerList.push(parsedData[i].symbol);
+            tickerList.push(parsedData[i].name);
+        }
+
+        return tickerList;
+    } catch (e) {
         console.log('Error:', e.stack);
     }
 

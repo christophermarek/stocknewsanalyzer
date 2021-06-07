@@ -8,29 +8,7 @@ const mongoose = require('mongoose');
 const { cryptocurrency } = require('./cryptocurrencyModel');
 dotenv.config();
 
-function generateCryptoList() {
 
-    let cryptoList = { filepath: '../tickers/coingeckoCryptoTickers.txt', encoding: 'utf8' };
-    try {
-        let data = fs.readFileSync(cryptoList.filepath, cryptoList.encoding);
-
-        let parsedData = JSON.parse(data);
-        let size = parsedData.length;
-
-        let tickerList = [];
-
-        for (let i = 0; i < size; i++) {
-            //can check for occurences of name and coin name
-            tickerList.push(parsedData[i].symbol);
-            tickerList.push(parsedData[i].name);
-        }
-
-        return tickerList;
-    } catch (e) {
-        console.log('Error:', e.stack);
-    }
-
-}
 
 async function getFirstArticleId() {
     const { data } = await axios.get(
@@ -298,7 +276,7 @@ async function getThreadCommentsAndPost(threadData, tickerList) {
     }
 }
 
-async function cryptoCurrency() {
+async function dailyCryptoCurrency(cryptoList) {
 
     let dbURI = process.env.MONGO_URI_DEV;
 
@@ -315,10 +293,8 @@ async function cryptoCurrency() {
         })
         .catch((err) => console.log(err));
 
-    //dataset for comparison
-    let cryptoList = generateCryptoList()
     let firstArticleId = await getFirstArticleId();
-    let pagesToSearch = 25;
+    let pagesToSearch = 1;
 
     //DONT COPY WSB ONES, CAN DO THEIR EXECUTOR FUNCTION JUST INSIDE OF HERE,
     //WITH BETTER CODE SPLITTING SINCE NOW I KNOW WHAT TO DO
@@ -335,7 +311,12 @@ async function cryptoCurrency() {
 
     let size = threads.length;
     for (let i = 0; i < size; i++) {
-        getThreadCommentsAndPost(threads[i], cryptoList);
+
+        try{
+            getThreadCommentsAndPost(threads[i], cryptoList);
+        }catch (error){
+            console.log("cc error getting thread coments to post");
+        }
     }
 
 
@@ -345,5 +326,7 @@ async function cryptoCurrency() {
 
 }
 
+module.exports = {
+    dailyCryptoCurrency
+};
 
-cryptoCurrency()
