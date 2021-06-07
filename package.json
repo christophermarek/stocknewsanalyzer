@@ -1,0 +1,21 @@
+{
+  "name": "stocknewsanalyzer",
+  "version": "1.0.0",
+  "description": "Backend hosted on Heroku:\r https://stock-news-analyze.herokuapp.com/",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "commit": "git add *  && git commit -m \"$npm_config_m [skip netlify]\"",
+    "commitProd": "git add *  && git commit -m \"$npm_config_m\"" 
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/christophermarek/stocknewsanalyzer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/christophermarek/stocknewsanalyzer/issues"
+  },
+  "homepage": "https://github.com/christophermarek/stocknewsanalyzer#readme"
+}
