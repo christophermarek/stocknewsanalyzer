@@ -40,31 +40,58 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists, dataSourceSelected 
         setFixedHistoricalPrices(tempHistoricalPrices);
     }
 
+    function fixCryptoHistoricalPrices() {
+        console.log(`fixing ${selectedTicker} historical prices`);
+
+        let size = historicalPrices.prices.length;
+
+        let tempHistoricalPrices: Array<areaSeriesType> = [];
+        for (let i = 0; i < size; i++) {
+            tempHistoricalPrices[i] = { time: historicalPrices.prices[i][0] / 1000, value: Number(historicalPrices.prices[i][1]) };
+        }
+        setFixedHistoricalPrices(tempHistoricalPrices);
+    }
+
+    function fixCryptoVolumeData() {
+        console.log(`fixing ${selectedTicker} volume data`);
+
+        let size = historicalPrices.prices.length;
+
+        let tempVolumeData: Array<areaSeriesType> = [];
+        for (let i = 0; i < size; i++) {
+            tempVolumeData[i] = { time: historicalPrices.total_volumes[i][0] / 1000, value: Number(historicalPrices.total_volumes[i][1]) };
+        }
+        setFixedVolumeData(tempVolumeData);
+    }
+
     function fetchCryptoHistoricalPrices(startDate: Date, endDate: Date, selectedTicker: string) {
         console.log(`fetching historical prices for ${selectedTicker}`);
 
         //get coin id
 
-        const CoinGeckoClient:any = new CoinGecko();
+        const CoinGeckoClient: any = new CoinGecko();
 
-        var func = async () => {
+        let func = async () => {
             let response = await CoinGeckoClient.coins.list();
             //console.log(response.data);
 
             let size = response.data.length;
 
-            for(let i = 0; i < size; i++){
-                if(response.data[i].symbol == selectedTicker || response.data[i].name == selectedTicker){
-
+            for (let i = 0; i < size; i++) {
+                if (response.data[i].symbol == selectedTicker || response.data[i].name == selectedTicker) {
                     //need to convert dates to unix time to pass
                     //correct id found, can do other api call out of this loop
-                    let data = await CoinGeckoClient.coins.fetchMarketChartRange('bitcoin', {
-                        from: 1392577232,
-                        to: 1422577232,
+                    let data = await CoinGeckoClient.coins.fetchMarketChartRange(response.data[i].id, {
+                        from: startDate.getTime() / 1000,
+                        to: endDate.getTime() / 1000,
+                        vs_currency: 'usd',
                         include_market_cap: true,
                         include_24hr_change: true,
-                      });
+                    });
+                    //console.log(`id: ${response.data[i].id} from ${startDate.getTime()} to ${endDate.getTime()} for ticker `)
                     //set data, 
+                    //console.log(data);
+                    setHistoricalPrices(data.data);
                     //then break
                     break;
                 }
@@ -238,12 +265,17 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists, dataSourceSelected 
     if (historicalPrices != undefined && fixedHistoricalPrices == undefined) {
         if (dataSourceSelected == 'wsb') {
             fixHistoricalPrices();
+        } else {
+            //console.log(historicalPrices.prices);
+            fixCryptoHistoricalPrices();
         }
     }
 
     if (historicalPrices != undefined && fixedVolumeData == undefined) {
         if (dataSourceSelected == 'wsb') {
             fixVolumeData();
+        } else {
+            fixCryptoVolumeData();
         }
     }
 
@@ -275,12 +307,13 @@ const SingleTickerData: React.FC<Props> = ({ frequencyLists, dataSourceSelected 
                         </div>
                     </div>
 
-                    <SingleTickerQueries
-                        selectedTicker={selectedTicker}
-                        frequencyOverTime={frequencyOverTime}
-                        historicalPrices={historicalPrices}
-                    />
-
+                    {dataSourceSelected == 'wsb' &&
+                        <SingleTickerQueries
+                            selectedTicker={selectedTicker}
+                            frequencyOverTime={frequencyOverTime}
+                            historicalPrices={historicalPrices}
+                        />
+                    }
                 </>
             }
 
