@@ -1,5 +1,5 @@
 scraperFolderName, active(0,1)
-bnnmarketcall, 0
-wsb, 0
-cryptocurrency, 0
+bnnmarketcall, 1
+wsb, 1
+cryptocurrency, 1
 wsbRealtimeData, 1

@@ -34,23 +34,101 @@ async function getCommentIds(threadId) {
     }
 }
 
+//takes an array of ids
+async function getRealTimeCommentText(threadId, unloadedIds) {
+
+    const timer = ms => new Promise(res => setTimeout(res, ms))
+
+    let counter = 0;
+    let maxTries = 100;
+
+    let size = unloadedIds.length;
+
+    let commentData = [];
+
+    console.log(`wsb realtime fetching comment text for thread ${threadId}`);
+    while (counter < size) {
+        try {
+            const { data } = await axios.get(
+                `https://www.reddit.com/comments/${threadId}//${unloadedIds[counter]}/.json`
+            );
+
+            //data will be the single comment thread
+            //console.log(`https://www.reddit.com/comments/${threadId}//${unloadedIds[counter]}/.json`);
+
+            if (data[1].data.children.length == 0) {
+                //comment mustve been deleted, or unable to fetch. if you check url it wont show
+                //console.log("no comment");
+                counter++;
+                continue;
+            }
+
+            let parentComment = data[1].data.children[0].data;
+            //console.log(data[1].data.children[0].data);
+
+            commentData[parentComment.id] = parentComment.body;
+            //console.log(commentData[parentComment.id]);
+            if (parentComment.replies.data == undefined) {
+                //console.log("no replies to comment");
+            } else {
+                let replies = parentComment.replies.data.children
+
+                //console.log(replies)
+                let sizeReplies = replies.length;
+                for (let i = 0; i < sizeReplies; i++) {
+                    commentData[replies[i].data.id] = replies[i].data.body;
+                }
+                //dont think itll reach here if theres an error
+            }
+
+            counter++;
+        } catch (error) {
+            console.log(error);
+            const rndInt = Math.floor(Math.random() * 30) + 1;
+            counter++;
+            console.log(`wsb Error fetching comment=text for ${threadId}, rate limited, at comment: ${counter} out of ${size} waiting ${rndInt} seconds to try again on`);
+            await timer(rndInt * 1000);
+        }
+    }
+    return commentData;
+
+}
+
 async function getRealTimeCommentIds(threadId) {
     const timer = ms => new Promise(res => setTimeout(res, ms))
 
     let counter = 0;
     let maxTries = 100;
+
+    //where comment id is key and value = text;
+    let commentData = {};
+    let unloadedIds = [];
     console.log(`wsb realtime fetching thread ${threadId}`);
     while (counter < maxTries) {
         try {
             const { data } = await axios.get(
                 `https://old.reddit.com/r/wallstreetbets/comments/${threadId}.json`
             );
-            console.log(`https://old.reddit.com/r/wallstreetbets/comments/${threadId}.json`);
-
-            console.log(data.length);
-            return data;
-
+            //console.log(`https://old.reddit.com/r/wallstreetbets/comments/${threadId}.json`);
+            //console.log(data[1].data.children);
+            let commentArray = data[1].data.children;
+            let size = commentArray.length;
+            for (let i = 0; i < size; i++) {
+                if (commentArray[i].kind = 't1') {
+                    let id = commentArray[i].data.id;
+                    let text = commentArray[i].data.body;
+                    if (text != undefined) {
+                        commentData[id] = text;
+                    }
+                }
+                if (commentArray[i].kind = 'more') {
+                    unloadedIds = commentArray[i].data.children;
+                }
+            }
+            return { commentData: commentData, unloadedIds: unloadedIds };
         } catch (error) {
+            console.log(error);
+            counter++;
             const rndInt = Math.floor(Math.random() * 30) + 1;
             console.log(`wsb Error fetching ids' for ${threadId}, rate limited probably at counter: ${counter} waiting ${rndInt} seconds to try again on`);
             await timer(rndInt * 1000);
@@ -78,7 +156,6 @@ async function getCommentText(commentIdStrings) {
                 //console.log(`i: ${i} comment number: ${j} ${data.data[j].body}`);
                 commentTextList.push({ createdAtUTC: data.data[j].created_utc, text: data.data[j].body });
             }
-            counter = counter + 1;
         } catch (error) {
             const rndInt = Math.floor(Math.random() * 30) + 1;
             console.log(`wsb Error fetching commentText, rate limited probably at counter: ${counter} going to ${sizeCommentIds}, waiting ${rndInt} seconds to try again on, thread ${commentIdStrings.length}`);
@@ -96,10 +173,8 @@ async function getRedditThreads(threadId) {
     const { data } = await axios.get(
         `https://old.reddit.com/r/wallstreetbets/search?q=flair%3ADaily+Discussion&restrict_sr=on&sort=relevance&t=all&after=t3_${threadId}`
     );
-
     const $ = cheerio.load(data);
     let submissionUrls = [];
-
 
     $('a').each((i, link) => {
         //console.log(link.attribs.href);
@@ -111,20 +186,13 @@ async function getRedditThreads(threadId) {
                 let month = splitForDate[4];
                 let day = splitForDate[5];
                 let year = splitForDate[6].slice(0, -1);
-
                 let monthArray = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
                 //var time1 = new Date(arr1[0], arr1[1]-1, arr1[2]); // year, month, day
                 let date = new Date(year, monthArray.indexOf(month.toUpperCase()), day);
                 submissionUrls.push({ articleId: href, date: date });
             }
-
         }
-
     });
-
-    //console.log(submissionUrls);
-
-
     return submissionUrls;
 }
 
@@ -139,6 +207,7 @@ async function wsbScraper(threadData, tickerList, isRealTime) {
     console.log("wsb fetching comment ids");
     let commentIds;
     if (isRealTime) {
+        //this returns an object that is key comment id's and value comment text
         commentIds = await getRealTimeCommentIds(threadId);
     } else {
         commentIds = await getCommentIds(threadId);
@@ -148,7 +217,7 @@ async function wsbScraper(threadData, tickerList, isRealTime) {
     let foundCurrentEntry;
     if (!isRealTime) {
         foundCurrentEntry = await wsb.findOne({ date: threadDate });
-        if (foundCurrentEntry != null) {
+        if (foundCurrentEntry != null && foundCurrentEntry.threadId != undefined) {
             console.log("wsb thread already posted to db");
             if (foundCurrentEntry.numComments >= commentIds.length) {
                 console.log("cc duplicate thread");
@@ -160,60 +229,91 @@ async function wsbScraper(threadData, tickerList, isRealTime) {
     }
 
 
+    //skip whole section if realtime
     //the comment id string must be less than 2048 per request or the server wont be able to handle it
     //i got a 414 error and im just assuming 2048 because that is url length limit of most browsers
     let commentIdStrings = [];
     let commentIdString = "";
-
-    for (let i = 0; i < commentIds.length; i++) {
-        //max url length is 2048, most of the time
-        if (commentIdString.length > 2040) {
-            //del last comma
-            if (commentIdString.charAt(commentIdString.length - 1) == ",") {
-                commentIdString = commentIdString.slice(0, -1);
+    if (!isRealTime) {
+        for (let i = 0; i < commentIds.length; i++) {
+            //max url length is 2048, most of the time
+            if (commentIdString.length > 2040) {
+                //del last comma
+                if (commentIdString.charAt(commentIdString.length - 1) == ",") {
+                    commentIdString = commentIdString.slice(0, -1);
+                }
+                commentIdStrings.push(commentIdString);
+                commentIdString = "";
             }
-            commentIdStrings.push(commentIdString);
-            commentIdString = "";
-        }
 
-        //no commma last line
-        if (i == commentIds.length - 1) {
-            commentIdString += commentIds[i];
-        } else {
-            commentIdString += commentIds[i] + ",";
+            //no commma last line
+            if (i == commentIds.length - 1) {
+                commentIdString += commentIds[i];
+            } else {
+                commentIdString += commentIds[i] + ",";
+            }
         }
     }
 
     console.log("wsb getting comment texts");
-
-    let commentTextList = await getCommentText(commentIdStrings);
-
+    let commentTextList;
+    if (isRealTime) {
+        //commentTextList = await getRealTimeCommentText(threadId, commentIds.unloadedIds);
+        //commentTextList = { ...commentIds.commentData, commentTextList }
+        commentTextList = commentIds.commentData;
+        console.log(Object.keys(commentTextList).length);
+    } else {
+        commentTextList = await getCommentText(commentIdStrings);
+    }
+    //console.log(commentTextList)
     console.log("wsb fetched comment texts");
 
 
     //then compare keywords to a stockkeywords list
     let frequencyList = {}
 
-    //Then save the frequency of each keyword for that thread with the date of the thread & date of parse
-    let sizeOfCommentList = commentTextList.length;
-    console.log("wsb generating frequency list")
-    for (let i = 0; i < sizeOfCommentList; i++) {
-        //regex is to split strings but not include whitespace
-        let tokens = commentTextList[i].text.split(" ");
-        for (let j = 0; j < tokens.length; j++) {
-            let token = tokens[j].toLowerCase().trim();
-            if (token.charAt(0) == '$') {
-                token = token.slice(1);
-            }
-            if (tickerList.includes(token)) {
-                if (frequencyList[token] == undefined) {
-                    frequencyList[token] = 1;
-                } else {
-                    frequencyList[token] += 1;
+    if (isRealTime) {
+        const keys = Object.keys(commentTextList);
+
+        // iterate over object
+        keys.forEach((key, index) => {
+            let tokens = commentTextList[key].split(" ");
+            for (let j = 0; j < tokens.length; j++) {
+                let token = tokens[j].toLowerCase().trim();
+                if (token.charAt(0) == '$') {
+                    token = token.slice(1);
+                }
+                if (tickerList.includes(token)) {
+                    if (frequencyList[token] == undefined) {
+                        frequencyList[token] = 1;
+                    } else {
+                        frequencyList[token] += 1;
+                    }
                 }
             }
-        }
+        });
+    } else {
+        //Then save the frequency of each keyword for that thread with the date of the thread & date of parse
+        let sizeOfCommentList = commentTextList.length;
+        console.log("wsb generating frequency list")
+        for (let i = 0; i < sizeOfCommentList; i++) {
+            //regex is to split strings but not include whitespace
+            let tokens = commentTextList[i].text.split(" ");
+            for (let j = 0; j < tokens.length; j++) {
+                let token = tokens[j].toLowerCase().trim();
+                if (token.charAt(0) == '$') {
+                    token = token.slice(1);
+                }
+                if (tickerList.includes(token)) {
+                    if (frequencyList[token] == undefined) {
+                        frequencyList[token] = 1;
+                    } else {
+                        frequencyList[token] += 1;
+                    }
+                }
+            }
 
+        }
     }
 
     //console.log(frequencyList);
@@ -240,7 +340,7 @@ async function wsbScraper(threadData, tickerList, isRealTime) {
         }
     } else {
         try {
-            if (foundCurrentEntry != null) {
+            if (foundCurrentEntry != null && threadId != undefined) {
                 console.log("wsb overwritting data");
                 foundCurrentEntry = dbData;
                 foundCurrentEntry.save();
@@ -417,6 +517,28 @@ async function dailyScrape(tickerList) {
 }
 
 async function wsbRealtimeData(tickerList) {
+    let dbURI = process.env.MONGO_URI_DEV;
+
+    // Connect to Mongo
+    mongoose
+        .connect(dbURI, {
+            useNewUrlParser: true,
+            useCreateIndex: true,
+            useUnifiedTopology: true,
+            useFindAndModify: false,
+        })
+        .then(() => {
+            console.log('wsb MongoDB Connected...');
+            realtimeWsb.deleteMany({}, function (err) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log('success deleting all entries');
+                }
+            }
+            );
+        })
+        .catch((err) => console.log(err));
 
     console.log("wsb real time data starting");
 
@@ -460,8 +582,8 @@ async function wsbRealtimeData(tickerList) {
     //verify date fetched is correct 
     //console.log(articleId);
     console.log("wsb realtime found article for today");
-    //5 is 5 minutes
-    let interval = 5 * 60000;
+    //15 is 15 minutes
+    let interval = 15 * 60000;
 
     let threadData = { articleId: articleId, date: currentDay };
     wsbScraper(threadData, tickerList, true);
