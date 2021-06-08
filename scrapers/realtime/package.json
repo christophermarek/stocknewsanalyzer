@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "apos-to-lex-form": "^1.0.5",
     "axios": "^0.21.1",
-    "natural": "^5.0.3"
+    "natural": "^5.0.3",
+    "stopword": "^1.0.7"
   }
 }
