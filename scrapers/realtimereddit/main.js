@@ -1,40 +1,53 @@
+const axios = require('axios');
 
-//returns object with array and id of last thread of page
-async function getCommentsFirstPage(subreddit) {
+//returns object with key id and value text
+async function getComments(subreddit) {
 
     const { data } = await axios.get(
         `https://old.reddit.com/r/${subreddit}/comments.json`
     );
-    console.log(`https://old.reddit.com/r/${subreddit}/comments.json`);
+    //console.log(`https://old.reddit.com/r/${subreddit}/comments.json`);
+    let comments = data.data.children;
+    //console.log(comments)
 
+    let commentsObj = {};
+    let size = comments.length;
+    for (let i = 0; i < size; i++) {
+        //console.log(comments[i].data.body);
+        commentsObj[comments[i].data.id] = comments[i].data.body
+    }
+    return
 
 }
 
-//returns array of comment text and id of last thread of page 
-async function getCommentsAfterFirstPage(subreddit, threadId) {
 
-    const { data } = await axios.get(
-        `https://old.reddit.com/r/CryptoCurrency/search?q=flair%3A%22OFFICIAL%22&restrict_sr=on&sort=new&t=all&after=t3_${threadId}`
-    );
-
-
-}
-
-function realTimeData() {
+async function realTimeData() {
 
     let subreddits = ['wallstreetbets', 'cryptocurrency'];
 
-    getCommentsFirstPage(subreddits[0]);
-    
-    //then start interval
-    /*
-    let interval = 15 * 60000;
+    let comments = {};
 
-    setInterval(function run() {
+    let count = 0;
+    let timesToRun = 4;
+    let stop = setInterval(async function run() {
         console.log("running interval");
-        wsbScraper(threadData, tickerList, true);
-    }, interval);
-    */
+        let firstPage = await getComments(subreddits[0]);
+        comments = {...comments, ...firstPage}
+        count++;
+    }, 15000);
+    
+    if(count >= timesToRun){
+        clearInterval(stop);
+        return comments;
+    }
 }
 
-realTimeData();
+async function realTimeDataHandler() {
+    setInterval(async function run() {
+        let comments = await realTimeData();
+
+        now here i analyze Text.
+    }, 60000);
+}
+
+realTimeDataHandler();
