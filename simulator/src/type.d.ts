@@ -16,6 +16,10 @@ interface simulatorProps {
 
 }
 
+interface realtimedataProps{
+
+}
+
 interface bnnmarketcallObject {
   bnnmarketcallObject: bnnmarketcall[]
 }
@@ -79,6 +83,8 @@ type wsbApiDataType = {
   status: string
   wsbFrequencyLists?: wsbFrequencyListItem[]
 }
+
+
 
 type cryptoCurrencyApiDataType = {
   message: string

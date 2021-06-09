@@ -4,6 +4,7 @@ import News from "./news/News";
 import Default from "./Default";
 import FrequencyCharts from "./simulator/FrequencyCharts";
 import Simulator from "./simulator/Simulator";
+import RealTimeData from "./realtimedata/RealTimeData";
 import ReactGA from 'react-ga';
 import { getBnnMarketCalls, getCurrentData, getCurrentPrice, getHistoricalPrices } from './API'
 
@@ -41,6 +42,9 @@ function App() {
       case '/news':
         setSelectedNavItem('news');
         break;
+      case '/realtimedata':
+        setSelectedNavItem('realtimedata');
+        break;
       case '/frequencycharts':
         setSelectedNavItem('frequencycharts');
         break;
@@ -67,6 +71,7 @@ function App() {
           <nav className="navBar">
             <Link className={"navBtn" + (selectedNavItem == "home" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("home")} to="/">Home</Link>
             <Link className={"navBtn" + (selectedNavItem == "news" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("news")} to="/news">News</Link>
+            <Link className={"navBtn" + (selectedNavItem == "realtimedata" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("realtimedata")} to="/realtimedata">Real Time</Link>
             <Link className={"navBtn" + (selectedNavItem == "simulator" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("simulator")} to="/simulator">Simulator</Link>
             <Link className={"navBtn" + (selectedNavItem == "frequencycharts" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("frequencycharts")} to="/frequencycharts">Frequency Charts</Link>
           </nav>
@@ -80,6 +85,9 @@ function App() {
             </Route>
             <Route path="/frequencycharts">
               <FrequencyCharts />
+            </Route>
+            <Route path="/realtimedata">
+              <RealTimeData />
             </Route>
             <Route path="/">
               <Default />
