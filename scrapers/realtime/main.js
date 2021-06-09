@@ -38,6 +38,7 @@ const realTimeData = async (subreddit) => {
 
         let count = 0;
         //runs every 1/8 min, pls dont rate limit me
+        //25 comments every 1/8 is 200 comments/min
         let timesToRun = 8;
         let stop = setInterval(async function run() {
             //console.log("running interval");
@@ -123,7 +124,7 @@ async function realTimeDataHandler(subreddit, tickerList) {
     //console.log(listToCompare);
 
     //so this will post to db once a minute
-    const durInMinutes = 100;
+    const durInMinutes = 10000;
     for (let i = 0; i < durInMinutes; i++) {
         let comments;
         try {

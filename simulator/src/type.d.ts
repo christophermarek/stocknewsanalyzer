@@ -16,6 +16,11 @@ interface simulatorProps {
 
 }
 
+interface toggleTickersControlProps {
+  type: string
+  realtimedata: realtimeDataItem[]
+}
+
 interface realtimedataProps {
 
 }

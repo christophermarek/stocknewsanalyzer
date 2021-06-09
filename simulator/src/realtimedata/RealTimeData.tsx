@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getRealTimeCrypto, getRealTimeWsb } from "../API";
 import LineChart from "../charts/LineChart";
+import ToggleTickersControl from "./ToggleTickersControl";
 
 type Props = realtimedataProps;
 
@@ -32,22 +33,36 @@ const RealTimeData: React.FC<Props> = () => {
 
         let size = dataset.length;
         let labels: string[] = [];
+
+        let datasets: number[] = [];
+        let datasets2: number[] = [];
         //generate list of dates
         for (let i = 0; i < size; i++) {
             let d = new Date(dataset[i].createdAt);
-            labels.push(d.toLocaleString('default', { month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' }));
+            labels.push(d.toLocaleString('default', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
+            let freqList = dataset[i].frequencyList;
+            datasets.push(type == 'wsb' ? freqList['gme'] : freqList['btc']);
+            datasets2.push(type == 'wsb' ? freqList['amc'] : freqList['eth']);
         }
 
-        console.log(labels);
         const dataToRender = {
             labels: labels,
             datasets: [
                 {
-                    label: 'Frequency over time, 1 minute interval chart',
-                    data: [12, 19, 3, 5, 2, 3],
+                    key: 1,
+                    label: 'btc',
+                    data: datasets,
                     fill: false,
                     backgroundColor: 'rgb(255, 99, 132)',
                     borderColor: 'rgba(255, 99, 132, 0.2)',
+                },
+                {
+                    key: 2,
+                    label: 'eth',
+                    data: datasets2,
+                    fill: false,
+                    backgroundColor: 'rgb(100, 59, 132)',
+                    borderColor: 'rgba(100, 59, 132, 0.2)',
                 },
             ],
         }
@@ -71,13 +86,19 @@ const RealTimeData: React.FC<Props> = () => {
                 <p>Loading Realtime WSB Data</p>
             }
             {realtimeWsb != undefined &&
-                renderRealtimeChart('wsb')
+                <>
+                    <ToggleTickersControl type={'wsb'} realtimedata={realtimeWsb}/>
+                    {renderRealtimeChart('wsb')}
+                </>
             }
             {realtimeCrypto == undefined &&
                 <p>Loading Realtime Crypto Data</p>
             }
             {realtimeCrypto != undefined &&
-                renderRealtimeChart('crypto')
+                <>
+                    <ToggleTickersControl type={'crypto'} realtimedata={realtimeCrypto} />
+                    {renderRealtimeChart('crypto')}
+                </>
             }
         </div>
 
