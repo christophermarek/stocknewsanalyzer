@@ -25,9 +25,8 @@ async function getComments(subreddit) {
 }
 
 //this function collects comments for 1 min, 0.25 min a time
-const realTimeData = async () => {
+const realTimeData = async (subreddit) => {
 
-    let subreddits = ['wallstreetbets', 'cryptocurrency'];
     return new Promise((resolve, reject) => {
         let comments = {};
 
@@ -36,7 +35,7 @@ const realTimeData = async () => {
         let timesToRun = 8;
         let stop = setInterval(async function run() {
             //console.log("running interval");
-            let firstPage = await getComments(subreddits[0]);
+            let firstPage = await getComments(subreddit);
             comments = { ...comments, ...firstPage }
 
             count++;
@@ -84,7 +83,9 @@ const cleanComment = (dirtyWord) => {
     return filteredReview;
 }
 
-async function realTimeDataHandler(tickerList, cryptoList) {
+async function realTimeDataHandler(subreddit, tickerList) {
+
+    console.log(`real time ${subreddit} data scraper started`);
 
     let dbURI = process.env.MONGO_URI_DEV;
 
@@ -98,7 +99,8 @@ async function realTimeDataHandler(tickerList, cryptoList) {
         })
         .then(() => {
             //DELETE ALL ENTRIES BECAUSE THIS WILL MAKE 1440 DOCUMENTS IF STARTED AT THE BEGGINING OF THE DAY
-            console.log('wsb MongoDB Connected...');
+            console.log('MongoDB Connected...');
+            /*
             realtimeWsb.deleteMany({}, function (err) {
                 if (err) {
                     console.log(err)
@@ -107,17 +109,23 @@ async function realTimeDataHandler(tickerList, cryptoList) {
                 }
             }
             );
+            */
         })
         .catch((err) => console.log(err));
 
     let listToCompare = tickerList;
     //console.log(listToCompare);
-    console.log("real time data scraper started");
 
     //so this will post to db once a minute
     const durInMinutes = 100;
     for (let i = 0; i < durInMinutes; i++) {
-        let comments = await realTimeData();
+        let comments;
+        try {
+            comments = await realTimeData(subreddit);
+        } catch (error) {
+            console.log(error);
+            return;
+        }
         //sentiment analysis without messing up the tickers
         //trying to clean text before adding to frequency list
         let frequencyList = {};
@@ -141,23 +149,43 @@ async function realTimeDataHandler(tickerList, cryptoList) {
         }
         //console.log(frequencyList);
         //console.log(sentimentList);
-        //dont do sentiment analysis if word isnt in frequency list, then create object
-        //maybe just use a new model like create a new one cause the old one is a mess
-        realtimeWsb.create({frequencyList: frequencyList, sentimentList: sentimentList}, function (err, entry) {
-            if(err){
-                console.log(err)
-            }else{
-                //empty callback
-                console.log("wsb realtime successfully pushed to db");
-            }
-            
-        });
+
+        if (subreddit == 'wallstreetbets') {
+            realtimeWsb.create({ frequencyList: frequencyList, sentimentList: sentimentList }, function (err, entry) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    //empty callback
+                    console.log("wsb realtime successfully pushed to db");
+                }
+
+            });
+        } else if (subreddit == 'cryptocurrency') {
+            realtimeCrypto.create({ frequencyList: frequencyList, sentimentList: sentimentList }, function (err, entry) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    //empty callback
+                    console.log("cryptocurrency realtime successfully pushed to db");
+                }
+
+            });
+        }
+
         console.log(`posted to db, at iteration num: ${i}`);
     }
 
     //stops when dyno gets reset every 24 hrs.
 }
 
+
+async function realtimeExecutor(tickerList, cryptoList) {
+    let subreddits = ['wallstreetbets', 'cryptocurrency'];
+    realTimeDataHandler(subreddits[0], tickerList);
+    realTimeDataHandler(subreddits[1], cryptoList);
+
+}
+
 module.exports = {
-    realTimeDataHandler
+    realtimeExecutor
 };

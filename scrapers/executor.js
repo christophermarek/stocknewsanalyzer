@@ -3,7 +3,7 @@ const readline = require('readline');
 const { bnnmarketcallscript } = require('./bnnmarketcall/server.js');
 const { dailyScrape, wsbRealtimeData } = require('./wsb/wsb.js');
 const { dailyCryptoCurrency } = require('./cryptocurrency/cryptocurrency.js');
-const { realTimeDataHandler } = require('./realtime/main.js');
+const { realtimeExecutor } = require('./realtime/main.js');
 /*
     Scraper executor file
 
@@ -27,7 +27,7 @@ function executeScript(scriptName) {
             wsbRealtimeData(generateTickerList());
             break;
         case 'realtimeData':
-            realTimeDataHandler(generateTickerList(), generateCryptoList());
+            realtimeExecutor(generateTickerList(), generateCryptoList());
             break;
         default:
             console.log("no script found for passed script " + scriptName);
