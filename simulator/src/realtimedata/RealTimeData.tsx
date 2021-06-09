@@ -12,6 +12,8 @@ const RealTimeData: React.FC<Props> = () => {
     const [selectedCryptoTickerList, setSelectedCryptoTickerList] = useState<Array<string>>([]);
     const [selectedWsbTickerList, setSelectedWsbList] = useState<Array<string>>([]);
     const [colorList, setColorList] = useState<any>({});
+    const [hideRealTimeWsb, setHideRealTimeWsb] = useState<boolean>(false);
+    const [hideRealTimeCrypto, setHideRealTimeCrypto] = useState<Boolean>(false);
 
     useEffect(() => {
         async function loadFromServerIntoState() {
@@ -66,7 +68,7 @@ const RealTimeData: React.FC<Props> = () => {
         let datasets: object[] = [];
 
         for (const [key, value] of Object.entries(tempData)) {
-            
+
             let data = {
                 key: key,
                 label: key,
@@ -95,13 +97,20 @@ const RealTimeData: React.FC<Props> = () => {
 
     return (
         <div className="realtime">
+            <input type="button" className="subButton" value={hideRealTimeWsb == false ? 'Hide Realtime WSB' : 'Expand Realtime WSB'} onClick={() => setHideRealTimeWsb(!hideRealTimeWsb)} />
+            <input type="button" className="subButton" value={hideRealTimeCrypto == false ? 'Hide Realtime Crypto' : 'Expand Realtime Crypto'} onClick={() => setHideRealTimeCrypto(!hideRealTimeCrypto)} />
+
             {realtimeWsb == undefined &&
                 <p>Loading Realtime WSB Data</p>
             }
             {realtimeWsb != undefined &&
                 <>
-                    <ToggleTickersControl type={'wsb'} realtimedata={realtimeWsb} selectedTickerList={selectedWsbTickerList} setSelectedTickerList={setSelectedWsbList} colorList={colorList} setColorList={setColorList} />
-                    {renderRealtimeChart('wsb')}
+                    {hideRealTimeWsb == false &&
+                        <>
+                            <ToggleTickersControl type={'wsb'} realtimedata={realtimeWsb} selectedTickerList={selectedWsbTickerList} setSelectedTickerList={setSelectedWsbList} colorList={colorList} setColorList={setColorList} />
+                            {renderRealtimeChart('wsb')}
+                        </>
+                    }
                 </>
             }
             {realtimeCrypto == undefined &&
@@ -109,8 +118,12 @@ const RealTimeData: React.FC<Props> = () => {
             }
             {realtimeCrypto != undefined &&
                 <>
-                    <ToggleTickersControl type={'crypto'} realtimedata={realtimeCrypto} selectedTickerList={selectedCryptoTickerList} setSelectedTickerList={setSelectedCryptoTickerList} colorList={colorList} setColorList={setColorList}/>
-                    {renderRealtimeChart('crypto')}
+                    {hideRealTimeCrypto == false &&
+                        <>
+                            <ToggleTickersControl type={'crypto'} realtimedata={realtimeCrypto} selectedTickerList={selectedCryptoTickerList} setSelectedTickerList={setSelectedCryptoTickerList} colorList={colorList} setColorList={setColorList} />
+                            {renderRealtimeChart('crypto')}
+                        </>
+                    }
                 </>
             }
         </div>
