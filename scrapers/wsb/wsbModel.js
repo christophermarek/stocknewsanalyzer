@@ -12,9 +12,7 @@ const wsbSchema = new Schema({
 );
 
 const wsb = mongoose.model('wsb', wsbSchema);
-const realtimeWsb = mongoose.model('wsbrealtime', wsbSchema);
 
 module.exports = {
-    wsb,
-    realtimeWsb
+    wsb
 };

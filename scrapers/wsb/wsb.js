@@ -6,7 +6,7 @@ const readline = require('readline');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const mongoose = require('mongoose');
-const { wsb, realtimeWsb } = require('./wsbModel');
+const { wsb } = require('./wsbModel');
 
 dotenv.config();
 

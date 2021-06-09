@@ -3,6 +3,8 @@ import { getbnnmarketcallData } from "../controllers/bnnmarketcall/index"
 import { getCurrentDataController, getCurrentPriceController, getHistoricalPricesController } from "../controllers/yahooStockPrices/index"
 import { getAllWsbFrequencyLists, getWsbFrequencyListAtDate } from "../controllers/wsb/index"
 import { getAllCryptoCurrencyFrequencyLists, getCryptoCurrencyFrequencyListAtDate } from "../controllers/cryptocurrency/index"
+import { getAllRealTimeCryptoData, getAllRealTimeWsb } from "../controllers/realtime/index"
+
 
 const router: Router = Router()
 
@@ -16,5 +18,8 @@ router.get("/wsb/singleFrequencyList/:date", getWsbFrequencyListAtDate);
 
 router.get("/cryptocurrency/allFrequencyLists", getAllCryptoCurrencyFrequencyLists)
 router.get("/cryptocurrency/singleFrequencyList/:date", getCryptoCurrencyFrequencyListAtDate);
+
+router.get("/realtime/crypto", getAllRealTimeCryptoData);
+router.get("/realtime/wsb", getAllRealTimeWsb);
 
 export default router;

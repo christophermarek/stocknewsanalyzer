@@ -5,7 +5,9 @@
   "main": "executor.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node executor.js"
+    "start": "node executor.js",
+    "pushscraper": "git add * && git commit -m \"push heroku\" && git push heroku master"
+
   },
   "author": "",
   "license": "ISC",
