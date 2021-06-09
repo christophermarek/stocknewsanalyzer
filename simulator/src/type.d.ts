@@ -16,7 +16,7 @@ interface simulatorProps {
 
 }
 
-interface realtimedataProps{
+interface realtimedataProps {
 
 }
 
@@ -44,18 +44,18 @@ interface allFrequencyDataProps {
   frequencyLists: any
 }
 
-interface wordFilterControlsProps{
+interface wordFilterControlsProps {
   symbolsToFilter: String[]
   setSymbolsToFilter: any
 }
 
-interface SingleTickerQueriesProps{
+interface SingleTickerQueriesProps {
   selectedTicker: any
   frequencyOverTime: any
   historicalPrices: any
 }
 
-interface selectDayControlsProps{
+interface selectDayControlsProps {
   frequencyLists: any
   setSelectedOneDay: any
   selectedOneDay: any
@@ -84,7 +84,18 @@ type wsbApiDataType = {
   wsbFrequencyLists?: wsbFrequencyListItem[]
 }
 
-
+type realtimeDataItem = {
+  _id: string,
+  frequencyList: any
+  sentimentList: any
+  createdAt: any
+  updatedAt: any
+}
+type realtimeApiType = {
+  message: string
+  status: string
+  realtimeList: realtimeDataItem
+}
 
 type cryptoCurrencyApiDataType = {
   message: string

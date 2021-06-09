@@ -13,7 +13,7 @@ Api routes:
 - /cryptocurrency/allFrequencyLists
 - /cryptocurrency/singleFrequencyList/:date
 - /realtime/crypto
--/realtime/wsb
+- /realtime/wsb
 <br>
 Frontend hosted on Netlify:
 

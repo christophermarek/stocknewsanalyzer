@@ -19,12 +19,23 @@ export const getBnnMarketCalls = async (): Promise<AxiosResponse<ApiDataType>> =
     }
 }
 
-export const getRealTimeCrypto = async (): Promise<AxiosResponse<ApiDataType>> => {
+export const getRealTimeCrypto = async (): Promise<AxiosResponse<realtimeApiType>> => {
     try{
-        const bnnmarketcalls: AxiosResponse<ApiDataType> = await axios.get(
-            baseUrl + "/bnnmarketcall"
+        const realtimeData: AxiosResponse<realtimeApiType> = await axios.get(
+            baseUrl + "/realtime/crypto"
         )
-        return bnnmarketcalls
+        return realtimeData
+    }catch (error){
+        throw new Error(error)
+    }
+}
+
+export const getRealTimeWsb = async (): Promise<AxiosResponse<realtimeApiType>> => {
+    try{
+        const realtimeData: AxiosResponse<realtimeApiType> = await axios.get(
+            baseUrl + "/realtime/wsb"
+        )
+        return realtimeData
     }catch (error){
         throw new Error(error)
     }
