@@ -9,6 +9,9 @@ const RealTimeData: React.FC<Props> = () => {
 
     const [realtimeCrypto, setRealTimeCrypto] = useState<any>();
     const [realtimeWsb, setRealTimeWsb] = useState<any>();
+    const [selectedCryptoTickerList, setSelectedCryptoTickerList] = useState<Array<string>>([]);
+    const [selectedWsbTickerList, setSelectedWsbList] = useState<Array<string>>([]);
+    const [colorList, setColorList] = useState<any>({});
 
     useEffect(() => {
         async function loadFromServerIntoState() {
@@ -29,44 +32,56 @@ const RealTimeData: React.FC<Props> = () => {
     function renderRealtimeChart(type: string) {
 
         let dataset: realtimeDataItem[];
+        let tickersToChart: string[];
         type == 'wsb' ? dataset = realtimeWsb : dataset = realtimeCrypto;
+        type == 'wsb' ? tickersToChart = selectedWsbTickerList : tickersToChart = selectedCryptoTickerList;
 
         let size = dataset.length;
         let labels: string[] = [];
 
-        let datasets: number[] = [];
-        let datasets2: number[] = [];
+        //let datasets: number[] = [];
+        //let datasets2: number[] = [];
+        let tempData: { [key: string]: [number] } = {};
+
         //generate list of dates
         for (let i = 0; i < size; i++) {
             let d = new Date(dataset[i].createdAt);
             labels.push(d.toLocaleString('default', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
             let freqList = dataset[i].frequencyList;
-            datasets.push(type == 'wsb' ? freqList['gme'] : freqList['btc']);
-            datasets2.push(type == 'wsb' ? freqList['amc'] : freqList['eth']);
+            let sizeOfTickersToChart = tickersToChart.length;
+            for (let n = 0; n < sizeOfTickersToChart; n++) {
+                let value = freqList[tickersToChart[n]];
+                value != undefined ? value = value : value = 0;
+                if (tempData[tickersToChart[n]] == undefined) {
+                    tempData[tickersToChart[n]] = [value];
+                } else {
+                    tempData[tickersToChart[n]].push(value)
+                }
+            }
+            // datasets.push(type == 'wsb' ? freqList['gme'] : freqList['btc']);
+            //datasets2.push(type == 'wsb' ? freqList['amc'] : freqList['eth']);
+        }
+        console.log(tempData);
+
+        let datasets: object[] = [];
+
+        for (const [key, value] of Object.entries(tempData)) {
+            
+            let data = {
+                key: key,
+                label: key,
+                data: value,
+                fill: false,
+                backgroundColor: colorList[key],
+                borderColor: colorList[key],
+            }
+            datasets.push(data);
         }
 
         const dataToRender = {
             labels: labels,
-            datasets: [
-                {
-                    key: 1,
-                    label: 'btc',
-                    data: datasets,
-                    fill: false,
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    borderColor: 'rgba(255, 99, 132, 0.2)',
-                },
-                {
-                    key: 2,
-                    label: 'eth',
-                    data: datasets2,
-                    fill: false,
-                    backgroundColor: 'rgb(100, 59, 132)',
-                    borderColor: 'rgba(100, 59, 132, 0.2)',
-                },
-            ],
+            datasets: datasets
         }
-
 
         return (
             <>
@@ -78,16 +93,14 @@ const RealTimeData: React.FC<Props> = () => {
         )
     }
 
-
     return (
         <div className="realtime">
-            <p>realtime data</p>
             {realtimeWsb == undefined &&
                 <p>Loading Realtime WSB Data</p>
             }
             {realtimeWsb != undefined &&
                 <>
-                    <ToggleTickersControl type={'wsb'} realtimedata={realtimeWsb}/>
+                    <ToggleTickersControl type={'wsb'} realtimedata={realtimeWsb} selectedTickerList={selectedWsbTickerList} setSelectedTickerList={setSelectedWsbList} colorList={colorList} setColorList={setColorList} />
                     {renderRealtimeChart('wsb')}
                 </>
             }
@@ -96,7 +109,7 @@ const RealTimeData: React.FC<Props> = () => {
             }
             {realtimeCrypto != undefined &&
                 <>
-                    <ToggleTickersControl type={'crypto'} realtimedata={realtimeCrypto} />
+                    <ToggleTickersControl type={'crypto'} realtimedata={realtimeCrypto} selectedTickerList={selectedCryptoTickerList} setSelectedTickerList={setSelectedCryptoTickerList} colorList={colorList} setColorList={setColorList}/>
                     {renderRealtimeChart('crypto')}
                 </>
             }

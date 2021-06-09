@@ -19,6 +19,10 @@ interface simulatorProps {
 interface toggleTickersControlProps {
   type: string
   realtimedata: realtimeDataItem[]
+  setSelectedTickerList: any
+  selectedTickerList: string[]
+  colorList: {[key: string]: string}
+  setColorList: any
 }
 
 interface realtimedataProps {

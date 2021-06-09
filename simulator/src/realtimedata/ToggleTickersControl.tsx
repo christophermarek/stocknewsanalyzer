@@ -3,11 +3,11 @@ import Select from 'react-select';
 
 type Props = toggleTickersControlProps;
 
-const ToggleTickersControl: React.FC<Props> = ({ type, realtimedata }) => {
+const ToggleTickersControl: React.FC<Props> = ({ type, realtimedata, selectedTickerList, setSelectedTickerList, colorList, setColorList }) => {
 
     const [tickerList, setTickerList] = useState<Array<object>>();
     const [selectedTicker, setSelectedTicker] = useState<any>();
-    const [selectedTickerList, setSelectedTickerList] = useState<Array<string>>([]);
+    //const [selectedTickerList, setSelectedTickerList] = useState<Array<string>>([]);
 
     useEffect(() => {
 
@@ -33,6 +33,14 @@ const ToggleTickersControl: React.FC<Props> = ({ type, realtimedata }) => {
     const selectedListItem = (event: any) => {
         setSelectedTicker(event.value);
         setSelectedTickerList(selectedTickerList?.concat(event.value));
+       
+        if(colorList[event.value] == undefined){
+            let o = Math.round, r = Math.random, s = 255;
+            let color = 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + 1 + ')';
+            let temp = {...colorList};
+            temp[event.value] = color;
+            setColorList(temp);
+        }
     }
 
     const removeFromList = (ticker: string) => {
