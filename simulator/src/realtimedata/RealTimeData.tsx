@@ -63,7 +63,7 @@ const RealTimeData: React.FC<Props> = () => {
             // datasets.push(type == 'wsb' ? freqList['gme'] : freqList['btc']);
             //datasets2.push(type == 'wsb' ? freqList['amc'] : freqList['eth']);
         }
-        console.log(tempData);
+        //console.log(tempData);
 
         let datasets: object[] = [];
 
@@ -126,6 +126,7 @@ const RealTimeData: React.FC<Props> = () => {
                     }
                 </>
             }
+            
         </div>
 
     )

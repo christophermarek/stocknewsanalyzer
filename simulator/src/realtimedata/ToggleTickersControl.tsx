@@ -33,7 +33,7 @@ const ToggleTickersControl: React.FC<Props> = ({ type, realtimedata, selectedTic
     const selectedListItem = (event: any) => {
         setSelectedTicker(event.value);
         setSelectedTickerList(selectedTickerList?.concat(event.value));
-       
+        
         if(colorList[event.value] == undefined){
             let o = Math.round, r = Math.random, s = 255;
             let color = 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + 1 + ')';

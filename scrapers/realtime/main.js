@@ -55,8 +55,6 @@ const realTimeData = async (subreddit) => {
 
         }, 7500);
 
-
-
     });
 
 }
