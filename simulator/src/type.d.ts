@@ -26,7 +26,8 @@ interface toggleTickersControlProps {
 }
 
 interface realtimedataProps {
-
+  realtimeCrypto: any
+  realtimeWsb: any
 }
 
 interface bnnmarketcallObject {

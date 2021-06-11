@@ -6,7 +6,7 @@ import FrequencyCharts from "./simulator/FrequencyCharts";
 import Simulator from "./simulator/Simulator";
 import RealTimeData from "./realtimedata/RealTimeData";
 import ReactGA from 'react-ga';
-import { getBnnMarketCalls, getCurrentData, getCurrentPrice, getHistoricalPrices } from './API'
+import { getBnnMarketCalls, getCurrentData, getCurrentPrice, getHistoricalPrices, getRealTimeCrypto, getRealTimeWsb  } from './API'
 
 import './news.css'
 
@@ -19,6 +19,8 @@ import {
 
 function App() {
 
+  const [realtimeCrypto, setRealTimeCrypto] = useState<any>();
+  const [realtimeWsb, setRealTimeWsb] = useState<any>();
   const [bnnmarketcalls, setBnnMarketCalls] = useState<bnnmarketcall[]>([]);
   const [selectedNavItem, setSelectedNavItem] = useState<string>("none");
 
@@ -29,7 +31,21 @@ function App() {
 
 
   useEffect(() => {
-    fetchTodos()
+    fetchBnnMarketCallData()
+
+    async function loadFromServerIntoState() {
+      if (realtimeCrypto == undefined) {
+        console.log("getting realtime crypto")
+        let data = await getRealTimeCrypto()
+        setRealTimeCrypto(data.data.realtimeList);
+      }
+      if (realtimeWsb == undefined) {
+        console.log("getting realtime wsb")
+        let data = await getRealTimeWsb()
+        setRealTimeWsb(data.data.realtimeList);
+      }
+    }
+    loadFromServerIntoState()
 
     const pathname = window.location.pathname
     switch (pathname.toString().toLowerCase()) {
@@ -52,7 +68,7 @@ function App() {
 
   }, [])
 
-  const fetchTodos = (): void => {
+  const fetchBnnMarketCallData = (): void => {
     getBnnMarketCalls()
       .then(({ data: { bnnmarketcallData } }: bnnmarketcall[] | any) => setBnnMarketCalls(bnnmarketcallData))
       .catch((err: Error) => console.log(err))
@@ -69,10 +85,8 @@ function App() {
         <div>
 
           <nav className="navBar">
-            <Link className={"navBtn" + (selectedNavItem == "home" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("home")} to="/">Home</Link>
-            <Link className={"navBtn" + (selectedNavItem == "news" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("news")} to="/news">News</Link>
+            <Link className={"navBtn" + (selectedNavItem == "home" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("home")} to="/">Market Overview</Link>
             <Link className={"navBtn" + (selectedNavItem == "realtimedata" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("realtimedata")} to="/realtimedata">Real Time</Link>
-            <Link className={"navBtn" + (selectedNavItem == "simulator" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("simulator")} to="/simulator">Simulator</Link>
             <Link className={"navBtn" + (selectedNavItem == "frequencycharts" ? (" navItemSelected") : (""))} onClick={() => navBtnClicked("frequencycharts")} to="/frequencycharts">Frequency Charts</Link>
           </nav>
 
@@ -87,7 +101,7 @@ function App() {
               <FrequencyCharts />
             </Route>
             <Route path="/realtimedata">
-              <RealTimeData />
+              <RealTimeData realtimeCrypto={realtimeCrypto} realtimeWsb={realtimeWsb} />
             </Route>
             <Route path="/">
               <Default />

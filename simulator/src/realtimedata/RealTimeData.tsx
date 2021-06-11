@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { getRealTimeCrypto, getRealTimeWsb } from "../API";
 import LineChart from "../charts/LineChart";
 import ToggleTickersControl from "./ToggleTickersControl";
 
 type Props = realtimedataProps;
 
-const RealTimeData: React.FC<Props> = () => {
-
-    const [realtimeCrypto, setRealTimeCrypto] = useState<any>();
-    const [realtimeWsb, setRealTimeWsb] = useState<any>();
+const RealTimeData: React.FC<Props> = ( {realtimeCrypto, realtimeWsb} ) => {
+    
     const [selectedCryptoTickerList, setSelectedCryptoTickerList] = useState<Array<string>>([]);
     const [selectedWsbTickerList, setSelectedWsbList] = useState<Array<string>>([]);
     const [colorList, setColorList] = useState<any>({});
@@ -16,19 +13,7 @@ const RealTimeData: React.FC<Props> = () => {
     const [hideRealTimeCrypto, setHideRealTimeCrypto] = useState<Boolean>(false);
 
     useEffect(() => {
-        async function loadFromServerIntoState() {
-            if (realtimeCrypto == undefined) {
-                console.log("getting realtime crypto")
-                let data = await getRealTimeCrypto()
-                setRealTimeCrypto(data.data.realtimeList);
-            }
-            if (realtimeWsb == undefined) {
-                console.log("getting realtime wsb")
-                let data = await getRealTimeWsb()
-                setRealTimeWsb(data.data.realtimeList);
-            }
-        }
-        loadFromServerIntoState()
+        
     }, [])
 
     function renderRealtimeChart(type: string) {
