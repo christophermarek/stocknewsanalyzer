@@ -86,6 +86,7 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
         )
     }
 
+
     const renderSentimentChart = () => {
 
         let dataSource = (selectedMarket == 'wsb' ? realtimeWsb : realtimeCrypto);
@@ -96,19 +97,34 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
         let labels: string[] = [];
 
         let tempData: number[] = [];
+        let negativeSentimentData: number[] = [];
+        let positiveSentimentData: number[] = [];
 
         //generate list of dates
         for (let i = 0; i < size; i++) {
             //dates
             let d = new Date(dataSource[i].createdAt);
             labels.push(d.toLocaleString('default', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
-            //freqList values
-            console.log(i);
+            //freqList values and sentiment list
             let freqList = dataSource[i].frequencyList;
+            let sentimentList = dataSource[i].sentimentList;
             if (freqList != undefined) {
                 let value = freqList[selectedTicker];
                 value != undefined ? value = value : value = 0;
                 tempData.push(value)
+            }
+            if (sentimentList != undefined) {
+                let value = sentimentList[selectedTicker];
+                value != undefined ? value = value : value = [0];
+                //So since the sentiment list is an array, for each timepoint it will be for now an average value
+                let average = value.reduce((a:number, v:number, i:number)=>(a*i+v)/(i+1));
+                if(average > 0){
+                    positiveSentimentData.push(average);
+                    negativeSentimentData.push(0);
+                }else{
+                    positiveSentimentData.push(0);
+                    negativeSentimentData.push(average);
+                }
             }
         }
 
@@ -126,18 +142,19 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
                 },
                 {
                     type: 'bar',
-                    label: 'Dataset 2',
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    //data: [rand(), rand(), rand(), rand(), rand(), rand(), rand()],
-                    borderColor: 'white',
+                    label: 'Positive Average Sentiment',
+                    backgroundColor: 'rgb(50,205,50)',
+                    data: positiveSentimentData,
                     borderWidth: 2,
                 },
                 {
                     type: 'bar',
-                    label: 'Dataset 3',
-                    backgroundColor: 'rgb(75, 192, 192)',
-                    //data: [rand(), rand(), rand(), rand(), rand(), rand(), rand()],
+                    label: 'Negative Average Sentiment',
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    data: negativeSentimentData,
+                    borderWidth: 2,
                 },
+               
             ],
         }
 
