@@ -29,13 +29,13 @@
     padding: 1%;
 }
 
-.minFrequencyToDisplayControl{
+.minFrequencyToDisplayControl {
     display: flex;
     flex-direction: row;
     padding-top: 1%;
 }
 
-.sortDirectionControl{
+.sortDirectionControl {
     margin-top: 1%;
 }
 
@@ -53,36 +53,45 @@
 }
 
 /* This is for the npm react-select picker */
-.css-yk16xz-control{
+
+.css-yk16xz-control {
     background-color: black !important;
 }
+
 /*background text for this*/
-.css-1uccc91-singleValue{
+
+.css-1uccc91-singleValue {
     color: white !important;
 }
+
 /*dropdown of options*/
-.css-1pahdxg-control{
+
+.css-1pahdxg-control {
     background-color: black !important;
     color: #8e8e8e !important;
 }
-.css-26l3qy-menu{
+
+.css-26l3qy-menu {
     background-color: black !important;
 }
+
 /*option currently hovering over*/
-.css-1n7v3ny-option{
+
+.css-1n7v3ny-option {
     color: white !important;
     background-color: #8e8e8e !important;
 }
+
 /*option currently selected*/
-.css-9gakcf-option{
+
+.css-9gakcf-option {
     background-color: black !important;
     color: white !important;
 }
+
 /*all other options*/
-.css-yt9ioa-option{
 
-}
-
+.css-yt9ioa-option {}
 
 .formField {
     display: flex;
@@ -125,9 +134,8 @@ body {
 .chart-container {}
 
 .summaryContainer {
-    background-color: white;
-    outline: black;
-    color: black;
+    outline: 1px solid white !important;
+    color: white;
     padding: 2%;
     width: 25%;
     margin: 2%;
@@ -143,15 +151,19 @@ body {
     box-shadow: 0px 0px 5px #fff;
 }
 
-.red{
+.marketSummaryTab {
+    display: flex;
+}
+
+.red {
     color: red !important;
 }
 
-.green{
+.green {
     color: green !important;
 }
 
-.dataSegment{
+.dataSegment {
     display: flex;
     flex-direction: row;
 }
@@ -161,7 +173,7 @@ body {
     flex-wrap: wrap;
 }
 
-.dateOccurencesForm{
+.dateOccurencesForm {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -182,6 +194,5 @@ body {
 }
 
 .chartExpanded {
-
     display: flex;
 }

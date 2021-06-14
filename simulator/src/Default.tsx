@@ -81,38 +81,46 @@ function Default() {
     <>
       <p>(Reminder)If it is monday the 24 hour change will be 0.00% for markets that are closed on sunday</p>
 
-      <div className="marketSummary">
+      <div >
         <p className="marketTitle">US Markets</p>
-        {snp500.length > 0 ? (
-          renderSummary(snp500, 'S&P500')
-        ) : (
-          <p>Loading</p>
-        )
-        }
-        {tsxsnp.length > 0 ? (
-          renderSummary(tsxsnp, 'TSX/SNP')
-        ) : (
-          <p>Loading</p>
-        )
-        }
-        {nasdaq.length > 0 ? (
-          renderSummary(nasdaq, 'Nasdaq')
-        ) : (
-          <p>Loading</p>
-        )
-        }
-        {cadUsd.length > 0 ? (
-          renderSummary(cadUsd, 'CAD/USD')
-        ) : (
-          <p>Loading</p>
-        )
-        }
-        {oil.length > 0 ? (
-          renderSummary(oil, 'Crude Oil ($USD)')
-        ) : (
-          <p>Loading</p>
-        )
-        }
+        <div className="marketSummaryTab">
+          {snp500.length > 0 ? (
+            renderSummary(snp500, 'S&P500')
+          ) : (
+            <p>Loading</p>
+          )
+          }
+          {nasdaq.length > 0 ? (
+            renderSummary(nasdaq, 'Nasdaq')
+          ) : (
+            <p>Loading</p>
+          )
+          }
+          {oil.length > 0 ? (
+            renderSummary(oil, 'Crude Oil ($USD)')
+          ) : (
+            <p>Loading</p>
+          )
+          }
+        </div>
+      </div>
+
+      <div >
+        <p className="marketTitle">Canadian Markets</p>
+        <div className="marketSummaryTab">
+          {tsxsnp.length > 0 ? (
+            renderSummary(tsxsnp, 'TSX/SNP')
+          ) : (
+            <p>Loading</p>
+          )
+          }
+          {cadUsd.length > 0 ? (
+            renderSummary(cadUsd, 'CAD/USD')
+          ) : (
+            <p>Loading</p>
+          )
+          }
+        </div>
       </div>
     </>
   );
