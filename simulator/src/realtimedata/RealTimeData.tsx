@@ -4,16 +4,17 @@ import ToggleTickersControl from "./ToggleTickersControl";
 
 type Props = realtimedataProps;
 
-const RealTimeData: React.FC<Props> = ( {realtimeCrypto, realtimeWsb} ) => {
-    
+const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
+
     const [selectedCryptoTickerList, setSelectedCryptoTickerList] = useState<Array<string>>([]);
     const [selectedWsbTickerList, setSelectedWsbList] = useState<Array<string>>([]);
     const [colorList, setColorList] = useState<any>({});
     const [hideRealTimeWsb, setHideRealTimeWsb] = useState<boolean>(false);
     const [hideRealTimeCrypto, setHideRealTimeCrypto] = useState<Boolean>(false);
+    const [pageSelected, setPageSelected] = useState<string>('single');
 
     useEffect(() => {
-        
+
     }, [])
 
     function renderRealtimeChart(type: string) {
@@ -73,6 +74,7 @@ const RealTimeData: React.FC<Props> = ( {realtimeCrypto, realtimeWsb} ) => {
         return (
             <>
                 <p>Chart for {type}</p>
+                <p>Some popular example tickers to enter: {type == 'wsb' ? 'gme, amc' : 'btc, eth'}</p>
                 <LineChart
                     data={dataToRender} options={{}}
                 />
@@ -82,36 +84,48 @@ const RealTimeData: React.FC<Props> = ( {realtimeCrypto, realtimeWsb} ) => {
 
     return (
         <div className="realtime">
-            <input type="button" className="subButton" value={hideRealTimeWsb == false ? 'Hide Realtime WSB' : 'Expand Realtime WSB'} onClick={() => setHideRealTimeWsb(!hideRealTimeWsb)} />
-            <input type="button" className="subButton" value={hideRealTimeCrypto == false ? 'Hide Realtime Crypto' : 'Expand Realtime Crypto'} onClick={() => setHideRealTimeCrypto(!hideRealTimeCrypto)} />
+            <div className="loadPageForm">
+                <input type="button" className={"subButton" + (pageSelected == 'single' ? ' navItemSelected' : '')} onClick={() => setPageSelected("single")} value="Single Ticker and sentiment analysis" />
+                <input type="button" className={"subButton" + (pageSelected == 'all' ? ' navItemSelected' : '')} onClick={() => setPageSelected("all")} value="Multiple Ticker View" />
+            </div>
 
-            {realtimeWsb == undefined &&
-                <p>Loading Realtime WSB Data</p>
-            }
-            {realtimeWsb != undefined &&
+            {pageSelected == 'all' ? (
                 <>
-                    {hideRealTimeWsb == false &&
+                    <input type="button" className="subButton" value={hideRealTimeWsb == false ? 'Hide Realtime WSB' : 'Expand Realtime WSB'} onClick={() => setHideRealTimeWsb(!hideRealTimeWsb)} />
+                    <input type="button" className="subButton" value={hideRealTimeCrypto == false ? 'Hide Realtime Crypto' : 'Expand Realtime Crypto'} onClick={() => setHideRealTimeCrypto(!hideRealTimeCrypto)} />
+
+                    {realtimeWsb == undefined &&
+                        <p>Loading Realtime WSB Data</p>
+                    }
+                    {realtimeWsb != undefined &&
                         <>
-                            <ToggleTickersControl type={'wsb'} realtimedata={realtimeWsb} selectedTickerList={selectedWsbTickerList} setSelectedTickerList={setSelectedWsbList} colorList={colorList} setColorList={setColorList} />
-                            {renderRealtimeChart('wsb')}
+                            {hideRealTimeWsb == false &&
+                                <>
+                                    <ToggleTickersControl type={'wsb'} realtimedata={realtimeWsb} selectedTickerList={selectedWsbTickerList} setSelectedTickerList={setSelectedWsbList} colorList={colorList} setColorList={setColorList} />
+                                    {renderRealtimeChart('wsb')}
+                                </>
+                            }
+                        </>
+                    }
+                    {realtimeCrypto == undefined &&
+                        <p>Loading Realtime Crypto Data</p>
+                    }
+                    {realtimeCrypto != undefined &&
+                        <>
+                            {hideRealTimeCrypto == false &&
+                                <>
+                                    <ToggleTickersControl type={'crypto'} realtimedata={realtimeCrypto} selectedTickerList={selectedCryptoTickerList} setSelectedTickerList={setSelectedCryptoTickerList} colorList={colorList} setColorList={setColorList} />
+                                    {renderRealtimeChart('crypto')}
+                                </>
+                            }
                         </>
                     }
                 </>
-            }
-            {realtimeCrypto == undefined &&
-                <p>Loading Realtime Crypto Data</p>
-            }
-            {realtimeCrypto != undefined &&
-                <>
-                    {hideRealTimeCrypto == false &&
-                        <>
-                            <ToggleTickersControl type={'crypto'} realtimedata={realtimeCrypto} selectedTickerList={selectedCryptoTickerList} setSelectedTickerList={setSelectedCryptoTickerList} colorList={colorList} setColorList={setColorList} />
-                            {renderRealtimeChart('crypto')}
-                        </>
-                    }
-                </>
-            }
-            
+            ) : (
+                true
+            )}
+
+
         </div>
 
     )
