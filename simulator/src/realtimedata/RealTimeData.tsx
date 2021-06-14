@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Bar } from "react-chartjs-2";
 import LineChart from "../charts/LineChart";
 import ToggleTickersControl from "./ToggleTickersControl";
@@ -16,10 +16,6 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
     const [selectedTicker, setSelectedTicker] = useState<string>('');
     const [selectedMarket, setSelectedMarket] = useState<string>('wsb');
     const [dataReadyToRender, setDataReadyToRender] = useState<boolean>(false);
-
-    useEffect(() => {
-
-    }, [])
 
     function renderRealtimeChart(type: string) {
 
@@ -172,7 +168,7 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
     return (
         <div className="realtime">
             <div className="loadPageForm">
-                <input type="button" className={"subButton" + (pageSelected == 'single' ? ' navItemSelected' : '')} onClick={() => setPageSelected("single")} value="Single Ticker and sentiment analysis" />
+                <input type="button" className={"subButton" + (pageSelected == 'single' ? ' navItemSelected' : '')} onClick={() => setPageSelected("single")} value="Single Ticker and Sentiment Analysis" />
                 <input type="button" className={"subButton" + (pageSelected == 'all' ? ' navItemSelected' : '')} onClick={() => setPageSelected("all")} value="Multiple Ticker View" />
             </div>
 
@@ -218,7 +214,7 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
                     }
                     {realtimeCrypto != undefined && realtimeWsb != undefined &&
                         <>
-                            <p>View the frequency of a ticker and sentiment over time, (past 7 days)</p>
+                            <p>View the frequency of a ticker and sentiment over time, (Since 4:00 am UTC)</p>
                             <input type="text" className="textInput" value={selectedTicker} onChange={e => setSelectedTicker(e.target.value)} />
                             <input type="radio" value="wsb" name="selectedmarket" checked={selectedMarket == 'wsb'} onChange={(e) => setSelectedMarket(e.target.value)} /> WSB
                             <input type="radio" value="crypto" name="selectedmarket" checked={selectedMarket == 'crypto'} onChange={(e) => setSelectedMarket(e.target.value)} /> Cryptocurrency
