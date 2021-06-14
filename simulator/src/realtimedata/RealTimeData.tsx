@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Bar } from "react-chartjs-2";
 import LineChart from "../charts/LineChart";
 import ToggleTickersControl from "./ToggleTickersControl";
 
@@ -12,6 +13,9 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
     const [hideRealTimeWsb, setHideRealTimeWsb] = useState<boolean>(false);
     const [hideRealTimeCrypto, setHideRealTimeCrypto] = useState<Boolean>(false);
     const [pageSelected, setPageSelected] = useState<string>('single');
+    const [selectedTicker, setSelectedTicker] = useState<string>('');
+    const [selectedMarket, setSelectedMarket] = useState<string>('wsb');
+    const [dataReadyToRender, setDataReadyToRender] = useState<boolean>(false);
 
     useEffect(() => {
 
@@ -82,6 +86,68 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
         )
     }
 
+    const renderSentimentChart = () => {
+
+        let dataSource = (selectedMarket == 'wsb' ? realtimeWsb : realtimeCrypto);
+        console.log(selectedMarket);
+        console.log(dataSource);
+        let size = dataSource.length;
+        let labels: string[] = [];
+
+        let tempData: number[] = [];
+
+        //generate list of dates
+        for (let i = 0; i < size; i++) {
+            //dates
+            let d = new Date(dataSource[i].createdAt);
+            labels.push(d.toLocaleString('default', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
+            //freqList values
+            let freqList = dataSource[i].frequencyList;
+            let value = freqList[selectedTicker];
+            value != undefined ? value = value : value = 0;
+            tempData.push(value)
+
+        }
+
+
+        let data = {
+            labels: labels,
+            datasets: [
+                {
+                    type: 'line',
+                    label: 'Frequency',
+                    borderColor: 'rgb(54, 162, 235)',
+                    borderWidth: 2,
+                    fill: false,
+                    data: tempData
+                },
+                {
+                    type: 'bar',
+                    label: 'Dataset 2',
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    //data: [rand(), rand(), rand(), rand(), rand(), rand(), rand()],
+                    borderColor: 'white',
+                    borderWidth: 2,
+                },
+                {
+                    type: 'bar',
+                    label: 'Dataset 3',
+                    backgroundColor: 'rgb(75, 192, 192)',
+                    //data: [rand(), rand(), rand(), rand(), rand(), rand(), rand()],
+                },
+            ],
+        }
+
+        return (
+            <>
+                <p>Chart with sentiment analysis over time</p>
+                {/*type property actually has no affect*/}
+                <Bar data={data} type="line" />
+            </>
+        )
+    }
+
+
     return (
         <div className="realtime">
             <div className="loadPageForm">
@@ -122,7 +188,29 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
                     }
                 </>
             ) : (
-                true
+                <>
+                    {realtimeCrypto == undefined &&
+                        <p>Loading Realtime Crypto Data</p>
+                    }
+                    {realtimeWsb == undefined &&
+                        <p>Loading Realtime WSB Data</p>
+                    }
+                    {realtimeCrypto != undefined && realtimeWsb != undefined &&
+                        <>
+                            <p>View the frequency of a ticker and sentiment over time, (past 7 days)</p>
+                            <input type="text" className="textInput" value={selectedTicker} onChange={e => setSelectedTicker(e.target.value)} />
+                            <input type="radio" value="wsb" name="selectedmarket" checked={selectedMarket == 'wsb'} onChange={(e) => setSelectedMarket(e.target.value)} /> WSB
+                            <input type="radio" value="crypto" name="selectedmarket" checked={selectedMarket == 'crypto'} onChange={(e) => setSelectedMarket(e.target.value)} /> Cryptocurrency
+                            <input type="button" className="subButton" onClick={() => setDataReadyToRender(true)} value="View"/>
+
+                            {dataReadyToRender &&
+                                renderSentimentChart()
+                            }
+                        </>
+                    }
+
+
+                </>
             )}
 
 
