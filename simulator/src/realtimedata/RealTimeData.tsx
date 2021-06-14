@@ -91,6 +91,7 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
         let dataSource = (selectedMarket == 'wsb' ? realtimeWsb : realtimeCrypto);
         console.log(selectedMarket);
         console.log(dataSource);
+
         let size = dataSource.length;
         let labels: string[] = [];
 
@@ -102,11 +103,13 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
             let d = new Date(dataSource[i].createdAt);
             labels.push(d.toLocaleString('default', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
             //freqList values
+            console.log(i);
             let freqList = dataSource[i].frequencyList;
-            let value = freqList[selectedTicker];
-            value != undefined ? value = value : value = 0;
-            tempData.push(value)
-
+            if (freqList != undefined) {
+                let value = freqList[selectedTicker];
+                value != undefined ? value = value : value = 0;
+                tempData.push(value)
+            }
         }
 
 
@@ -117,8 +120,8 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
                     type: 'line',
                     label: 'Frequency',
                     borderColor: 'rgb(54, 162, 235)',
-                    borderWidth: 2,
-                    fill: false,
+                    borderWidth: 1,
+                    fill: true,
                     data: tempData
                 },
                 {
@@ -138,13 +141,14 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
             ],
         }
 
+
         return (
             <>
                 <p>Chart with sentiment analysis over time</p>
-                {/*type property actually has no affect*/}
                 <Bar data={data} type="line" />
             </>
         )
+
     }
 
 
@@ -201,7 +205,7 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
                             <input type="text" className="textInput" value={selectedTicker} onChange={e => setSelectedTicker(e.target.value)} />
                             <input type="radio" value="wsb" name="selectedmarket" checked={selectedMarket == 'wsb'} onChange={(e) => setSelectedMarket(e.target.value)} /> WSB
                             <input type="radio" value="crypto" name="selectedmarket" checked={selectedMarket == 'crypto'} onChange={(e) => setSelectedMarket(e.target.value)} /> Cryptocurrency
-                            <input type="button" className="subButton" onClick={() => setDataReadyToRender(true)} value="View"/>
+                            <input type="button" className="subButton" onClick={() => setDataReadyToRender(true)} value="View" />
 
                             {dataReadyToRender &&
                                 renderSentimentChart()

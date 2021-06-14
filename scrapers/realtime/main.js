@@ -105,7 +105,7 @@ async function realTimeDataHandler(subreddit, tickerList) {
         .then(() => {
             //DELETE ALL ENTRIES BECAUSE THIS WILL MAKE 1440 DOCUMENTS IF STARTED AT THE BEGGINING OF THE DAY
             console.log('MongoDB Connected...');
-            /*
+            
             realtimeWsb.deleteMany({}, function (err) {
                 if (err) {
                     console.log(err)
@@ -114,7 +114,7 @@ async function realTimeDataHandler(subreddit, tickerList) {
                 }
             }
             );
-            */
+            
         })
         .catch((err) => console.log(err));
 
