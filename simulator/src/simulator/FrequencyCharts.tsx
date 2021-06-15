@@ -4,38 +4,36 @@ import { getCryptoCurrencyAllFrequencyLists } from "../API";
 import AllFrequencyData from './AllFrequencyData';
 import SingleTickerData from './SingleTickerData';
 
-type Props = simulatorProps
 
-const FrequencyCharts: React.FC<Props> = () => {
+const FrequencyCharts: React.FC<any> = () => {
 
     const [frequencyLists, setFrequencyLists] = useState<Array<wsbFrequencyListItem>>();
     const [cryptoFrequencyLists, setCryptoFrequencyLists] = useState<Array<cryptoCurrencyFrequencyListItem>>();
-    //new Array so the ts compiler knows its an array not an object so we can use [...spread]
     const [pageSelected, setPageSelected] = useState<string>("allData");
     const [dataSourceSelected, setDataSourceSelected] = useState<string>('wsb');
 
     useEffect(() => {
         async function loadFrequencyListsIntoState() {
             if (frequencyLists === undefined) {
-                setFrequencyLists(JSON.parse(await getDataFromLocalStorage('frequencyData')));
+                setFrequencyLists(await getDataFromLocalStorage('frequencyData'));
             }
             if (cryptoFrequencyLists === undefined) {
-                setCryptoFrequencyLists(JSON.parse(await getDataFromLocalStorage('cryptoFrequencyData')));
+                setCryptoFrequencyLists(await getDataFromLocalStorage('cryptoFrequencyData'));
             }
         }
 
         loadFrequencyListsIntoState();
-    }, [cryptoFrequencyLists, frequencyLists])
+    }, [frequencyLists, cryptoFrequencyLists])
 
     //should really error handle here for if api returns error
     async function getFrequencyChartDataFromServer(itemName: string) {
-        if(itemName === 'frequencyData'){
+        if (itemName === 'frequencyData') {
             let data = await getAllFrequencyLists();
             console.log("frequency data fetched");
             return data.data.wsbFrequencyLists;
 
         }
-        if(itemName === 'cryptoFrequencyData'){
+        if (itemName === 'cryptoFrequencyData') {
             let data = await getCryptoCurrencyAllFrequencyLists();
             console.log("crypto frequency data fetched");
             return data.data.cryptocurrencyFrequencyLists;
@@ -43,18 +41,27 @@ const FrequencyCharts: React.FC<Props> = () => {
     }
 
     function loadDataIntoLocalStorage(itemName: string, item: any) {
-        localStorage.setItem(itemName, item);
+        localStorage.setItem(itemName, JSON.stringify({ data: item, dateAdded: Date.now() }));
     }
 
     async function getDataFromLocalStorage(itemName: string) {
         let data: any = localStorage.getItem(itemName);
         if (data === null) {
             data = await getFrequencyChartDataFromServer(itemName);
-
-            data = JSON.stringify(data);
             loadDataIntoLocalStorage(itemName, data);
+        } else {
+            //data = JSON.parse(data);
+            let dateSaved = JSON.parse(data).dateAdded;
+
+            //check if its old data
+            if (new Date(Date.now()).getDay() != new Date(dateSaved).getDay()) {
+                data = await getFrequencyChartDataFromServer(itemName);
+                loadDataIntoLocalStorage(itemName, data);
+            }else{
+                data = JSON.parse(data);
+            }
         }
-        return data;
+        return data.data;
     }
 
     function deleteDataInLocalStorage() {
