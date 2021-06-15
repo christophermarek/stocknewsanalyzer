@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 type Props = SingleTickerQueriesProps;
 
@@ -10,16 +10,6 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
     const [daysBetweenFilter, setDaysbetweenFilter] = useState<string>('');
     const [minimumFrequency, setMinimumFrequency] = useState<string>('');
     const [dateFilter, setDateFilter] = useState<string>('');
-
-    //not sure how I want this to endup
-    interface singleTickerQuery {
-        dayBefore: yahooStockHistoricalPrices
-        dayOf: yahooStockHistoricalPrices
-        dayAfter: yahooStockHistoricalPrices
-        dayAfter1: yahooStockHistoricalPrices
-        dayAfter2: yahooStockHistoricalPrices
-
-    }
     const [singleTickerQuery, setSingleTickerQuery] = useState<Array<singleTickerQuery>>();
 
     function treatAsUTC(date: any) {
@@ -36,17 +26,15 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
     function executeQuery() {
         console.log(`Executing query on ${selectedTicker}, checking occurences when ${comparisonValue} times ${comparisonSign} than the past day`);
 
-        console.log(frequencyOverTime);
-
         let result = [];
-
+        if(frequencyOverTime === undefined){
+            return;
+        }
         let size = frequencyOverTime.length;
         let sizeOfHistoricalPrices = historicalPrices.length;
         //there are count = 85 but count2 = 81 so there are entries that are not matching properly. Fix
         let count = 0
         let count2 = 0;
-
-        console.log(historicalPrices);
 
         //historicalPrices is the wrong way
         let reversed = [...historicalPrices];
@@ -58,8 +46,6 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
             if (frequencyOverTime[i].freq < minimumFrequency) {
                 continue;
             }
-            //console.log(frequencyOverTime[i].freq);
-
             //check to make sure comparing day before and day of i
             let dayBefore = new Date(frequencyOverTime[i - 1].date);
             let dayOf = new Date(frequencyOverTime[i].date);
@@ -69,10 +55,10 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
                 let ratio = frequencyOverTime[i].freq / frequencyOverTime[i - 1].freq;
                 //console.log(ratio);
                 let comparison;
-                if (comparisonSign == 'greater') {
+                if (comparisonSign === 'greater') {
                     comparison = ratio >= Number(comparisonValue)
                 }
-                if (comparisonSign == 'less') {
+                if (comparisonSign === 'less') {
                     comparison = ratio <= Number(comparisonValue)
                 }
                 if (comparison) {
@@ -80,27 +66,22 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
                     //need to create a date object
                     //get the stock price for the day before, day of, and next 7 days. 
                     //can do this with historical prices.
-                    //result.push({before: frequencyOverTim]})
                     count += 1;
 
                     let currentDate = new Date(frequencyOverTime[i].date);
-                    //console.log(currentDate);
                     for (let n = 0; n < sizeOfHistoricalPrices; n++) {
-
                         //since we cant control for exact seconds we need to compare day
                         let historicalPrice = new Date(reversed[n].date * 1000);
-
                         let currYear = currentDate.getFullYear();
                         let currMonth = currentDate.getMonth();
                         let currDay = currentDate.getDate();
-
                         let compYear = historicalPrice.getFullYear();
                         let compMonth = historicalPrice.getMonth();
                         let compDay = historicalPrice.getDate();
 
-                        if (currDay == compDay) {
-                            if (currMonth == compMonth) {
-                                if (currYear == compYear) {
+                        if (currDay === compDay) {
+                            if (currMonth === compMonth) {
+                                if (currYear === compYear) {
                                     count2 += 1;
                                     result.push({
                                         dayBefore: reversed[n - 1],
@@ -115,21 +96,19 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
                             }
                         }
                     }
-                    //console.log(currentDate.toDateString());
                     //in historicalPrices array date is a unix time int
                 }
             }
-            console.log(`Count: ${count} Count2: ${count2}`);
+            //console.log(`Count: ${count} Count2: ${count2}`);
 
         }
 
-        console.log(`Count: ${count} Count2: ${count2}`);
+        //console.log(`Count: ${count} Count2: ${count2}`);
 
-        if (result.length == 0) {
+        if (result === undefined || result.length === 0) {
             alert('No entries found, returning');
             return;
         }
-
         let resultsInDateRange = [];
         let count3 = 0;
         //now filter results that are not at the right day.
@@ -142,7 +121,6 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
                 resultsInDateRange.push(result[i]);
             }
         }
-
         setNumEntries(`${count3}`);
         setSingleTickerQuery(resultsInDateRange);
     }
@@ -159,7 +137,6 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
     }
 
     function removeDecimals(inNum: number) {
-
         return Number(inNum.toFixed(2));
     }
     function renderCaluclations(currentEntry: singleTickerQuery) {
@@ -185,7 +162,6 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
 
     function renderTable(currentEntry: singleTickerQuery) {
 
-
         //dont like hardcoding this but doing it dynamically sucks just as much
         return (
             <div className="dataSegment">
@@ -198,7 +174,7 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
                         <th>High</th>
                         <th>Volume</th>
                     </tr>
-                    {currentEntry.dayBefore != undefined &&
+                    {currentEntry.dayBefore !== undefined &&
                         <tr>
                             <td>{new Date(currentEntry.dayBefore.date * 1000).toDateString()}</td>
                             <td>{Number(currentEntry.dayBefore.open).toFixed(3)}</td>
@@ -209,7 +185,7 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
                         </tr>
                     }
 
-                    {currentEntry.dayOf != undefined &&
+                    {currentEntry.dayOf !== undefined &&
                         <tr>
                             <td>{new Date(currentEntry.dayOf.date * 1000).toDateString()}</td>
                             <td>{Number(currentEntry.dayOf.open).toFixed(3)}</td>
@@ -219,7 +195,7 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
                             <td>{currentEntry.dayOf.volume}</td>
                         </tr>
                     }
-                    {currentEntry.dayAfter != undefined &&
+                    {currentEntry.dayAfter !== undefined &&
                         <tr>
 
                             <td>{new Date(currentEntry.dayAfter.date * 1000).toDateString()}</td>
@@ -230,7 +206,7 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
                             <td>{currentEntry.dayAfter.volume}</td>
                         </tr>
                     }
-                    {currentEntry.dayAfter1 != undefined &&
+                    {currentEntry.dayAfter1 !== undefined &&
                         <tr>
                             <td>{new Date(currentEntry.dayAfter1.date * 1000).toDateString()}</td>
                             <td>{Number(currentEntry.dayAfter1.open).toFixed(3)}</td>
@@ -240,7 +216,7 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
                             <td>{currentEntry.dayAfter1.volume}</td>
                         </tr>
                     }
-                    {currentEntry.dayAfter2 != undefined &&
+                    {currentEntry.dayAfter2 !== undefined &&
                         <tr>
                             <td>{new Date(currentEntry.dayAfter2.date * 1000).toDateString()}</td>
                             <td>{Number(currentEntry.dayAfter2.open).toFixed(3)}</td>
@@ -266,7 +242,7 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
                 <p>Get all date occurrences when {selectedTicker} frequency is </p>
                 <input type="text" value={comparisonValue} onChange={updateComparisonValue} />
                 <p> times {comparisonSign} than the day before</p>
-                <input type="button" value="Change Comparison Sign" onClick={() => setComparisonSign(comparisonSign == 'greater' ? 'less' : 'greater')} />
+                <input type="button" value="Change Comparison Sign" onClick={() => setComparisonSign(comparisonSign === 'greater' ? 'less' : 'greater')} />
                 <p>How many days prior to search for increase</p>
                 <input type="text" value={daysBetweenFilter} onChange={(e) => setDaysbetweenFilter(e.target.value)} />
                 <p>Minimum frequency filter</p>
@@ -274,10 +250,9 @@ const SingleTickerQueries: React.FC<Props> = ({ selectedTicker, frequencyOverTim
                 <p>Select Days after: </p>
                 <input type="date" value={dateFilter} onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => setDateFilter(ev.target.value)} />
             </div>
-
             <input type="button" onClick={executeQuery} value="Execute" />
 
-            {singleTickerQuery != undefined && comparisonValue.length > 0 &&
+            {singleTickerQuery !== undefined && comparisonValue.length > 0 &&
                 <>
                     <p>There are {numEntries} Entries</p>
                     {singleTickerQuery.map((dataPoint: singleTickerQuery) =>

@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Article from "./Article";
-import bnnmarketcallItem from "./bnnmarketcallItemComponent";
 import BnnMarketCallItemComponent from "./bnnmarketcallItemComponent";
 
 function News( bnnmarketcallObject: bnnmarketcallObject ) {
@@ -16,7 +15,7 @@ function News( bnnmarketcallObject: bnnmarketcallObject ) {
 
   return (
     <div className="News">
-      {currentArticleViewing == "none" ? (
+      {currentArticleViewing === "none" ? (
         bnnmarketcallObject.bnnmarketcallObject.sort(sortArticles).map((bnnmarketcallItem: bnnmarketcall) => (
           <>
             <BnnMarketCallItemComponent 

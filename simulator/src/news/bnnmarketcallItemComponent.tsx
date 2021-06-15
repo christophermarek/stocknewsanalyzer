@@ -22,7 +22,7 @@ const BnnMarketCallItemComponent: React.FC<Props> = ({ bnnmarketcallItem, setCur
           ))}
         </ul>
       </div>
-      {bnnmarketcallItem.text != undefined ? (
+      {bnnmarketcallItem.text !== undefined ? (
         <button className="bnnmarketcallitemArticleButton"onClick={onClick}>View Article</button>
       ) : (
         true

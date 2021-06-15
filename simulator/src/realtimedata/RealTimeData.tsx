@@ -21,14 +21,10 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
 
         let dataset: realtimeDataItem[];
         let tickersToChart: string[];
-        type == 'wsb' ? dataset = realtimeWsb : dataset = realtimeCrypto;
-        type == 'wsb' ? tickersToChart = selectedWsbTickerList : tickersToChart = selectedCryptoTickerList;
-
+        type === 'wsb' ? dataset = realtimeWsb : dataset = realtimeCrypto;
+        type === 'wsb' ? tickersToChart = selectedWsbTickerList : tickersToChart = selectedCryptoTickerList;
         let size = dataset.length;
         let labels: string[] = [];
-
-        //let datasets: number[] = [];
-        //let datasets2: number[] = [];
         let tempData: { [key: string]: [number] } = {};
 
         //generate list of dates
@@ -39,20 +35,16 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
             let sizeOfTickersToChart = tickersToChart.length;
             for (let n = 0; n < sizeOfTickersToChart; n++) {
                 let value = freqList[tickersToChart[n]];
-                value != undefined ? value = value : value = 0;
-                if (tempData[tickersToChart[n]] == undefined) {
+                value !== undefined ? value = value : value = 0;
+                if (tempData[tickersToChart[n]] === undefined) {
                     tempData[tickersToChart[n]] = [value];
                 } else {
                     tempData[tickersToChart[n]].push(value)
                 }
             }
-            // datasets.push(type == 'wsb' ? freqList['gme'] : freqList['btc']);
-            //datasets2.push(type == 'wsb' ? freqList['amc'] : freqList['eth']);
         }
-        //console.log(tempData);
 
         let datasets: object[] = [];
-
         for (const [key, value] of Object.entries(tempData)) {
 
             let data = {
@@ -74,7 +66,7 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
         return (
             <>
                 <p>Chart for {type}</p>
-                <p>Some popular example tickers to enter: {type == 'wsb' ? 'gme, amc' : 'btc, eth'}</p>
+                <p>Some popular example tickers to enter: {type === 'wsb' ? 'gme, amc' : 'btc, eth'}</p>
                 <LineChart
                     data={dataToRender} options={{}}
                 />
@@ -85,13 +77,9 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
 
     const renderSentimentChart = () => {
 
-        let dataSource = (selectedMarket == 'wsb' ? realtimeWsb : realtimeCrypto);
-        console.log(selectedMarket);
-        console.log(dataSource);
-
+        let dataSource = (selectedMarket === 'wsb' ? realtimeWsb : realtimeCrypto);
         let size = dataSource.length;
         let labels: string[] = [];
-
         let tempData: number[] = [];
         let negativeSentimentData: number[] = [];
         let positiveSentimentData: number[] = [];
@@ -104,28 +92,27 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
             //freqList values and sentiment list
             let freqList = dataSource[i].frequencyList;
             let sentimentList = dataSource[i].sentimentList;
-            if (freqList != undefined) {
+            if (freqList !== undefined) {
                 let value = freqList[selectedTicker];
-                value != undefined ? value = value : value = 0;
+                value !== undefined ? value = value : value = 0;
                 tempData.push(value)
             }
-            if (sentimentList != undefined) {
+            if (sentimentList !== undefined) {
                 let value = sentimentList[selectedTicker];
-                value != undefined ? value = value : value = [0];
+                value !== undefined ? value = value : value = [0];
                 //So since the sentiment list is an array, for each timepoint it will be for now an average value
                 let average = value.reduce((a:number, v:number, i:number)=>(a*i+v)/(i+1));
                 //with chart at the end of the day its to big to have negative and positive, 
                 //need to multiply by 10 to finish
                 if(average > 0){
-                    positiveSentimentData.push(average * 10);
-                    //negativeSentimentData.push(0);
+                    positiveSentimentData.push(average * 5);
+                    negativeSentimentData.push(0);
                 }else{
-                    positiveSentimentData.push(average * 10);
-                    //negativeSentimentData.push(average * 10);
+                    positiveSentimentData.push(0);
+                    negativeSentimentData.push(average * 5);
                 }
             }
         }
-
 
         let data = {
             labels: labels,
@@ -140,17 +127,23 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
                 },
                 {
                     type: 'bar',
-                    label: 'Average Sentiment',
+                    label: 'Scaled Positive Average Sentiment',
                     backgroundColor: 'rgb(50,205,50)',
                     borderColor: 'rgb(50,205,50)',
                     data: positiveSentimentData,
-                    borderWidth: 4,
+                    borderWidth: 1,
                 },
-                
+                {
+                    type: 'bar',
+                    label: 'Scaled Negative Average Sentiment',
+                    backgroundColor: 'rgb(255,0,0)',
+                    borderColor: 'rgb(255,0,0)',
+                    data: negativeSentimentData,
+                    borderWidth: 1,
+                },
                
             ],
         }
-
 
         return (
             <>
@@ -161,25 +154,24 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
 
     }
 
-
     return (
         <div className="realtime">
             <div className="loadPageForm">
-                <input type="button" className={"subButton" + (pageSelected == 'single' ? ' navItemSelected' : '')} onClick={() => setPageSelected("single")} value="Single Ticker and Sentiment Analysis" />
-                <input type="button" className={"subButton" + (pageSelected == 'all' ? ' navItemSelected' : '')} onClick={() => setPageSelected("all")} value="Multiple Ticker View" />
+                <input type="button" className={"subButton" + (pageSelected === 'single' ? ' navItemSelected' : '')} onClick={() => setPageSelected("single")} value="Single Ticker and Sentiment Analysis" />
+                <input type="button" className={"subButton" + (pageSelected === 'all' ? ' navItemSelected' : '')} onClick={() => setPageSelected("all")} value="Multiple Ticker View" />
             </div>
 
-            {pageSelected == 'all' ? (
+            {pageSelected === 'all' ? (
                 <>
-                    <input type="button" className="subButton" value={hideRealTimeWsb == false ? 'Hide Realtime WSB' : 'Expand Realtime WSB'} onClick={() => setHideRealTimeWsb(!hideRealTimeWsb)} />
-                    <input type="button" className="subButton" value={hideRealTimeCrypto == false ? 'Hide Realtime Crypto' : 'Expand Realtime Crypto'} onClick={() => setHideRealTimeCrypto(!hideRealTimeCrypto)} />
+                    <input type="button" className="subButton" value={hideRealTimeWsb === false ? 'Hide Realtime WSB' : 'Expand Realtime WSB'} onClick={() => setHideRealTimeWsb(!hideRealTimeWsb)} />
+                    <input type="button" className="subButton" value={hideRealTimeCrypto === false ? 'Hide Realtime Crypto' : 'Expand Realtime Crypto'} onClick={() => setHideRealTimeCrypto(!hideRealTimeCrypto)} />
 
-                    {realtimeWsb == undefined &&
+                    {realtimeWsb === undefined &&
                         <p>Loading Realtime WSB Data</p>
                     }
-                    {realtimeWsb != undefined &&
+                    {realtimeWsb !== undefined &&
                         <>
-                            {hideRealTimeWsb == false &&
+                            {hideRealTimeWsb === false &&
                                 <>
                                     <ToggleTickersControl type={'wsb'} realtimedata={realtimeWsb} selectedTickerList={selectedWsbTickerList} setSelectedTickerList={setSelectedWsbList} colorList={colorList} setColorList={setColorList} />
                                     {renderRealtimeChart('wsb')}
@@ -187,12 +179,12 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
                             }
                         </>
                     }
-                    {realtimeCrypto == undefined &&
+                    {realtimeCrypto === undefined &&
                         <p>Loading Realtime Crypto Data</p>
                     }
-                    {realtimeCrypto != undefined &&
+                    {realtimeCrypto !== undefined &&
                         <>
-                            {hideRealTimeCrypto == false &&
+                            {hideRealTimeCrypto === false &&
                                 <>
                                     <ToggleTickersControl type={'crypto'} realtimedata={realtimeCrypto} selectedTickerList={selectedCryptoTickerList} setSelectedTickerList={setSelectedCryptoTickerList} colorList={colorList} setColorList={setColorList} />
                                     {renderRealtimeChart('crypto')}
@@ -203,18 +195,18 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
                 </>
             ) : (
                 <>
-                    {realtimeCrypto == undefined &&
+                    {realtimeCrypto === undefined &&
                         <p>Loading Realtime Crypto Data</p>
                     }
-                    {realtimeWsb == undefined &&
+                    {realtimeWsb === undefined &&
                         <p>Loading Realtime WSB Data</p>
                     }
-                    {realtimeCrypto != undefined && realtimeWsb != undefined &&
+                    {realtimeCrypto !== undefined && realtimeWsb !== undefined &&
                         <>
                             <p>View the frequency of a ticker and sentiment over time, (Since 4:00 am UTC)</p>
                             <input type="text" className="textInput" value={selectedTicker} onChange={e => setSelectedTicker(e.target.value)} />
-                            <input type="radio" value="wsb" name="selectedmarket" checked={selectedMarket == 'wsb'} onChange={(e) => setSelectedMarket(e.target.value)} /> WSB
-                            <input type="radio" value="crypto" name="selectedmarket" checked={selectedMarket == 'crypto'} onChange={(e) => setSelectedMarket(e.target.value)} /> Cryptocurrency
+                            <input type="radio" value="wsb" name="selectedmarket" checked={selectedMarket === 'wsb'} onChange={(e) => setSelectedMarket(e.target.value)} /> WSB
+                            <input type="radio" value="crypto" name="selectedmarket" checked={selectedMarket === 'crypto'} onChange={(e) => setSelectedMarket(e.target.value)} /> Cryptocurrency
                             <input type="button" className="subButton" onClick={() => setDataReadyToRender(true)} value="View" />
 
                             {dataReadyToRender &&
@@ -222,16 +214,10 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
                             }
                         </>
                     }
-
-
                 </>
             )}
-
-
         </div>
-
     )
 }
-
 
 export default RealTimeData;

@@ -9,7 +9,7 @@ type Props = allFrequencyDataProps;
 
 const AllFrequencyData: React.FC<Props> = ({ frequencyLists }) => {
 
-    const [symbolsToFilter, setSymbolsToFilter] = useState<Array<String>>(new Array());
+    const [symbolsToFilter, setSymbolsToFilter] = useState<Array<string>>([]);
     const [oneDayFrequencyChartData, setOneDayFrequencyChartData] = useState<any>();
     const [singleDayFrequencyChartActive, setSingleDayFrequencyChartActive] = useState<boolean>(false);
     const [sortDirection, setSortDirection] = useState<boolean>(false);
@@ -18,10 +18,10 @@ const AllFrequencyData: React.FC<Props> = ({ frequencyLists }) => {
 
     useEffect(() => {
 
-        if (symbolsToFilter == undefined || symbolsToFilter.length < 1) {
+        if (symbolsToFilter === undefined || symbolsToFilter.length < 1) {
             let wsbWordsToFilterLocalStorage: any = localStorage.getItem('wsbWordsToFilter');
             wsbWordsToFilterLocalStorage = JSON.parse(wsbWordsToFilterLocalStorage);
-            if (wsbWordsToFilterLocalStorage == null) {
+            if (wsbWordsToFilterLocalStorage === null) {
                 console.log("resetting symbols to filter");
                 setSymbolsToFilter(wsbSymbolsToFilter);
             } else {
@@ -110,7 +110,7 @@ const AllFrequencyData: React.FC<Props> = ({ frequencyLists }) => {
                 symbolsToFilter={symbolsToFilter}
                 setSymbolsToFilter={setSymbolsToFilter}
             />
-            {singleDayFrequencyChartActive && selectedOneDay != null && oneDayFrequencyChartData != undefined &&
+            {singleDayFrequencyChartActive && selectedOneDay !== null && oneDayFrequencyChartData !== undefined &&
                 <>
                     <div className="minFrequencyToDisplayControl">
                         <input type="text" className="textInput" value={minFrequencyToDisplay} onChange={setValue} />

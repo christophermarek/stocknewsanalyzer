@@ -7,11 +7,10 @@ const ToggleTickersControl: React.FC<Props> = ({ type, realtimedata, selectedTic
 
     const [tickerList, setTickerList] = useState<Array<object>>();
     const [selectedTicker, setSelectedTicker] = useState<any>();
-    //const [selectedTickerList, setSelectedTickerList] = useState<Array<string>>([]);
 
     useEffect(() => {
 
-        if (tickerList == undefined) {
+        if (tickerList === undefined) {
             let temp: object = {};
             let size = realtimedata.length;
             //dont think this will preserve frequency, just gets all keys and removes duplicates
@@ -21,20 +20,19 @@ const ToggleTickersControl: React.FC<Props> = ({ type, realtimedata, selectedTic
 
             let tempSelectData: object[] = [];
             //select takes [ {value: , label: }, {}, ...]
-            for (const [key, value] of Object.entries(temp)) {
+            for (const [key] of Object.entries(temp)) {
                 tempSelectData.push({ value: key, label: key });
             }
 
             setTickerList(tempSelectData);
         }
 
-    }, [])
+    }, [realtimedata, tickerList])
 
     const selectedListItem = (event: any) => {
         setSelectedTicker(event.value);
         setSelectedTickerList(selectedTickerList?.concat(event.value));
-        
-        if(colorList[event.value] == undefined){
+        if(colorList[event.value] === undefined){
             let o = Math.round, r = Math.random, s = 255;
             let color = 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + 1 + ')';
             let temp = {...colorList};
@@ -58,13 +56,13 @@ const ToggleTickersControl: React.FC<Props> = ({ type, realtimedata, selectedTic
     return (
         <div className='ToggleTickersControl'>
             <p>Toggle active for {type}</p>
-            {tickerList == undefined &&
+            {tickerList === undefined &&
                 <p>Loading Selection</p>
             }
-            {tickerList != undefined &&
+            {tickerList !== undefined &&
                 <>
                     <Select
-                        defaultValue={selectedTicker == undefined ? '' : selectedTicker}
+                        defaultValue={selectedTicker === undefined ? '' : selectedTicker}
                         onChange={selectedListItem}
                         options={tickerList}
                         className="dateInput"
@@ -82,6 +80,4 @@ const ToggleTickersControl: React.FC<Props> = ({ type, realtimedata, selectedTic
     )
 }
 
-
 export default ToggleTickersControl;
-;

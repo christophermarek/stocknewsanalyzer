@@ -1,6 +1,7 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 
+/*
 const example_data = {
   labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
   datasets: [
@@ -27,8 +28,12 @@ const example_data = {
     },
   ],
 };
+*/
 
 const example_options = {
+  animation: {
+    duration: 0
+  },
   scales: {
     yAxes: [
       {
@@ -40,7 +45,7 @@ const example_options = {
   },
 };
 
-const VerticalBar = ( {data, options, header} ) => (
+const VerticalBar = ({ data, options, header }) => (
   <>
     <div className='header'>
       <h1 className='title'>{header}</h1>

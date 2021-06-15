@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Select from 'react-select';
 
 type Props = selectDayControlsProps;
 
 const SelectDayControls: React.FC<Props> = ({ frequencyLists, setSelectedOneDay, selectedOneDay, setSingleDayFrequencyChartActive, setOneDayFrequencyChartData }) => {
 
-
     function getFrequenclyListsDatesArray() {
         let datesToPass: any = [];
-        if (frequencyLists != undefined) {
+        if (frequencyLists !== undefined) {
             let size = frequencyLists.length;
             for (let i = 0; i < size; i++) {
                 datesToPass.push({ value: frequencyLists[i].date, label: frequencyLists[i].date });
@@ -19,12 +18,12 @@ const SelectDayControls: React.FC<Props> = ({ frequencyLists, setSelectedOneDay,
     }
 
     function singleDayFrequencyChartClicked() {
-        if (selectedOneDay != null && frequencyLists != undefined) {
+        if (selectedOneDay !== null && frequencyLists !== undefined) {
             setSingleDayFrequencyChartActive(true);
 
             let size = frequencyLists.length;
             for (let i = 0; i < size; i++) {
-                if (frequencyLists[i].date == selectedOneDay.value) {
+                if (frequencyLists[i].date === selectedOneDay.value) {
                     setOneDayFrequencyChartData(frequencyLists[i]);
                 }
             }
@@ -46,6 +45,5 @@ const SelectDayControls: React.FC<Props> = ({ frequencyLists, setSelectedOneDay,
         </div>
     )
 }
-
 
 export default SelectDayControls;

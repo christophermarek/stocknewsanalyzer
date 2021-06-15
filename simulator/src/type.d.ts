@@ -16,6 +16,26 @@ interface simulatorProps {
 
 }
 
+interface singleTickerQuery {
+  dayBefore: yahooStockHistoricalPrices
+  dayOf: yahooStockHistoricalPrices
+  dayAfter: yahooStockHistoricalPrices
+  dayAfter1: yahooStockHistoricalPrices
+  dayAfter2: yahooStockHistoricalPrices
+
+}
+
+interface marketSummaryProps{
+  snp500: yahooStockHistoricalPrices[],
+  tsxsnp: yahooStockHistoricalPrices[],
+  nasdaq: yahooStockHistoricalPrices[],
+  cadUsd: yahooStockHistoricalPrices[],
+  oil: yahooStockHistoricalPrices[],
+  btc: yahooStockHistoricalPrices[],
+  eth: yahooStockHistoricalPrices[],
+  dataFetched: boolean,
+}
+
 interface toggleTickersControlProps {
   type: string
   realtimedata: realtimeDataItem[]

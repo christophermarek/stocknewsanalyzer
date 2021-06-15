@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 type Props = wordFilterControlsProps;
 
@@ -7,7 +7,7 @@ const WordFilterControls: React.FC<Props> = ({ symbolsToFilter, setSymbolsToFilt
     const [symbolsToFilterUpdate, setSymbolsToFilterUpdate] = useState<string>('');
 
     function addSymbolToFilter() {
-        if (symbolsToFilter != undefined) {
+        if (symbolsToFilter !== undefined) {
 
             let localStorageUpdate: any = [...symbolsToFilter];
             localStorageUpdate.push(symbolsToFilterUpdate);
@@ -23,7 +23,7 @@ const WordFilterControls: React.FC<Props> = ({ symbolsToFilter, setSymbolsToFilt
     }
 
     function printFilteredWords() {
-        if (symbolsToFilter != undefined) {
+        if (symbolsToFilter !== undefined) {
             let size = symbolsToFilter.length;
             let string = "";
             for (let i = 0; i < size; i++) {

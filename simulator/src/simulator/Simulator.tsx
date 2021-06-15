@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-
-import { getCurrentData, getCurrentPrice, getHistoricalPrices } from '../API'
+import React, { useState } from "react";
+import { getHistoricalPrices } from '../API'
 import Chart from 'kaktana-react-lightweight-charts'
 
 type Props = simulatorProps
@@ -15,7 +14,6 @@ const Simulator: React.FC<Props> = (  ) => {
     const [historicalPrices, setHistoricalPrices] = useState<Array<yahooStockHistoricalPrices>>([]);
     const [fixedHistoricalPrices, setFixedHistoricalPrices] = useState<Array<areaSeriesType>>([]);
     const [historicalPricesFixed, setHistoricalPricesFixed] = useState<boolean>(false);
-
 
     const fetchHistoricalPrices = (_startMonth: string, _startDay: string, _startYear: string, _endMonth: string, _endDay: string, _endYear: string, _ticker: string, _frequency: string): void => {
         getHistoricalPrices(_startMonth, _startDay, _startYear, _endMonth, _endDay, _endYear, _ticker, _frequency)
@@ -32,30 +30,26 @@ const Simulator: React.FC<Props> = (  ) => {
     function simulateClicked(){
 
         //set simulate text to reset
-        if(simulateBtnText == 'Simulate'){
+        if(simulateBtnText === 'Simulate'){
             setSimulateBtnText('Reset');
 
             let failed = false;
             let failedText = "No text entered";
-
-            //simulate logic
-            //first check all forms are filled and not blank
-            if(ticker == ''){
+            if(ticker === ''){
                 failed = true;
                 failedText = "No ticker entered";
             }
-            if(date == ''){
+            if(date === ''){
                 failed = true;
                 failedText = "No date entered";
             }
-            if(cash == ''){
+            if(cash === ''){
                 failed = true;
                 failedText = "No cash entered";
             }
           
-
             //check if validation passed, if it didnt then cancel simulation
-            if(failed == true){
+            if(failed === true){
                 setSimulateBtnText("Simulate");
                 setFormDisabled(false);
                 alert(failedText);
@@ -71,7 +65,6 @@ const Simulator: React.FC<Props> = (  ) => {
             let today = new Date();
 
             //test data
-            //dont forget about frequency parameter, add to form
             //frequency is part of the yahoo stock prices, its 1d, i forget the other options
 
             //stores to a state
@@ -166,7 +159,7 @@ const Simulator: React.FC<Props> = (  ) => {
         )
     }
 
-    if(historicalPrices.length > 0 && historicalPricesFixed == false){
+    if(historicalPrices.length > 0 && historicalPricesFixed === false){
         setHistoricalPricesFixed(true);
         fixHistoricalPrices();
     }

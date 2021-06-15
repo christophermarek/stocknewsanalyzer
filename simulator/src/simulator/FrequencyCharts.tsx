@@ -6,7 +6,7 @@ import SingleTickerData from './SingleTickerData';
 
 type Props = simulatorProps
 
-const Article: React.FC<Props> = ({ }) => {
+const FrequencyCharts: React.FC<Props> = () => {
 
     const [frequencyLists, setFrequencyLists] = useState<Array<wsbFrequencyListItem>>();
     const [cryptoFrequencyLists, setCryptoFrequencyLists] = useState<Array<cryptoCurrencyFrequencyListItem>>();
@@ -15,39 +15,31 @@ const Article: React.FC<Props> = ({ }) => {
     const [dataSourceSelected, setDataSourceSelected] = useState<string>('wsb');
 
     useEffect(() => {
-
         async function loadFrequencyListsIntoState() {
-            if (frequencyLists == undefined) {
+            if (frequencyLists === undefined) {
                 setFrequencyLists(JSON.parse(await getDataFromLocalStorage('frequencyData')));
             }
-
-            if (cryptoFrequencyLists == undefined) {
+            if (cryptoFrequencyLists === undefined) {
                 setCryptoFrequencyLists(JSON.parse(await getDataFromLocalStorage('cryptoFrequencyData')));
             }
         }
 
-
         loadFrequencyListsIntoState();
-    }, [])
+    }, [cryptoFrequencyLists, frequencyLists])
 
     //should really error handle here for if api returns error
     async function getFrequencyChartDataFromServer(itemName: string) {
-        //keep these comments
-        console.log("pausing to get frequency data from server");
-        if(itemName == 'frequencyData'){
+        if(itemName === 'frequencyData'){
             let data = await getAllFrequencyLists();
             console.log("frequency data fetched");
             return data.data.wsbFrequencyLists;
 
         }
-        
-        if(itemName == 'cryptoFrequencyData'){
+        if(itemName === 'cryptoFrequencyData'){
             let data = await getCryptoCurrencyAllFrequencyLists();
             console.log("crypto frequency data fetched");
             return data.data.cryptocurrencyFrequencyLists;
-
         }
-        //console.log(data.data.wsbFrequencyLists);
     }
 
     function loadDataIntoLocalStorage(itemName: string, item: any) {
@@ -56,12 +48,10 @@ const Article: React.FC<Props> = ({ }) => {
 
     async function getDataFromLocalStorage(itemName: string) {
         let data: any = localStorage.getItem(itemName);
-        //console.log(data);
-        if (data == null) {
+        if (data === null) {
             data = await getFrequencyChartDataFromServer(itemName);
 
             data = JSON.stringify(data);
-            //console.log(JSON.stringify(data));
             loadDataIntoLocalStorage(itemName, data);
         }
         return data;
@@ -82,28 +72,28 @@ const Article: React.FC<Props> = ({ }) => {
                 </div>
             }
 
-            {frequencyLists == undefined || cryptoFrequencyLists == undefined &&
+            {frequencyLists === undefined || cryptoFrequencyLists === undefined &&
                 <p>Data loading from server</p>
             }
 
             <div className="loadPageForm">
-                <input type="button" className={"subButton" + (pageSelected == 'allData' ? ' navItemSelected' : '')} onClick={() => setPageSelected("allData")} value="All Data" />
-                <input type="button" className={"subButton" + (pageSelected == 'singleTicker' ? ' navItemSelected' : '')} onClick={() => setPageSelected("singleTicker")} value="Single Ticker" />
+                <input type="button" className={"subButton" + (pageSelected === 'allData' ? ' navItemSelected' : '')} onClick={() => setPageSelected("allData")} value="All Data" />
+                <input type="button" className={"subButton" + (pageSelected === 'singleTicker' ? ' navItemSelected' : '')} onClick={() => setPageSelected("singleTicker")} value="Single Ticker" />
             </div>
 
             <div className="loadPageForm">
-                <input type="button" className={"subButton" + (dataSourceSelected == 'wsb' ? ' navItemSelected' : '')} onClick={() => setDataSourceSelected("wsb")} value="WSB" />
-                <input type="button" className={"subButton" + (dataSourceSelected == 'crypto' ? ' navItemSelected' : '')} onClick={() => setDataSourceSelected("crypto")} value="Crypto Currency" />
+                <input type="button" className={"subButton" + (dataSourceSelected === 'wsb' ? ' navItemSelected' : '')} onClick={() => setDataSourceSelected("wsb")} value="WSB" />
+                <input type="button" className={"subButton" + (dataSourceSelected === 'crypto' ? ' navItemSelected' : '')} onClick={() => setDataSourceSelected("crypto")} value="Crypto Currency" />
             </div>
 
             <div className="dataVisualizer">
-                {pageSelected == "allData" ? (
+                {pageSelected === "allData" ? (
                     <AllFrequencyData
-                        frequencyLists={dataSourceSelected == 'wsb' ? frequencyLists : cryptoFrequencyLists}
+                        frequencyLists={dataSourceSelected === 'wsb' ? frequencyLists : cryptoFrequencyLists}
                     />
                 ) : (
                     <SingleTickerData
-                        frequencyLists={dataSourceSelected == 'wsb' ? frequencyLists : cryptoFrequencyLists}
+                        frequencyLists={dataSourceSelected === 'wsb' ? frequencyLists : cryptoFrequencyLists}
                         dataSourceSelected={dataSourceSelected}
                     />
                 )}
@@ -113,4 +103,4 @@ const Article: React.FC<Props> = ({ }) => {
     )
 }
 
-export default Article;
+export default FrequencyCharts;
