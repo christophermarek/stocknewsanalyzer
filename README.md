@@ -1,3 +1,7 @@
+# If app is not working on first load
+
+- Refresh the page because the server goes idle after 30 minutes of inactivity
+
 Frontend hosted on Netlify:
 
 https://stock-news-analyzer.netlify.app/
