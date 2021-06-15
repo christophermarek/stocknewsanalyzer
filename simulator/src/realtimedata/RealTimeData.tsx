@@ -142,8 +142,9 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
                     type: 'bar',
                     label: 'Average Sentiment',
                     backgroundColor: 'rgb(50,205,50)',
+                    borderColor: 'rgb(50,205,50)',
                     data: positiveSentimentData,
-                    borderWidth: 1,
+                    borderWidth: 4,
                 },
                 
                
