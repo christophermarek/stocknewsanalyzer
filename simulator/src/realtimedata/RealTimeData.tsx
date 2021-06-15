@@ -114,12 +114,14 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
                 value != undefined ? value = value : value = [0];
                 //So since the sentiment list is an array, for each timepoint it will be for now an average value
                 let average = value.reduce((a:number, v:number, i:number)=>(a*i+v)/(i+1));
+                //with chart at the end of the day its to big to have negative and positive, 
+                //need to multiply by 10 to finish
                 if(average > 0){
-                    positiveSentimentData.push(average);
-                    negativeSentimentData.push(0);
+                    positiveSentimentData.push(average * 10);
+                    //negativeSentimentData.push(0);
                 }else{
-                    positiveSentimentData.push(0);
-                    negativeSentimentData.push(average);
+                    positiveSentimentData.push(average * 10);
+                    //negativeSentimentData.push(average * 10);
                 }
             }
         }
@@ -138,18 +140,12 @@ const RealTimeData: React.FC<Props> = ({ realtimeCrypto, realtimeWsb }) => {
                 },
                 {
                     type: 'bar',
-                    label: 'Positive Average Sentiment',
+                    label: 'Average Sentiment',
                     backgroundColor: 'rgb(50,205,50)',
                     data: positiveSentimentData,
-                    borderWidth: 2,
+                    borderWidth: 1,
                 },
-                {
-                    type: 'bar',
-                    label: 'Negative Average Sentiment',
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    data: negativeSentimentData,
-                    borderWidth: 2,
-                },
+                
                
             ],
         }
