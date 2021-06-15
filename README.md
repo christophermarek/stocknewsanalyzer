@@ -1,3 +1,7 @@
+Frontend hosted on Netlify:
+
+https://stock-news-analyzer.netlify.app/
+
 # FRONTEND
 
 ## Market Overview 
@@ -50,9 +54,9 @@ Api routes:
 - /realtime/wsb
 <br>
 
-Frontend hosted on Netlify:
+# Scrapers
 
-https://stock-news-analyzer.netlify.app/
+For info on how to run them alone check the Readme in that dir.
 
 Notes:
 - In simulator dir, the news section has been removed from the project.
